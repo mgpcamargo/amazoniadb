@@ -2,6 +2,8 @@
 
 AmazoniaDB is a directory, not a mirror. A useful contribution is a trustworthy path from a research question to the original publisher.
 
+Don't know where to start? `SOURCES-TO-VERIFY.md` lists real institutions we haven't added yet — pick one, verify it, submit it.
+
 The `submit.html` page can create a locally stored candidate record. It is an aid for preparing a submission, not an automatic publishing channel.
 
 ## Two ways to submit
