@@ -1,0 +1,33 @@
+# Contributing a source
+
+AmazoniaDB is a directory, not a mirror. A useful contribution is a trustworthy path from a research question to the original publisher.
+
+The `submit.html` page can create a locally stored candidate record. It is an aid for preparing a submission, not an automatic publishing channel.
+
+## Two ways to submit
+
+- **Open a pull request** with your entry added to `data/catalog.js` directly (see the record format below). `validate-catalog.yml` runs automatically on the PR.
+- **Open a "New source submission" issue** using the issue form. This runs the same validation and opens a draft pull request for you automatically — a maintainer still reviews and merges it. Use `submit.html` first if you want to draft and sanity-check your fields before filling in either path.
+
+## Before adding a record
+
+1. Confirm the link goes to the original publisher, repository, or official data portal.
+2. Check the page is still available and record the date in `checked` as `YYYY-MM-DD`.
+3. Read the source’s access, attribution, licensing, and redistribution conditions.
+4. Select the single most useful one of the six categories.
+5. Write a brief description of what the source contains—not what you infer from it.
+
+## Geographic scope
+
+Default to the Brazilian Amazon — that's where open, well-documented portals are easiest to verify. Use `Pan-Amazon` or `Global — subsettable` only when a source is genuinely the best option for its topic and no comparable Brazil-specific source exists (e.g. a network that only operates at basin scale, like RAISG). A well-verified Brazil-only entry beats a thinner multi-country one added just for coverage.
+
+## Do not add
+
+- copied files, download mirrors, or unauthorised API endpoints;
+- data that reveals sensitive species locations, personal information, or restricted cultural knowledge;
+- links that obscure the original provider or require users to bypass access controls;
+- a claim that a source is “open” when its terms are unclear.
+
+## Review standard
+
+Each source should be reproducible from its card alone: a reader can identify the publisher, the coverage, data form, access note, and source page. When conditions are unclear, use `Provider terms apply` rather than guessing.

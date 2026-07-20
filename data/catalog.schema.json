@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AmazoniaDB catalog record",
+  "description": "Schema for a single entry in data/catalog.js (window.AMAZONIA_CATALOG). This mirrors the rules enforced by scripts/validate-catalog.mjs. If the two ever disagree, the validator script is the source of truth — update this file to match it.",
+  "type": "object",
+  "required": ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Unique, lowercase, kebab-case identifier for the record."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Name of the dataset, repository, or portal."
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The original publishing institution or organization."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Forest & biodiversity",
+        "Climate, water & air",
+        "Land use & infrastructure",
+        "Peoples, territories & culture",
+        "Society, health & livelihoods",
+        "Governance, rights & safeguards"
+      ],
+      "description": "Exactly one of the six approved domains. Must match this list character-for-character."
+    },
+    "coverage": {
+      "type": "string",
+      "enum": ["Pan-Amazon", "Brazil", "Global — subsettable"],
+      "description": "Geographic scope. Note the em dash in \"Global — subsettable\"."
+    },
+    "formats": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Data forms the source is available in, e.g. GeoTIFF, CSV, API, Shapefile."
+    },
+    "access": {
+      "type": "string",
+      "enum": ["Provider terms apply", "Dataset-specific license", "Publicly available"],
+      "description": "Use 'Publicly available' only when the provider explicitly frames the resource as open/free access. Use 'Dataset-specific license' when a specific named license applies (e.g. CC-BY, PDDL). Default to 'Provider terms apply' whenever terms are unclear or mixed — do not guess toward openness."
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["Dataset", "Data portal", "Download", "Explorer"],
+      "description": "Dataset: a single, well-defined dataset. Data portal: a searchable aggregator of many records/datasets. Download: a page whose main function is a file download. Explorer: an interactive map, dashboard, or query-builder tool."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Plain-language description of what the source contains and how it's structured — not what a user might infer or do with it."
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^https://",
+      "description": "Direct link to the original publisher's page, repository, or portal. Must use https and must not be a mirror."
+    },
+    "checked": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Date this link was last confirmed live and accurate, as YYYY-MM-DD."
+    }
+  }
+}
