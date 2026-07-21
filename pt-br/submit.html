@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Prepare um registro de fonte pronto para revisão na AmazoniaDB sem enviar dados.">
+    <title>Preparar uma fonte — AmazoniaDB</title>
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#source-form">Pular para o formulário de fonte</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="Página inicial da AmazoniaDB">
+          <span class="brand-mark" aria-hidden="true">A</span>
+          <span>AmazoniaDB</span>
+        </a>
+        <div class="header-links">
+          <a class="header-link" href="index.html#catalog">Ver diretório</a>
+          <a class="header-link" href="../CONTRIBUTING.md">Diretrizes de revisão</a>
+          <nav class="lang-switch" aria-label="Idioma">
+            <a class="lang-link" href="../submit.html">EN</a>
+            <span class="lang-current" aria-current="true">PT-BR</span>
+            <a class="lang-link" href="../es/submit.html">ES</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="submission-page">
+      <section class="container submission-intro" aria-labelledby="source-page-title">
+        <p class="eyebrow">Preparação de fonte</p>
+        <h1 id="source-page-title">Prepare uma fonte para revisão.</h1>
+        <p>A AmazoniaDB lista páginas de publicadores originais. Este formulário cria um registro candidato localmente no seu navegador; ele não envia dados nem submete nada automaticamente.</p>
+      </section>
+
+      <section class="container submission-layout" aria-label="Espaço de preparação de fontes">
+        <form id="source-form" class="source-form" novalidate>
+          <div class="form-heading">
+            <h2>Detalhes da fonte</h2>
+            <p>Os campos obrigatórios estão marcados com <span aria-hidden="true">*</span><span class="sr-only">obrigatório</span>.</p>
+          </div>
+
+          <div class="form-grid">
+            <label class="wide-field" for="url">
+              <span>URL do publicador original *</span>
+              <input id="url" name="url" type="url" inputmode="url" placeholder="https://publicador.org/dataset" required>
+              <small>Link para o conjunto de dados, repositório ou portal oficial do publicador — não um espelho.</small>
+            </label>
+            <label for="title">
+              <span>Título da fonte *</span>
+              <input id="title" name="title" type="text" minlength="3" placeholder="Nome do conjunto de dados ou portal" required>
+            </label>
+            <label for="provider">
+              <span>Provedor original *</span>
+              <input id="provider" name="provider" type="text" minlength="2" placeholder="Instituição ou publicador" required>
+            </label>
+            <label for="category">
+              <span>Domínio *</span>
+              <select id="category" name="category" required>
+                <option value="">Escolha um domínio</option>
+                <option value="Forest &amp; biodiversity">Floresta e biodiversidade</option>
+                <option value="Climate, water &amp; air">Clima, água e ar</option>
+                <option value="Land use &amp; infrastructure">Uso da terra e infraestrutura</option>
+                <option value="Peoples, territories &amp; culture">Povos, territórios e cultura</option>
+                <option value="Society, health &amp; livelihoods">Sociedade, saúde e meios de vida</option>
+                <option value="Governance, rights &amp; safeguards">Governança, direitos e salvaguardas</option>
+              </select>
+            </label>
+            <label for="coverage">
+              <span>Cobertura *</span>
+              <select id="coverage" name="coverage" required>
+                <option value="">Escolha a cobertura</option>
+                <option value="Pan-Amazon">Pan-Amazônia</option>
+                <option value="Brazil">Brasil</option>
+                <option value="Global — subsettable">Global — recortável</option>
+              </select>
+            </label>
+            <label for="kind">
+              <span>Tipo de fonte *</span>
+              <select id="kind" name="kind" required>
+                <option value="">Escolha um tipo</option>
+                <option value="Dataset">Conjunto de dados</option>
+                <option value="Data portal">Portal de dados</option>
+                <option value="Download">Download</option>
+                <option value="Explorer">Explorador</option>
+              </select>
+            </label>
+            <label for="access">
+              <span>Condição de acesso *</span>
+              <select id="access" name="access" required>
+                <option value="">Escolha uma condição de acesso</option>
+                <option value="Provider terms apply">Sujeito aos termos do provedor</option>
+                <option value="Dataset-specific license">Licença específica do conjunto de dados</option>
+                <option value="Publicly available">Disponível publicamente</option>
+              </select>
+            </label>
+            <label class="wide-field" for="formats">
+              <span>Formatos de dados *</span>
+              <input id="formats" name="formats" type="text" placeholder="ex.: GeoTIFF, CSV, API" required>
+              <small>Separe os formatos com vírgulas.</small>
+            </label>
+            <label class="wide-field" for="description">
+              <span>Descrição em linguagem simples *</span>
+              <textarea id="description" name="description" rows="4" minlength="20" placeholder="Descreva o que a fonte contém e como ela pode ser usada no contexto amazônico." required></textarea>
+            </label>
+          </div>
+
+          <fieldset class="review-checks">
+            <legend>Verificações de revisão *</legend>
+            <label><input id="is-original" type="checkbox" required> Confirmei que a URL pertence ao publicador original ou a seu repositório autorizado.</label>
+            <label><input id="is-safe" type="checkbox" required> Não estou enviando localizações sensíveis, dados pessoais ou conhecimento comunitário restrito.</label>
+            <label><input id="is-terms-reviewed" type="checkbox" required> Revisei as condições de acesso e reutilização da fonte e usei uma condição de acesso cautelosa.</label>
+          </fieldset>
+
+          <div class="form-actions">
+            <button class="button button-primary" type="submit">Gerar registro para revisão</button>
+            <button id="reset-form" class="button button-secondary" type="reset">Limpar formulário</button>
+          </div>
+          <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
+        </form>
+
+        <aside class="record-preview" aria-labelledby="preview-title">
+          <p class="eyebrow">Pré-visualização local</p>
+          <h2 id="preview-title">Um registro pronto para revisão aparecerá aqui.</h2>
+          <p id="preview-copy">Preencha os detalhes e gere um candidato. Nada sai deste navegador.</p>
+          <pre id="record-output" hidden><code></code></pre>
+          <div id="record-actions" class="record-actions" hidden>
+            <button id="copy-record" class="button button-primary" type="button">Copiar registro</button>
+            <button id="download-record" class="button button-secondary" type="button">Baixar JSON</button>
+          </div>
+          <p class="preview-note">Um candidato ainda precisa de revisão humana antes de aparecer no diretório público.</p>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>A AmazoniaDB é um índice independente, não um repositório de dados. Nomes de fontes e materiais permanecem com seus respectivos provedores.</p>
+        <a href="index.html">Voltar ao diretório ←</a>
+      </div>
+    </footer>
+
+    <script src="submit.js"></script>
+  </body>
+</html>
