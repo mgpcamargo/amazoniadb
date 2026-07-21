@@ -4,6 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Un directorio ligero para encontrar conjuntos de datos socioambientales de la Amazonía en sus fuentes originales.">
+    <meta property="og:site_name" content="AmazoniaDB">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_LA">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:locale:alternate" content="pt_BR">
+    <meta property="og:url" content="https://mgpcamargo.github.io/amazoniadb/es/">
+    <meta property="og:title" content="AmazoniaDB — Encuentra los datos en la fuente">
+    <meta property="og:description" content="Un directorio ligero para encontrar conjuntos de datos socioambientales de la Amazonía en sus fuentes originales.">
+    <meta property="og:image" content="https://mgpcamargo.github.io/amazoniadb/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AmazoniaDB — Encuentra los datos en la fuente">
+    <meta name="twitter:description" content="Un directorio ligero para encontrar conjuntos de datos socioambientales de la Amazonía en sus fuentes originales.">
+    <meta name="twitter:image" content="https://mgpcamargo.github.io/amazoniadb/og-image.png">
+    <link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/">
+    <link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/">
+    <link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/">
+    <link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <title>AmazoniaDB — Encuentra los datos en la fuente</title>
     <link rel="stylesheet" href="../styles.css">
   </head>
@@ -66,7 +84,10 @@
         <form id="filters" class="filters" role="search">
           <label class="search-field" for="search">
             <span>Buscar en el directorio</span>
-            <input id="search" name="search" type="search" autocomplete="off" placeholder="ej.: ríos, territorio, deforestación">
+            <span class="input-wrap">
+              <input id="search" name="search" type="search" autocomplete="off" placeholder="ej.: ríos, territorio, deforestación">
+              <kbd aria-hidden="true">/</kbd>
+            </span>
           </label>
           <label for="coverage">
             <span>Cobertura</span>

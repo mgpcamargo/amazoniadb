@@ -1,0 +1,15 @@
+{
+  "id": "facebook",
+  "title": "Facebook",
+  "provider": "FB",
+  "category": "Forest & biodiversity",
+  "coverage": "Pan-Amazon",
+  "formats": [
+    "CSV"
+  ],
+  "access": "Publicly available",
+  "kind": "Dataset",
+  "description": "Nice stuff Holy shit",
+  "url": "https://www.facebook.com/",
+  "checked": "2026-07-21"
+}

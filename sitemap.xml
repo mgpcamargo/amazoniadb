@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://mgpcamargo.github.io/amazoniadb/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/"/>
+  </url>
+  <url>
+    <loc>https://mgpcamargo.github.io/amazoniadb/pt-br/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/"/>
+  </url>
+  <url>
+    <loc>https://mgpcamargo.github.io/amazoniadb/es/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/"/>
+  </url>
+  <url>
+    <loc>https://mgpcamargo.github.io/amazoniadb/submit.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/submit.html"/>
+  </url>
+  <url>
+    <loc>https://mgpcamargo.github.io/amazoniadb/pt-br/submit.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/submit.html"/>
+  </url>
+  <url>
+    <loc>https://mgpcamargo.github.io/amazoniadb/es/submit.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/submit.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/submit.html"/>
+  </url>
+</urlset>

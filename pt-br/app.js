@@ -35,6 +35,27 @@
 
   count.textContent = String(catalog.length);
 
+  // Restore filter state from the URL (?category=&q=&coverage=&access=) so a
+  // filtered view can be bookmarked or shared as a link.
+  const initialParams = new URLSearchParams(window.location.search);
+  state.category = initialParams.get("category") || "";
+  state.search = initialParams.get("q") || "";
+  state.coverage = initialParams.get("coverage") || "";
+  state.access = initialParams.get("access") || "";
+  search.value = state.search;
+  coverage.value = state.coverage;
+  access.value = state.access;
+
+  const syncUrl = () => {
+    const params = new URLSearchParams();
+    if (state.category) params.set("category", state.category);
+    if (state.search) params.set("q", state.search);
+    if (state.coverage) params.set("coverage", state.coverage);
+    if (state.access) params.set("access", state.access);
+    const qs = params.toString();
+    window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash);
+  };
+
   const escapeHtml = (value) => String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -93,22 +114,26 @@
     state.category = button.dataset.category;
     renderDomains();
     renderCatalog();
+    syncUrl();
     document.getElementById("catalog").scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   search.addEventListener("input", () => {
     state.search = search.value;
     renderCatalog();
+    syncUrl();
   });
 
   coverage.addEventListener("change", () => {
     state.coverage = coverage.value;
     renderCatalog();
+    syncUrl();
   });
 
   access.addEventListener("change", () => {
     state.access = access.value;
     renderCatalog();
+    syncUrl();
   });
 
   filters.addEventListener("reset", () => {
@@ -117,7 +142,17 @@
       state.coverage = "";
       state.access = "";
       renderCatalog();
+      syncUrl();
     }, 0);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) return;
+    const active = document.activeElement;
+    const isTyping = active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable);
+    if (isTyping) return;
+    event.preventDefault();
+    search.focus();
   });
 
   renderDomains();

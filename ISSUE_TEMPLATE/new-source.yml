@@ -1,0 +1,104 @@
+name: New source submission
+description: Propose a dataset, repository, or portal for the AmazoniaDB directory.
+title: "[source] "
+labels: ["new-source"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a source. Please read CONTRIBUTING.md first — link only to the original publisher, don't submit sensitive locations or restricted knowledge, and default to Brazil unless a source is genuinely pan-Amazon or global.
+
+        Submitting this form opens a GitHub Action that validates your entry and opens a draft pull request automatically. A maintainer still reviews it before it's merged.
+  - type: input
+    id: url
+    attributes:
+      label: Original publisher URL
+      description: Link to the publisher's dataset, repository, or official portal — not a mirror. Must start with https://
+      placeholder: "https://publisher.org/dataset"
+    validations:
+      required: true
+  - type: input
+    id: title
+    attributes:
+      label: Source title
+      placeholder: Dataset or portal name
+    validations:
+      required: true
+  - type: input
+    id: provider
+    attributes:
+      label: Original provider
+      placeholder: Institution or publisher
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Domain
+      options:
+        - "Forest & biodiversity"
+        - "Climate, water & air"
+        - "Land use & infrastructure"
+        - "Peoples, territories & culture"
+        - "Society, health & livelihoods"
+        - "Governance, rights & safeguards"
+    validations:
+      required: true
+  - type: dropdown
+    id: coverage
+    attributes:
+      label: Coverage
+      options:
+        - "Brazil"
+        - "Pan-Amazon"
+        - "Global — subsettable"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Source type
+      options:
+        - "Dataset"
+        - "Data portal"
+        - "Download"
+        - "Explorer"
+    validations:
+      required: true
+  - type: dropdown
+    id: access
+    attributes:
+      label: Access note
+      description: Default to "Provider terms apply" unless the provider explicitly states open/free access, or names a specific license.
+      options:
+        - "Provider terms apply"
+        - "Dataset-specific license"
+        - "Publicly available"
+    validations:
+      required: true
+  - type: input
+    id: formats
+    attributes:
+      label: Data forms
+      description: Comma-separated, e.g. GeoTIFF, CSV, API
+      placeholder: "GeoTIFF, CSV, API"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Plain-language description
+      description: What the source contains and how it's structured — not what you infer from it.
+    validations:
+      required: true
+  - type: checkboxes
+    id: review_checks
+    attributes:
+      label: Review checks
+      options:
+        - label: I confirmed the URL belongs to the original publisher or their authorised repository.
+          required: true
+        - label: I am not submitting sensitive locations, personal data, or restricted community knowledge.
+          required: true
+        - label: I reviewed the source's access and reuse conditions and used a cautious access note.
+          required: true
