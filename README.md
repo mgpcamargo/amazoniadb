@@ -4,6 +4,7 @@ AmazoniaDB is a lightweight directory of Amazon socioenvironmental datasets and 
 
 ## Run it
 
+
 Open `index.html` directly in a browser. The directory works without a build step or server.
 
 ## Add a source
