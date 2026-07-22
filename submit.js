@@ -55,26 +55,26 @@
     output.textContent = toCatalogObject(record);
     outputContainer.hidden = false;
     recordActions.hidden = false;
-    previewTitle.textContent = "Candidate record generated.";
-    previewCopy.textContent = "Copy it into the catalog or download it for a reviewer. Confirm the source terms again before publishing.";
+    previewTitle.textContent = "Registro candidato gerado.";
+    previewCopy.textContent = "Copie-o para o catálogo ou baixe-o para um revisor. Confirme novamente os termos da fonte antes de publicar.";
   };
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const url = form.elements.url;
-    url.setCustomValidity(url.value && !url.value.startsWith("https://") ? "Use an https:// URL." : "");
+    url.setCustomValidity(url.value && !url.value.startsWith("https://") ? "Use uma URL https://." : "");
     if (!form.checkValidity()) {
       form.reportValidity();
-      message.textContent = "Complete the required source and review fields before generating a record.";
+      message.textContent = "Preencha os campos obrigatórios da fonte e da revisão antes de gerar um registro.";
       return;
     }
     const record = generateRecord();
     if (!record.id) {
-      message.textContent = "Use a source title that contains letters or numbers.";
+      message.textContent = "Use um título de fonte que contenha letras ou números.";
       return;
     }
     showRecord(record);
-    message.textContent = "Candidate generated locally. Review it before adding it to the public catalog.";
+    message.textContent = "Candidato gerado localmente. Revise-o antes de adicioná-lo ao catálogo público.";
   });
 
   form.addEventListener("reset", () => {
@@ -83,8 +83,8 @@
       output.textContent = "";
       outputContainer.hidden = true;
       recordActions.hidden = true;
-      previewTitle.textContent = "A review-ready record will appear here.";
-      previewCopy.textContent = "Fill in the details, then generate a candidate. Nothing leaves this browser.";
+      previewTitle.textContent = "Um registro pronto para revisão aparecerá aqui.";
+      previewCopy.textContent = "Preencha os detalhes e gere um candidato. Nada sai deste navegador.";
       message.textContent = "";
     }, 0);
   });
@@ -93,9 +93,9 @@
     if (!currentRecord) return;
     try {
       await navigator.clipboard.writeText(toCatalogObject(currentRecord));
-      message.textContent = "Candidate copied to your clipboard.";
+      message.textContent = "Candidato copiado para a área de transferência.";
     } catch {
-      message.textContent = "Copy is unavailable in this browser. Select the record text and copy it manually.";
+      message.textContent = "A cópia não está disponível neste navegador. Selecione o texto do registro e copie-o manualmente.";
     }
   });
 
@@ -109,6 +109,6 @@
     link.click();
     link.remove();
     URL.revokeObjectURL(link.href);
-    message.textContent = "Candidate JSON downloaded.";
+    message.textContent = "JSON do candidato baixado.";
   });
 })();

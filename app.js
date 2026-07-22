@@ -1,13 +1,26 @@
 (() => {
   const catalog = window.AMAZONIA_CATALOG || [];
+  const i18n = (window.AMAZONIA_CATALOG_I18N && window.AMAZONIA_CATALOG_I18N["pt-BR"]) || { descriptions: {} };
+
+  // `key` matches record.category/coverage/access/kind exactly as stored in
+  // ../data/catalog.js (the canonical English values required by
+  // data/catalog.schema.json) — only `label`/`note` are shown to the user.
   const categories = [
-    { name: "Forest & biodiversity", note: "Species, habitats, forest condition" },
-    { name: "Climate, water & air", note: "Weather, rivers, carbon, extremes" },
-    { name: "Land use & infrastructure", note: "Change, monitoring, access" },
-    { name: "Peoples, territories & culture", note: "Communities, lands, knowledge" },
-    { name: "Society, health & livelihoods", note: "Wellbeing and local economies" },
-    { name: "Governance, rights & safeguards", note: "Protection, policy, accountability" }
+    { key: "Forest & biodiversity", label: "Floresta e biodiversidade", note: "Espécies, habitats, condição da floresta" },
+    { key: "Climate, water & air", label: "Clima, água e ar", note: "Clima, rios, carbono, extremos" },
+    { key: "Land use & infrastructure", label: "Uso da terra e infraestrutura", note: "Mudanças, monitoramento, acesso" },
+    { key: "Peoples, territories & culture", label: "Povos, territórios e cultura", note: "Comunidades, terras, saberes" },
+    { key: "Society, health & livelihoods", label: "Sociedade, saúde e meios de vida", note: "Bem-estar e economias locais" },
+    { key: "Governance, rights & safeguards", label: "Governança, direitos e salvaguardas", note: "Proteção, política, responsabilização" }
   ];
+  const categoryLabels = Object.fromEntries(categories.map((c) => [c.key, c.label]));
+  const coverageLabels = { "Pan-Amazon": "Pan-Amazônia", "Brazil": "Brasil", "Global — subsettable": "Global — recortável" };
+  const accessLabels = {
+    "Provider terms apply": "Sujeito aos termos do provedor",
+    "Dataset-specific license": "Licença específica do conjunto de dados",
+    "Publicly available": "Disponível publicamente"
+  };
+  const kindLabels = { "Dataset": "Conjunto de dados", "Data portal": "Portal de dados", "Download": "Download", "Explorer": "Explorador" };
 
   const state = { category: "", search: "", coverage: "", access: "" };
   const domainNav = document.getElementById("domain-nav");
@@ -51,10 +64,10 @@
     .replaceAll("'", "&#039;");
 
   const renderDomains = () => {
-    const allButton = `<button class="domain-button" type="button" data-category="" aria-pressed="${state.category === ""}"><strong>All sources</strong><span>See every curated link</span></button>`;
+    const allButton = `<button class="domain-button" type="button" data-category="" aria-pressed="${state.category === ""}"><strong>Todas as fontes</strong><span>Ver todos os links selecionados</span></button>`;
     const buttons = categories.map((category) => `
-      <button class="domain-button" type="button" data-category="${escapeHtml(category.name)}" aria-pressed="${state.category === category.name}">
-        <strong>${escapeHtml(category.name)}</strong>
+      <button class="domain-button" type="button" data-category="${escapeHtml(category.key)}" aria-pressed="${state.category === category.key}">
+        <strong>${escapeHtml(category.label)}</strong>
         <span>${escapeHtml(category.note)}</span>
       </button>`).join("");
     domainNav.innerHTML = allButton + buttons;
@@ -75,23 +88,23 @@
 
   const renderCatalog = () => {
     const records = getVisibleRecords();
-    resultCount.textContent = `${records.length} ${records.length === 1 ? "source" : "sources"} found`;
+    resultCount.textContent = `${records.length} ${records.length === 1 ? "fonte encontrada" : "fontes encontradas"}`;
     emptyState.hidden = records.length !== 0;
     grid.innerHTML = records.map((record) => `
       <article class="dataset-card">
         <div class="card-topline">
-          <span class="category-label">${escapeHtml(record.category)}</span>
-          <span class="source-kind">${escapeHtml(record.kind)}</span>
+          <span class="category-label">${escapeHtml(categoryLabels[record.category] || record.category)}</span>
+          <span class="source-kind">${escapeHtml(kindLabels[record.kind] || record.kind)}</span>
         </div>
         <h3>${escapeHtml(record.title)}</h3>
         <p class="provider">${escapeHtml(record.provider)}</p>
-        <p class="description">${escapeHtml(record.description)}</p>
-        <ul class="metadata" aria-label="Dataset metadata">
-          <li>${escapeHtml(record.coverage)}</li>
-          <li>${escapeHtml(record.access)}</li>
-          <li>Checked ${escapeHtml(record.checked)}</li>
+        <p class="description">${escapeHtml(i18n.descriptions[record.id] || record.description)}</p>
+        <ul class="metadata" aria-label="Metadados do conjunto de dados">
+          <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
+          <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
+          <li>Verificado em ${escapeHtml(record.checked)}</li>
         </ul>
-        <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
+        <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir na fonte <span class="sr-only">(abre em nova aba)</span></a>
       </article>`).join("");
   };
 
