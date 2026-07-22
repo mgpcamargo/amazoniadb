@@ -69,6 +69,7 @@
             <h2 id="domains-title">Start with the question you have.</h2>
           </div>
           <div id="domain-nav" class="domain-nav" aria-label="Filter datasets by domain"></div>
+          <p id="domain-gap" class="domain-gap" aria-live="polite"></p>
         </div>
       </section>
 
@@ -78,7 +79,10 @@
             <p class="eyebrow">Curated source links</p>
             <h2 id="catalog-title">Dataset directory</h2>
           </div>
-          <p id="result-count" class="result-count" aria-live="polite"></p>
+          <div class="catalog-heading-meta">
+            <p id="result-count" class="result-count" aria-live="polite"></p>
+            <button id="copy-view-link" class="text-button copy-link-button" type="button">Copy link to this view</button>
+          </div>
         </div>
 
         <form id="filters" class="filters" role="search">

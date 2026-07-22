@@ -63,6 +63,39 @@
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
+  // Clipboard helper shared by the "copy link to this view" and "cite" buttons.
+  // Falls back to a hidden textarea + execCommand for older browsers.
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      try {
+        const helper = document.createElement("textarea");
+        helper.value = text;
+        helper.style.position = "fixed";
+        helper.style.opacity = "0";
+        document.body.appendChild(helper);
+        helper.select();
+        document.execCommand("copy");
+        document.body.removeChild(helper);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  };
+
+  const flashConfirmation = (button, tempLabel, originalLabel) => {
+    button.textContent = tempLabel;
+    button.classList.add("copied");
+    window.clearTimeout(button._flashTimeout);
+    button._flashTimeout = window.setTimeout(() => {
+      button.textContent = originalLabel;
+      button.classList.remove("copied");
+    }, 1600);
+  };
+
   const renderDomains = () => {
     const allButton = `<button class="domain-button" type="button" data-category="" aria-pressed="${state.category === ""}"><strong>Todas as fontes</strong><span>Ver todos os links selecionados</span></button>`;
     const buttons = categories.map((category) => `
@@ -71,6 +104,23 @@
         <span>${escapeHtml(category.note)}</span>
       </button>`).join("");
     domainNav.innerHTML = allButton + buttons;
+  };
+
+  // Highlights whichever domain has the fewest catalog entries, as a nudge
+  // toward community submissions. Reflects the whole catalog, not the current
+  // filter, so it does not need to re-render on filter change.
+  const renderGapPrompt = () => {
+    const gapEl = document.getElementById("domain-gap");
+    if (!gapEl) return;
+    const counts = categories.map((category) => ({
+      label: category.label,
+      count: catalog.filter((record) => record.category === category.key).length
+    }));
+    const minCount = Math.min(...counts.map((entry) => entry.count));
+    const thinnest = counts.filter((entry) => entry.count === minCount);
+    gapEl.innerHTML = thinnest.length === counts.length
+      ? `Todos os domínios têm ${minCount} ${minCount === 1 ? "fonte" : "fontes"} até agora — <a href="submit.html">ajude um deles a crescer →</a>`
+      : `${escapeHtml(thinnest[0].label)} tem o menor número de fontes (${thinnest[0].count}) — conhece uma? <a href="submit.html">Propor uma fonte →</a>`;
   };
 
   const getVisibleRecords = () => {
@@ -104,8 +154,41 @@
           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
           <li>Verificado em ${escapeHtml(record.checked)}</li>
         </ul>
-        <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir na fonte <span class="sr-only">(abre em nova aba)</span></a>
+        <div class="card-actions">
+          <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir na fonte <span class="sr-only">(abre em nova aba)</span></a>
+          <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
+        </div>
       </article>`).join("");
+  };
+
+  // One-time structured-data injection so search engines (Google Dataset
+  // Search in particular) can index each entry as a Dataset. Runs once
+  // against the full catalog, not the filtered view.
+  const injectStructuredData = () => {
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "DataCatalog",
+      "name": "AmazoniaDB",
+      "description": "Um diretório enxuto de conjuntos de dados socioambientais da Amazônia, indexados em suas fontes originais.",
+      "url": `${window.location.origin}${window.location.pathname}`,
+      "inLanguage": "pt-BR",
+      "dataset": catalog.map((record) => ({
+        "@type": "Dataset",
+        "name": record.title,
+        "description": i18n.descriptions[record.id] || record.description,
+        "url": record.url,
+        "keywords": [categoryLabels[record.category] || record.category, coverageLabels[record.coverage] || record.coverage],
+        "provider": { "@type": "Organization", "name": record.provider },
+        "license": accessLabels[record.access] || record.access,
+        "isAccessibleForFree": record.access === "Publicly available",
+        "dateModified": record.checked,
+        "distribution": record.formats.map((format) => ({ "@type": "DataDownload", "encodingFormat": format }))
+      }))
+    };
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify(structuredData);
+    document.head.appendChild(script);
   };
 
   domainNav.addEventListener("click", (event) => {
@@ -146,6 +229,23 @@
     }, 0);
   });
 
+  const copyLinkButton = document.getElementById("copy-view-link");
+  copyLinkButton?.addEventListener("click", async () => {
+    const original = copyLinkButton.textContent;
+    const ok = await copyToClipboard(window.location.href);
+    flashConfirmation(copyLinkButton, ok ? "Link copiado" : "Não foi possível copiar", original);
+  });
+
+  grid.addEventListener("click", async (event) => {
+    const citeButton = event.target.closest("button[data-cite-id]");
+    if (!citeButton) return;
+    const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
+    if (!record) return;
+    const citation = `"${record.title}." ${record.provider}. Acessado em ${record.checked}. ${record.url}`;
+    const ok = await copyToClipboard(citation);
+    flashConfirmation(citeButton, ok ? "Copiado" : "Não foi possível copiar", "Citar");
+  });
+
   document.addEventListener("keydown", (event) => {
     if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) return;
     const active = document.activeElement;
@@ -157,4 +257,6 @@
 
   renderDomains();
   renderCatalog();
+  renderGapPrompt();
+  injectStructuredData();
 })();

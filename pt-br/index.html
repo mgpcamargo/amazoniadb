@@ -69,6 +69,7 @@
             <h2 id="domains-title">Comece pela pergunta que você tem.</h2>
           </div>
           <div id="domain-nav" class="domain-nav" aria-label="Filtrar conjuntos de dados por domínio"></div>
+          <p id="domain-gap" class="domain-gap" aria-live="polite"></p>
         </div>
       </section>
 
@@ -78,7 +79,10 @@
             <p class="eyebrow">Links de fontes selecionadas</p>
             <h2 id="catalog-title">Diretório de conjuntos de dados</h2>
           </div>
-          <p id="result-count" class="result-count" aria-live="polite"></p>
+          <div class="catalog-heading-meta">
+            <p id="result-count" class="result-count" aria-live="polite"></p>
+            <button id="copy-view-link" class="text-button copy-link-button" type="button">Copiar link desta visualização</button>
+          </div>
         </div>
 
         <form id="filters" class="filters" role="search">

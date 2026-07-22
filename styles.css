@@ -66,10 +66,15 @@ h2 { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; color: va
 .domain-button strong, .domain-button span { display: block; }
 .domain-button strong { margin-bottom: 7px; font-size: 1rem; }
 .domain-button span { color: inherit; opacity: 0.72; font-size: 0.82rem; line-height: 1.35; }
+.domain-gap { margin: 18px 0 0; color: var(--quiet); font-size: 0.86rem; }
+.domain-gap a { color: var(--forest); font-weight: 700; text-decoration: underline; text-underline-offset: 0.16em; }
 
 .catalog-section { padding: 84px 0 98px; }
 .catalog-heading { margin-bottom: 26px; }
-.result-count { margin: 0 0 4px; color: var(--quiet); font-size: 0.92rem; }
+.catalog-heading-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.result-count { margin: 0; color: var(--quiet); font-size: 0.92rem; }
+.copy-link-button { min-height: auto; padding: 0; }
+.copy-link-button.copied { color: var(--moss); }
 .filters { display: grid; grid-template-columns: minmax(260px, 2fr) minmax(160px, 1fr) minmax(160px, 1fr) auto; gap: 11px; align-items: end; margin-bottom: 27px; padding-bottom: 25px; border-bottom: 1px solid var(--line); }
 .filters label { display: grid; gap: 6px; color: var(--quiet); font-size: 0.77rem; font-weight: 720; }
 input, select { width: 100%; min-height: 43px; border: 1px solid var(--line); border-radius: 8px; padding: 0 11px; background: var(--paper); color: var(--ink); }
@@ -96,9 +101,13 @@ input::placeholder { color: #819087; }
 .description { margin-bottom: 18px; color: var(--quiet); font-size: 0.91rem; line-height: 1.52; }
 .metadata { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 16px; padding: 0; list-style: none; }
 .metadata li { border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; color: var(--quiet); font-size: 0.72rem; line-height: 1.1; }
+.card-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .dataset-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--forest); font-size: 0.88rem; font-weight: 780; }
 .dataset-link::after { content: "↗"; font-size: 1rem; }
 .dataset-link:hover { color: var(--focus); }
+.cite-button { flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: none; color: var(--quiet); font-size: 0.76rem; font-weight: 650; white-space: nowrap; }
+.cite-button:hover { border-color: var(--forest); color: var(--forest); }
+.cite-button.copied { border-color: var(--moss); color: var(--moss); background: var(--sand); }
 .empty-state { margin: 0; padding: 34px; border: 1px dashed var(--line); color: var(--quiet); text-align: center; }
 
 .principles-section { padding: 86px 0; background: var(--forest); color: #ebf0e5; }
