@@ -1,11 +1,9 @@
 // Reads the parsed issue-form JSON (stefanbuck/github-issue-parser's
 // `jsonString` output, passed in via the ISSUEFORM_JSON env var), builds a
-// catalog entry from it, and appends it to data/catalog.js.
-//
-// Also reads SUBMITTED_BY (source-submission.yml passes in
-// github.event.issue.user.login) and embeds it as record.submittedBy. Its
-// presence is what marks a card as community-submitted rather than
-// editorially reviewed on the front end, and drives the card's credit line.
+// catalog entry from it, and appends it to data/catalog.js. The submitter's
+// GitHub login comes separately via ISSUE_AUTHOR (from the workflow's
+// github.event context, not the form itself) and is stored as the optional
+// submittedBy field when present.
 //
 // Runs inside .github/workflows/source-submission.yml, immediately before
 // validate-catalog.mjs and create-pull-request — if this script exits
@@ -30,20 +28,20 @@ const slugify = (value) =>
 
 const toCatalogObject = (record) => {
   const lines = [
-    `    id: ${JSON.stringify(record.id)},`,
-    `    title: ${JSON.stringify(record.title)},`,
-    `    provider: ${JSON.stringify(record.provider)},`,
-    `    category: ${JSON.stringify(record.category)},`,
-    `    coverage: ${JSON.stringify(record.coverage)},`,
-    `    formats: ${JSON.stringify(record.formats)},`,
-    `    access: ${JSON.stringify(record.access)},`,
-    `    kind: ${JSON.stringify(record.kind)},`,
-    `    description: ${JSON.stringify(record.description)},`,
-    `    url: ${JSON.stringify(record.url)},`,
-    `    checked: ${JSON.stringify(record.checked)}${record.submittedBy ? "," : ""}`
+    `    id: ${JSON.stringify(record.id)}`,
+    `    title: ${JSON.stringify(record.title)}`,
+    `    provider: ${JSON.stringify(record.provider)}`,
+    `    category: ${JSON.stringify(record.category)}`,
+    `    coverage: ${JSON.stringify(record.coverage)}`,
+    `    formats: ${JSON.stringify(record.formats)}`,
+    `    access: ${JSON.stringify(record.access)}`,
+    `    kind: ${JSON.stringify(record.kind)}`,
+    `    description: ${JSON.stringify(record.description)}`,
+    `    url: ${JSON.stringify(record.url)}`,
+    `    checked: ${JSON.stringify(record.checked)}`
   ];
   if (record.submittedBy) lines.push(`    submittedBy: ${JSON.stringify(record.submittedBy)}`);
-  return `  {\n${lines.join("\n")}\n  }`;
+  return `  {\n${lines.join(",\n")}\n  }`;
 };
 
 const raw = process.env.ISSUEFORM_JSON;
@@ -75,11 +73,12 @@ const record = {
   kind: (fields.kind || "").trim(),
   description: (fields.description || "").trim(),
   url: (fields.url || "").trim(),
-  checked: new Date().toISOString().slice(0, 10)
+  checked: new Date().toISOString().slice(0, 10),
+  submittedBy: (process.env.ISSUE_AUTHOR || "").trim() || undefined
 };
 
 const missing = Object.entries(record)
-  .filter(([key, value]) => key !== "formats" && !value)
+  .filter(([key, value]) => key !== "formats" && key !== "submittedBy" && !value)
   .map(([key]) => key);
 if (missing.length) {
   console.error("Missing required field(s):", missing.join(", "));
@@ -89,9 +88,6 @@ if (!record.formats.length) {
   console.error("Data forms field parsed to an empty list.");
   process.exit(1);
 }
-
-const submittedBy = (process.env.SUBMITTED_BY || "").trim();
-if (submittedBy) record.submittedBy = submittedBy;
 
 const source = await readFile(catalogUrl, "utf8");
 const context = { window: {} };

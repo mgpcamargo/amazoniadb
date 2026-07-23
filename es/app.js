@@ -7,14 +7,14 @@
   // data/catalog.schema.json) — only `label`/`note` are shown to the user.
   const categories = [
     { key: "Forest & biodiversity", label: "Bosque y biodiversidad", note: "Especies, hábitats, estado del bosque" },
-    { key: "Earth, water & climate", label: "Tierra, agua y clima", note: "Clima, ríos, rocas, extremos" },
+    { key: "Climate, water & air", label: "Clima, agua y aire", note: "Clima, ríos, carbono, extremos" },
     { key: "Land use & infrastructure", label: "Uso del suelo e infraestructura", note: "Cambios, monitoreo, acceso" },
     { key: "Peoples, territories & culture", label: "Pueblos, territorios y cultura", note: "Comunidades, tierras, saberes" },
     { key: "Society, health & livelihoods", label: "Sociedad, salud y medios de vida", note: "Bienestar y economías locales" },
     { key: "Governance, rights & safeguards", label: "Gobernanza, derechos y salvaguardas", note: "Protección, política, rendición de cuentas" }
   ];
   const categoryLabels = Object.fromEntries(categories.map((c) => [c.key, c.label]));
-  const coverageLabels = { "Pan-Amazon": "Panamazonía", "Brazil": "Brasil", "Peru": "Perú", "Colombia": "Colombia", "Bolivia": "Bolivia", "Ecuador": "Ecuador", "Global — subsettable": "Global — recortable" };
+  const coverageLabels = { "Pan-Amazon": "Panamazonía", "Brazil": "Brasil", "Global — subsettable": "Global — recortable" };
   const accessLabels = {
     "Provider terms apply": "Sujeto a los términos del proveedor",
     "Dataset-specific license": "Licencia específica del conjunto de datos",
@@ -126,7 +126,7 @@
   const getVisibleRecords = () => {
     const query = state.search.trim().toLocaleLowerCase();
     return catalog.filter((record) => {
-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], ...record.formats]
+      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, ...record.formats]
         .join(" ")
         .toLocaleLowerCase();
       return (!state.category || record.category === state.category)
@@ -150,13 +150,12 @@
         <p class="provider">${escapeHtml(record.provider)}</p>
         <p class="description">${escapeHtml(i18n.descriptions[record.id] || record.description)}</p>
         <ul class="metadata" aria-label="Metadatos del conjunto de datos">
+          <li class="verified-pill">✓ Verificado</li>
           <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
           <li>Verificado el ${escapeHtml(record.checked)}</li>
         </ul>
-        <p class="credit-line">${record.submittedBy
-          ? `<span class="tier-badge tier-community">Enviado por la comunidad, validado</span> · Enviado por <a href="https://github.com/${encodeURIComponent(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
-          : `<span class="tier-badge tier-editorial">Revisado editorialmente</span>`}</p>
+        ${record.submittedBy ? `<p class="submitted-by">Enviado por <a href="https://github.com/${escapeHtml(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a></p>` : ""}
         <div class="card-actions">
           <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir en la fuente <span class="sr-only">(se abre en una pestaña nueva)</span></a>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
@@ -192,6 +191,105 @@
     script.type = "application/ld+json";
     script.textContent = JSON.stringify(structuredData);
     document.head.appendChild(script);
+  };
+
+  // --- Panel de candidatos -----------------------------------------------
+  // Lee pull requests abiertas con la etiqueta "new-source" en la API
+  // pública de GitHub (sin autenticación — CORS habilitado, límite de 60
+  // solicitudes/hora por IP del visitante). Cada PR de estas solo se abre
+  // mediante source-submission.yml después de que scripts/validate-catalog.mjs
+  // pasa, así que todo lo que aparece aquí ya es válido según el esquema —
+  // solo falta la revisión editorial. Leemos el texto de la *issue de
+  // origen*, no el diff de archivo de la PR, para que nada aquí ejecute
+  // jamás contenido descargado; siempre se muestra únicamente como texto.
+  const CANDIDATES_REPO = "mgpcamargo/amazoniadb";
+
+  const parseIssueForm = (body) => {
+    const fields = {};
+    const chunks = ("\n" + (body || "")).split(/\n### /).slice(1);
+    for (const chunk of chunks) {
+      const breakIndex = chunk.indexOf("\n");
+      if (breakIndex === -1) continue;
+      fields[chunk.slice(0, breakIndex).trim()] = chunk.slice(breakIndex).trim();
+    }
+    return fields;
+  };
+
+  const candidateFromIssueBody = (body, prUrl, submittedBy) => {
+    const fields = parseIssueForm(body);
+    const title = fields["Source title"];
+    const url = fields["Original publisher URL"];
+    if (!title || !url) return null; // issue malformada o no relacionada — se omite en vez de suponer
+    return {
+      title,
+      url,
+      provider: fields["Original provider"] || "",
+      category: fields.Domain || "",
+      coverage: fields.Coverage || "",
+      kind: fields["Source type"] || "",
+      access: fields["Access note"] || "",
+      formats: (fields["Data forms"] || "").split(",").map((format) => format.trim()).filter(Boolean),
+      description: fields["Plain-language description"] || "",
+      prUrl,
+      submittedBy
+    };
+  };
+
+  const renderCandidateCard = (candidate) => `
+    <article class="dataset-card candidate-card">
+      <div class="card-topline">
+        <span class="category-label">${escapeHtml(categoryLabels[candidate.category] || candidate.category)}</span>
+        <span class="source-kind">${escapeHtml(kindLabels[candidate.kind] || candidate.kind)}</span>
+      </div>
+      <span class="pending-badge">Pendiente de revisión</span>
+      <h3>${escapeHtml(candidate.title)}</h3>
+      <p class="provider">${escapeHtml(candidate.provider)}</p>
+      <p class="description">${escapeHtml(candidate.description)}</p>
+      <ul class="metadata" aria-label="Metadatos del candidato">
+        <li>${escapeHtml(coverageLabels[candidate.coverage] || candidate.coverage)}</li>
+        <li>${escapeHtml(accessLabels[candidate.access] || candidate.access)}</li>
+        ${candidate.formats.map((format) => `<li>${escapeHtml(format)}</li>`).join("")}
+      </ul>
+      ${candidate.submittedBy ? `<p class="submitted-by">Enviado por <a href="https://github.com/${escapeHtml(candidate.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(candidate.submittedBy)}</a></p>` : ""}
+      <div class="card-actions">
+        <a class="dataset-link" href="${escapeHtml(candidate.prUrl)}" target="_blank" rel="noopener noreferrer">Ver pull request <span class="sr-only">(se abre en una pestaña nueva)</span></a>
+      </div>
+    </article>`;
+
+  const loadCandidates = async () => {
+    const statusEl = document.getElementById("candidates-status");
+    const gridEl = document.getElementById("candidates-grid");
+    const countEl = document.getElementById("candidates-count");
+    if (!statusEl || !gridEl) return;
+
+    try {
+      const listResponse = await fetch(`https://api.github.com/repos/${CANDIDATES_REPO}/issues?state=open&labels=new-source&per_page=50`, { headers: { Accept: "application/vnd.github+json" } });
+      if (!listResponse.ok) throw new Error(`GitHub API returned ${listResponse.status}`);
+      const issues = await listResponse.json();
+      const prStubs = issues.filter((issue) => issue.pull_request);
+
+      const candidates = [];
+      for (const prStub of prStubs) {
+        const issueMatch = (prStub.body || "").match(/#(\d+)/);
+        if (!issueMatch) continue;
+        const issueResponse = await fetch(`https://api.github.com/repos/${CANDIDATES_REPO}/issues/${issueMatch[1]}`, { headers: { Accept: "application/vnd.github+json" } });
+        if (!issueResponse.ok) continue;
+        const issue = await issueResponse.json();
+        const candidate = candidateFromIssueBody(issue.body, prStub.html_url, issue.user?.login);
+        if (candidate) candidates.push(candidate);
+      }
+
+      if (candidates.length === 0) {
+        statusEl.textContent = "No hay envíos pendientes por ahora — sé el primero en proponer una fuente.";
+        return;
+      }
+
+      gridEl.innerHTML = candidates.map(renderCandidateCard).join("");
+      countEl.textContent = `${candidates.length} ${candidates.length === 1 ? "envío pendiente" : "envíos pendientes"}`;
+      statusEl.hidden = true;
+    } catch {
+      statusEl.textContent = "No se pudieron cargar los envíos pendientes en este momento.";
+    }
   };
 
   domainNav.addEventListener("click", (event) => {
@@ -262,4 +360,5 @@
   renderCatalog();
   renderGapPrompt();
   injectStructuredData();
+  loadCandidates();
 })();
