@@ -7,7 +7,7 @@
   // data/catalog.schema.json) — only `label`/`note` are shown to the user.
   const categories = [
     { key: "Forest & biodiversity", label: "Floresta e biodiversidade", note: "Espécies, habitats, condição da floresta" },
-    { key: "Climate, water & air", label: "Clima, água e ar", note: "Clima, rios, carbono, extremos" },
+    { key: "Earth, water & climate", label: "Terra, água e clima", note: "Clima, rios, rochas, extremos" },
     { key: "Land use & infrastructure", label: "Uso da terra e infraestrutura", note: "Mudanças, monitoramento, acesso" },
     { key: "Peoples, territories & culture", label: "Povos, territórios e cultura", note: "Comunidades, terras, saberes" },
     { key: "Society, health & livelihoods", label: "Sociedade, saúde e meios de vida", note: "Bem-estar e economias locais" },

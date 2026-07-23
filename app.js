@@ -2,7 +2,7 @@
   const catalog = window.AMAZONIA_CATALOG || [];
   const categories = [
     { name: "Forest & biodiversity", note: "Species, habitats, forest condition" },
-    { name: "Climate, water & air", note: "Weather, rivers, carbon, extremes" },
+    { name: "Earth, water & climate", note: "Weather, rivers, bedrock, extremes" },
     { name: "Land use & infrastructure", note: "Change, monitoring, access" },
     { name: "Peoples, territories & culture", note: "Communities, lands, knowledge" },
     { name: "Society, health & livelihoods", note: "Wellbeing and local economies" },

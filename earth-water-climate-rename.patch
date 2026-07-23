@@ -1,0 +1,126 @@
+diff --git a/.github/ISSUE_TEMPLATE/new-source.yml b/.github/ISSUE_TEMPLATE/new-source.yml
+index 7dab1b6..f09017e 100644
+--- a/.github/ISSUE_TEMPLATE/new-source.yml
++++ b/.github/ISSUE_TEMPLATE/new-source.yml
+@@ -37,7 +37,7 @@ body:
+       label: Domain
+       options:
+         - "Forest & biodiversity"
+-        - "Climate, water & air"
++        - "Earth, water & climate"
+         - "Land use & infrastructure"
+         - "Peoples, territories & culture"
+         - "Society, health & livelihoods"
+diff --git a/app.js b/app.js
+index 024ae0b..2194ab2 100644
+--- a/app.js
++++ b/app.js
+@@ -2,7 +2,7 @@
+   const catalog = window.AMAZONIA_CATALOG || [];
+   const categories = [
+     { name: "Forest & biodiversity", note: "Species, habitats, forest condition" },
+-    { name: "Climate, water & air", note: "Weather, rivers, carbon, extremes" },
++    { name: "Earth, water & climate", note: "Weather, rivers, bedrock, extremes" },
+     { name: "Land use & infrastructure", note: "Change, monitoring, access" },
+     { name: "Peoples, territories & culture", note: "Communities, lands, knowledge" },
+     { name: "Society, health & livelihoods", note: "Wellbeing and local economies" },
+diff --git a/data/catalog.js b/data/catalog.js
+index 802bef7..d97457d 100644
+--- a/data/catalog.js
++++ b/data/catalog.js
+@@ -29,7 +29,7 @@ window.AMAZONIA_CATALOG = [
+     id: "ana-hidroweb",
+     title: "Hidroweb \u2014 National Hydrometeorological Network",
+     provider: "Ag\u00eancia Nacional de \u00c1guas e Saneamento B\u00e1sico (ANA)",
+-    category: "Climate, water & air",
++    category: "Earth, water & climate",
+     coverage: "Brazil",
+     formats: ["CSV", "API"],
+     access: "Publicly available",
+@@ -42,7 +42,7 @@ window.AMAZONIA_CATALOG = [
+     id: "inmet-bdmep",
+     title: "BDMEP \u2014 Historical Meteorological Database",
+     provider: "Instituto Nacional de Meteorologia (INMET)",
+-    category: "Climate, water & air",
++    category: "Earth, water & climate",
+     coverage: "Brazil",
+     formats: ["CSV"],
+     access: "Provider terms apply",
+diff --git a/data/catalog.schema.json b/data/catalog.schema.json
+index d7b3a51..e2e2b7c 100644
+--- a/data/catalog.schema.json
++++ b/data/catalog.schema.json
+@@ -25,7 +25,7 @@
+       "type": "string",
+       "enum": [
+         "Forest & biodiversity",
+-        "Climate, water & air",
++        "Earth, water & climate",
+         "Land use & infrastructure",
+         "Peoples, territories & culture",
+         "Society, health & livelihoods",
+diff --git a/es/app.js b/es/app.js
+index c0f9d39..53c5fab 100644
+--- a/es/app.js
++++ b/es/app.js
+@@ -7,7 +7,7 @@
+   // data/catalog.schema.json) — only `label`/`note` are shown to the user.
+   const categories = [
+     { key: "Forest & biodiversity", label: "Bosque y biodiversidad", note: "Especies, hábitats, estado del bosque" },
+-    { key: "Climate, water & air", label: "Clima, agua y aire", note: "Clima, ríos, carbono, extremos" },
++    { key: "Earth, water & climate", label: "Tierra, agua y clima", note: "Clima, ríos, rocas, extremos" },
+     { key: "Land use & infrastructure", label: "Uso del suelo e infraestructura", note: "Cambios, monitoreo, acceso" },
+     { key: "Peoples, territories & culture", label: "Pueblos, territorios y cultura", note: "Comunidades, tierras, saberes" },
+     { key: "Society, health & livelihoods", label: "Sociedad, salud y medios de vida", note: "Bienestar y economías locales" },
+diff --git a/es/submit.html b/es/submit.html
+index f392add..600a786 100644
+--- a/es/submit.html
++++ b/es/submit.html
+@@ -79,7 +79,7 @@
+               <select id="category" name="category" required>
+                 <option value="">Elige un dominio</option>
+                 <option value="Forest &amp; biodiversity">Bosque y biodiversidad</option>
+-                <option value="Climate, water &amp; air">Clima, agua y aire</option>
++                <option value="Earth, water &amp; climate">Tierra, agua y clima</option>
+                 <option value="Land use &amp; infrastructure">Uso del suelo e infraestructura</option>
+                 <option value="Peoples, territories &amp; culture">Pueblos, territorios y cultura</option>
+                 <option value="Society, health &amp; livelihoods">Sociedad, salud y medios de vida</option>
+diff --git a/pt-br/app.js b/pt-br/app.js
+index fb2a496..c37d7dd 100644
+--- a/pt-br/app.js
++++ b/pt-br/app.js
+@@ -7,7 +7,7 @@
+   // data/catalog.schema.json) — only `label`/`note` are shown to the user.
+   const categories = [
+     { key: "Forest & biodiversity", label: "Floresta e biodiversidade", note: "Espécies, habitats, condição da floresta" },
+-    { key: "Climate, water & air", label: "Clima, água e ar", note: "Clima, rios, carbono, extremos" },
++    { key: "Earth, water & climate", label: "Terra, água e clima", note: "Clima, rios, rochas, extremos" },
+     { key: "Land use & infrastructure", label: "Uso da terra e infraestrutura", note: "Mudanças, monitoramento, acesso" },
+     { key: "Peoples, territories & culture", label: "Povos, territórios e cultura", note: "Comunidades, terras, saberes" },
+     { key: "Society, health & livelihoods", label: "Sociedade, saúde e meios de vida", note: "Bem-estar e economias locais" },
+diff --git a/pt-br/submit.html b/pt-br/submit.html
+index 9b36101..7f188cb 100644
+--- a/pt-br/submit.html
++++ b/pt-br/submit.html
+@@ -79,7 +79,7 @@
+               <select id="category" name="category" required>
+                 <option value="">Escolha um domínio</option>
+                 <option value="Forest &amp; biodiversity">Floresta e biodiversidade</option>
+-                <option value="Climate, water &amp; air">Clima, água e ar</option>
++                <option value="Earth, water &amp; climate">Terra, água e clima</option>
+                 <option value="Land use &amp; infrastructure">Uso da terra e infraestrutura</option>
+                 <option value="Peoples, territories &amp; culture">Povos, territórios e cultura</option>
+                 <option value="Society, health &amp; livelihoods">Sociedade, saúde e meios de vida</option>
+diff --git a/submit.html b/submit.html
+index 6948198..865394f 100644
+--- a/submit.html
++++ b/submit.html
+@@ -79,7 +79,7 @@
+               <select id="category" name="category" required>
+                 <option value="">Choose a domain</option>
+                 <option>Forest &amp; biodiversity</option>
+-                <option>Climate, water &amp; air</option>
++                <option>Earth, water &amp; climate</option>
+                 <option>Land use &amp; infrastructure</option>
+                 <option>Peoples, territories &amp; culture</option>
+                 <option>Society, health &amp; livelihoods</option>
