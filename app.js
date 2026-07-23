@@ -2,7 +2,7 @@
   const catalog = window.AMAZONIA_CATALOG || [];
   const categories = [
     { name: "Forest & biodiversity", note: "Species, habitats, forest condition" },
-    { name: "Earth, water & climate", note: "Weather, rivers, bedrock, extremes" },
+    { name: "Climate, water & air", note: "Weather, rivers, carbon, extremes" },
     { name: "Land use & infrastructure", note: "Change, monitoring, access" },
     { name: "Peoples, territories & culture", note: "Communities, lands, knowledge" },
     { name: "Society, health & livelihoods", note: "Wellbeing and local economies" },
@@ -137,13 +137,12 @@
         <p class="provider">${escapeHtml(record.provider)}</p>
         <p class="description">${escapeHtml(record.description)}</p>
         <ul class="metadata" aria-label="Dataset metadata">
+          <li class="verified-pill">✓ Verified</li>
           <li>${escapeHtml(record.coverage)}</li>
           <li>${escapeHtml(record.access)}</li>
           <li>Checked ${escapeHtml(record.checked)}</li>
         </ul>
-        <p class="credit-line">${record.submittedBy
-          ? `<span class="tier-badge tier-community">Community-submitted, schema-valid</span> · Submitted by <a href="https://github.com/${encodeURIComponent(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
-          : `<span class="tier-badge tier-editorial">Editorially reviewed</span>`}</p>
+        ${record.submittedBy ? `<p class="submitted-by">Submitted by <a href="https://github.com/${escapeHtml(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a></p>` : ""}
         <div class="card-actions">
           <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
@@ -179,6 +178,104 @@
     script.type = "application/ld+json";
     script.textContent = JSON.stringify(structuredData);
     document.head.appendChild(script);
+  };
+
+  // --- Candidates board -------------------------------------------------
+  // Reads open pull requests labeled "new-source" from the public GitHub
+  // API (no auth — CORS-enabled, unauthenticated 60 req/hr per visitor IP).
+  // Each such PR was opened automatically by source-submission.yml only
+  // after scripts/validate-catalog.mjs passed, so anything shown here is
+  // already schema-valid — just not yet editorially reviewed. We read the
+  // *source issue* text rather than the PR's file diff so nothing here
+  // ever executes fetched content; it is only ever displayed as text.
+  const CANDIDATES_REPO = "mgpcamargo/amazoniadb";
+
+  const parseIssueForm = (body) => {
+    const fields = {};
+    const chunks = ("\n" + (body || "")).split(/\n### /).slice(1);
+    for (const chunk of chunks) {
+      const breakIndex = chunk.indexOf("\n");
+      if (breakIndex === -1) continue;
+      fields[chunk.slice(0, breakIndex).trim()] = chunk.slice(breakIndex).trim();
+    }
+    return fields;
+  };
+
+  const candidateFromIssueBody = (body, prUrl, submittedBy) => {
+    const fields = parseIssueForm(body);
+    const title = fields["Source title"];
+    const url = fields["Original publisher URL"];
+    if (!title || !url) return null; // malformed or unrelated issue — skip rather than guess
+    return {
+      title,
+      url,
+      provider: fields["Original provider"] || "",
+      category: fields.Domain || "",
+      coverage: fields.Coverage || "",
+      kind: fields["Source type"] || "",
+      access: fields["Access note"] || "",
+      formats: (fields["Data forms"] || "").split(",").map((format) => format.trim()).filter(Boolean),
+      description: fields["Plain-language description"] || "",
+      prUrl,
+      submittedBy
+    };
+  };
+
+  const renderCandidateCard = (candidate) => `
+    <article class="dataset-card candidate-card">
+      <div class="card-topline">
+        <span class="category-label">${escapeHtml(candidate.category)}</span>
+        <span class="source-kind">${escapeHtml(candidate.kind)}</span>
+      </div>
+      <span class="pending-badge">Pending review</span>
+      <h3>${escapeHtml(candidate.title)}</h3>
+      <p class="provider">${escapeHtml(candidate.provider)}</p>
+      <p class="description">${escapeHtml(candidate.description)}</p>
+      <ul class="metadata" aria-label="Candidate metadata">
+        <li>${escapeHtml(candidate.coverage)}</li>
+        <li>${escapeHtml(candidate.access)}</li>
+        ${candidate.formats.map((format) => `<li>${escapeHtml(format)}</li>`).join("")}
+      </ul>
+      ${candidate.submittedBy ? `<p class="submitted-by">Submitted by <a href="https://github.com/${escapeHtml(candidate.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(candidate.submittedBy)}</a></p>` : ""}
+      <div class="card-actions">
+        <a class="dataset-link" href="${escapeHtml(candidate.prUrl)}" target="_blank" rel="noopener noreferrer">View pull request <span class="sr-only">(opens in a new tab)</span></a>
+      </div>
+    </article>`;
+
+  const loadCandidates = async () => {
+    const statusEl = document.getElementById("candidates-status");
+    const gridEl = document.getElementById("candidates-grid");
+    const countEl = document.getElementById("candidates-count");
+    if (!statusEl || !gridEl) return;
+
+    try {
+      const listResponse = await fetch(`https://api.github.com/repos/${CANDIDATES_REPO}/issues?state=open&labels=new-source&per_page=50`, { headers: { Accept: "application/vnd.github+json" } });
+      if (!listResponse.ok) throw new Error(`GitHub API returned ${listResponse.status}`);
+      const issues = await listResponse.json();
+      const prStubs = issues.filter((issue) => issue.pull_request);
+
+      const candidates = [];
+      for (const prStub of prStubs) {
+        const issueMatch = (prStub.body || "").match(/#(\d+)/);
+        if (!issueMatch) continue;
+        const issueResponse = await fetch(`https://api.github.com/repos/${CANDIDATES_REPO}/issues/${issueMatch[1]}`, { headers: { Accept: "application/vnd.github+json" } });
+        if (!issueResponse.ok) continue;
+        const issue = await issueResponse.json();
+        const candidate = candidateFromIssueBody(issue.body, prStub.html_url, issue.user?.login);
+        if (candidate) candidates.push(candidate);
+      }
+
+      if (candidates.length === 0) {
+        statusEl.textContent = "No pending submissions right now — be the first to propose a source.";
+        return;
+      }
+
+      gridEl.innerHTML = candidates.map(renderCandidateCard).join("");
+      countEl.textContent = `${candidates.length} pending ${candidates.length === 1 ? "submission" : "submissions"}`;
+      statusEl.hidden = true;
+    } catch {
+      statusEl.textContent = "Couldn't load pending submissions right now.";
+    }
   };
 
   domainNav.addEventListener("click", (event) => {
@@ -249,4 +346,5 @@
   renderCatalog();
   renderGapPrompt();
   injectStructuredData();
+  loadCandidates();
 })();

@@ -36,8 +36,8 @@
         </a>
         <div class="header-links">
           <a class="header-link" href="submit.html">Preparar uma fonte</a>
+          <a class="header-link" href="#candidates">Aguardando revisão</a>
           <a class="header-link" href="#how-it-works">Como funciona</a>
-          <a class="header-link" href="candidates.html">Candidatas</a>
           <nav class="lang-switch" aria-label="Idioma">
             <a class="lang-link" href="../index.html">EN</a>
             <span class="lang-current" aria-current="true">PT-BR</span>
@@ -57,7 +57,7 @@
           <a class="button button-secondary" href="#how-it-works">Nossa política de links</a>
         </div>
         <dl class="site-stats" aria-label="Resumo do diretório">
-          <div><dt id="dataset-count">13</dt><dd>fontes selecionadas</dd></div>
+          <div><dt id="dataset-count">12</dt><dd>fontes selecionadas</dd></div>
           <div><dt>6</dt><dd>domínios conectados</dd></div>
           <div><dt>0</dt><dd>conjuntos de dados espelhados</dd></div>
         </dl>
@@ -100,10 +100,6 @@
               <option value="">Toda a cobertura</option>
               <option value="Pan-Amazon">Pan-Amazônia</option>
               <option value="Brazil">Brasil</option>
-              <option value="Peru">Peru</option>
-              <option value="Colombia">Colômbia</option>
-              <option value="Bolivia">Bolívia</option>
-              <option value="Ecuador">Equador</option>
               <option value="Global — subsettable">Global — recortável</option>
             </select>
           </label>
@@ -136,6 +132,19 @@
             <li><strong>Cuidado com dados sensíveis.</strong><span>Não listamos localizações sensíveis precisas nem informações que possam colocar em risco pessoas, territórios ou espécies.</span></li>
           </ol>
         </div>
+      </section>
+
+      <section id="candidates" class="candidates-section container" aria-labelledby="candidates-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Fluxo da comunidade</p>
+            <h2 id="candidates-title">Aguardando revisão</h2>
+          </div>
+          <p id="candidates-count" class="result-count" aria-live="polite"></p>
+        </div>
+        <p class="candidates-intro">Todas as submissões abaixo já passaram pela validação automática de esquema. Nenhuma está publicada no diretório ainda — estão aguardando um mantenedor conferir a categoria, a nota de acesso e a descrição de acordo com o CONTRIBUTING.md antes de mesclar.</p>
+        <div id="candidates-grid" class="dataset-grid candidates-grid" aria-live="polite"></div>
+        <p id="candidates-status" class="empty-state" aria-live="polite">Carregando submissões pendentes…</p>
       </section>
 
       <section class="contribute-section container" aria-labelledby="contribute-title">

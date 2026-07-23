@@ -13,8 +13,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
 
@@ -22,7 +22,7 @@ jobs:
         id: links
         run: node scripts/check-links.mjs
 
-      - name: Find existing catalog-health issue
+      - name: Find existing maintenance issue
         id: existing
         if: steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0'
         uses: actions/github-script@v7
@@ -49,22 +49,18 @@ jobs:
           script: |
             const brokenCount = Number(process.env.BROKEN_COUNT);
             const staleCount = Number(process.env.STALE_COUNT);
+            const sections = [];
+            if (brokenCount > 0) sections.push(`### Broken links (${brokenCount})\n\nSome sites block automated checks even when they work fine for real visitors — verify by hand before removing anything.\n\n${process.env.BROKEN_BODY}`);
+            if (staleCount > 0) sections.push(`### Unverified for 180+ days (${staleCount})\n\nThese still passed their last link check — this is a nudge to re-review, not a claim that anything is wrong.\n\n${process.env.STALE_BODY}`);
             const titleParts = [];
-            if (brokenCount) titleParts.push(`${brokenCount} broken link${brokenCount === 1 ? "" : "s"}`);
-            if (staleCount) titleParts.push(`${staleCount} stale entr${staleCount === 1 ? "y" : "ies"}`);
-            const bodyParts = [];
-            if (brokenCount) {
-              bodyParts.push(`**Broken links** — some sites block automated checks even when they work fine for real visitors; verify by hand before removing anything.\n\n${process.env.BROKEN_BODY}`);
-            }
-            if (staleCount) {
-              bodyParts.push(`**Stale entries** — not yet checked again in a while. Worth a quick revisit to confirm the link, access terms, and description still hold.\n\n${process.env.STALE_BODY}`);
-            }
+            if (brokenCount > 0) titleParts.push(`${brokenCount} broken`);
+            if (staleCount > 0) titleParts.push(`${staleCount} stale`);
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Catalog health check: ${titleParts.join(", ")}`,
+              title: `Weekly catalog check: ${titleParts.join(", ")}`,
               labels: ["broken-links"],
-              body: bodyParts.join("\n\n---\n\n")
+              body: `Automated weekly check of the catalog.\n\n${sections.join("\n\n")}`
             });
 
       - name: Update existing issue
@@ -80,12 +76,12 @@ jobs:
           script: |
             const brokenCount = Number(process.env.BROKEN_COUNT);
             const staleCount = Number(process.env.STALE_COUNT);
-            const bodyParts = ["Re-checked:"];
-            if (brokenCount) bodyParts.push(`**Broken links**\n\n${process.env.BROKEN_BODY}`);
-            if (staleCount) bodyParts.push(`**Stale entries**\n\n${process.env.STALE_BODY}`);
+            const sections = [];
+            if (brokenCount > 0) sections.push(`### Broken links (${brokenCount})\n\n${process.env.BROKEN_BODY}`);
+            if (staleCount > 0) sections.push(`### Unverified for 180+ days (${staleCount})\n\n${process.env.STALE_BODY}`);
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: Number(process.env.ISSUE_NUMBER),
-              body: bodyParts.join("\n\n---\n\n")
+              body: `Re-checked:\n\n${sections.join("\n\n")}`
             });

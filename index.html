@@ -36,8 +36,8 @@
         </a>
         <div class="header-links">
           <a class="header-link" href="submit.html">Prepare a source</a>
+          <a class="header-link" href="#candidates">Pending review</a>
           <a class="header-link" href="#how-it-works">How it works</a>
-          <a class="header-link" href="candidates.html">Candidates</a>
           <nav class="lang-switch" aria-label="Language">
             <span class="lang-current" aria-current="true">EN</span>
             <a class="lang-link" href="pt-br/index.html">PT-BR</a>
@@ -57,7 +57,7 @@
           <a class="button button-secondary" href="#how-it-works">Our linking policy</a>
         </div>
         <dl class="site-stats" aria-label="Directory summary">
-          <div><dt id="dataset-count">13</dt><dd>curated sources</dd></div>
+          <div><dt id="dataset-count">12</dt><dd>curated sources</dd></div>
           <div><dt>6</dt><dd>connected domains</dd></div>
           <div><dt>0</dt><dd>datasets mirrored</dd></div>
         </dl>
@@ -100,10 +100,6 @@
               <option value="">All coverage</option>
               <option value="Pan-Amazon">Pan-Amazon</option>
               <option value="Brazil">Brazil</option>
-              <option value="Peru">Peru</option>
-              <option value="Colombia">Colombia</option>
-              <option value="Bolivia">Bolivia</option>
-              <option value="Ecuador">Ecuador</option>
               <option value="Global — subsettable">Global — subsettable</option>
             </select>
           </label>
@@ -136,6 +132,19 @@
             <li><strong>Care around sensitive data.</strong><span>We do not list precise sensitive locations or information that could put people, territories, or species at risk.</span></li>
           </ol>
         </div>
+      </section>
+
+      <section id="candidates" class="candidates-section container" aria-labelledby="candidates-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Community pipeline</p>
+            <h2 id="candidates-title">Pending review</h2>
+          </div>
+          <p id="candidates-count" class="result-count" aria-live="polite"></p>
+        </div>
+        <p class="candidates-intro">Every submission below already passed automatic schema validation. None are live in the directory yet — they're waiting on a maintainer to check the category, access note, and description against CONTRIBUTING.md before merging.</p>
+        <div id="candidates-grid" class="dataset-grid candidates-grid" aria-live="polite"></div>
+        <p id="candidates-status" class="empty-state" aria-live="polite">Loading pending submissions…</p>
       </section>
 
       <section class="contribute-section container" aria-labelledby="contribute-title">
