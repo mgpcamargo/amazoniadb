@@ -35,7 +35,7 @@
     },
     "coverage": {
       "type": "string",
-      "enum": ["Pan-Amazon", "Brazil", "Global — subsettable"],
+      "enum": ["Pan-Amazon", "Brazil", "Peru", "Colombia", "Bolivia", "Ecuador", "Global — subsettable"],
       "description": "Geographic scope. Note the em dash in \"Global — subsettable\"."
     },
     "formats": {

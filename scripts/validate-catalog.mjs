@@ -9,7 +9,7 @@ const validCategories = new Set([
   "Society, health & livelihoods",
   "Governance, rights & safeguards"
 ]);
-const validCoverage = new Set(["Pan-Amazon", "Brazil", "Global — subsettable"]);
+const validCoverage = new Set(["Pan-Amazon", "Brazil", "Peru", "Colombia", "Bolivia", "Ecuador", "Global — subsettable"]);
 const validAccess = new Set(["Provider terms apply", "Dataset-specific license", "Publicly available"]);
 const validKinds = new Set(["Dataset", "Data portal", "Download", "Explorer"]);
 const requiredFields = ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked"];

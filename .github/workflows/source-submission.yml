@@ -14,7 +14,7 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'new-source')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Parse issue form
         id: issue-parser
@@ -23,7 +23,7 @@ jobs:
           issue-body: ${{ github.event.issue.body }}
           template-path: .github/ISSUE_TEMPLATE/new-source.yml
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
 

@@ -51,6 +51,10 @@ body:
       options:
         - "Brazil"
         - "Pan-Amazon"
+        - "Peru"
+        - "Colombia"
+        - "Bolivia"
+        - "Ecuador"
         - "Global — subsettable"
     validations:
       required: true

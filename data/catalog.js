@@ -154,5 +154,18 @@ window.AMAZONIA_CATALOG = [
     description: "Pan-Amazon geospatial data on indigenous territories, protected natural areas, infrastructure projects, and resource-extraction concessions, compiled by a nine-country civil-society network.",
     url: "https://www.raisg.org/en/maps/",
     checked: "2026-07-14"
+  },
+  {
+    id: "geobosques-national-forest-monitoring-platform",
+    title: "Geobosques — National Forest Monitoring Platform",
+    provider: "Ministerio del Ambiente (MINAM), Programa Nacional de Conservación de Bosques y Clima",
+    category: "Land use & infrastructure",
+    coverage: "Peru",
+    formats: ["API", "WMS", "GeoTIFF", "Web map"],
+    access: "Provider terms apply",
+    kind: "Data portal",
+    description: "Peru's national forest-loss and early-warning monitoring platform, covering the country's Amazon humid forest with annual loss maps, monthly alerts, and degradation layers.",
+    url: "https://geobosques.minam.gob.pe/geobosque/view/index.php",
+    checked: "2026-07-22"
   }
 ];

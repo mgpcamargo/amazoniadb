@@ -10,6 +10,8 @@ on:
     branches: [main]
     paths:
       - "data/catalog.js"
+      - "data/catalog.schema.json"
+      - "scripts/validate-catalog.mjs"
 
 permissions:
   contents: read
@@ -18,8 +20,8 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
       - run: node scripts/validate-catalog.mjs

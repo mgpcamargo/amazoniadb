@@ -26,7 +26,8 @@ window.AMAZONIA_CATALOG_I18N = {
       "ibge-cidades": "Estatísticas oficiais em nível municipal e estadual do Brasil — população, economia, indicadores de educação e saúde —, pesquisáveis por localidade, produzidas pelo instituto nacional de estatística.",
       "datasus-tabnet": "Uma ferramenta interativa de tabulação para os dados do sistema público de saúde do Brasil — mortalidade, nascimentos, morbidade e registros de estabelecimentos de saúde —, desenvolvida pelo Ministério da Saúde.",
       "icmbio-dados-geoespaciais": "Dados oficiais de limites das áreas protegidas federais do Brasil, incluindo parques nacionais e reservas biológicas, publicados sob licença de dados abertos pelo órgão que as administra.",
-      "raisg-maps": "Dados geoespaciais pan-amazônicos sobre terras indígenas, áreas naturais protegidas, projetos de infraestrutura e concessões de exploração de recursos, compilados por uma rede da sociedade civil de nove países."
+      "raisg-maps": "Dados geoespaciais pan-amazônicos sobre terras indígenas, áreas naturais protegidas, projetos de infraestrutura e concessões de exploração de recursos, compilados por uma rede da sociedade civil de nove países.",
+      "geobosques-national-forest-monitoring-platform": "A plataforma nacional peruana de monitoramento de perda florestal e alertas antecipados, cobrindo a floresta amazônica úmida do país com mapas anuais de perda, alertas mensais e camadas de degradação."
     }
   },
   "es": {
@@ -42,7 +43,8 @@ window.AMAZONIA_CATALOG_I18N = {
       "ibge-cidades": "Estadísticas oficiales a nivel municipal y estatal de Brasil —población, economía, indicadores de educación y salud—, con búsqueda por localidad, del instituto nacional de estadística.",
       "datasus-tabnet": "Una herramienta interactiva de tabulación para los datos del sistema público de salud de Brasil —mortalidad, nacimientos, morbilidad y registros de establecimientos de salud—, desarrollada por el Ministerio de Salud.",
       "icmbio-dados-geoespaciais": "Datos oficiales de límites de las áreas protegidas federales de Brasil, incluidos parques nacionales y reservas biológicas, publicados bajo una licencia de datos abiertos por el organismo que las administra.",
-      "raisg-maps": "Datos geoespaciales panamazónicos sobre territorios indígenas, áreas naturales protegidas, proyectos de infraestructura y concesiones de extracción de recursos, compilados por una red de la sociedad civil de nueve países."
+      "raisg-maps": "Datos geoespaciales panamazónicos sobre territorios indígenas, áreas naturales protegidas, proyectos de infraestructura y concesiones de extracción de recursos, compilados por una red de la sociedad civil de nueve países.",
+      "geobosques-national-forest-monitoring-platform": "La plataforma nacional peruana de monitoreo de pérdida de bosque y alertas tempranas, que cubre el bosque húmedo amazónico del país con mapas anuales de pérdida, alertas mensuales y capas de degradación."
     }
   }
 };

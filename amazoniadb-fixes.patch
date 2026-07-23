@@ -1,0 +1,310 @@
+diff --git a/.github/ISSUE_TEMPLATE/new-source.yml b/.github/ISSUE_TEMPLATE/new-source.yml
+index e7ea503..7dab1b6 100644
+--- a/.github/ISSUE_TEMPLATE/new-source.yml
++++ b/.github/ISSUE_TEMPLATE/new-source.yml
+@@ -51,6 +51,10 @@ body:
+       options:
+         - "Brazil"
+         - "Pan-Amazon"
++        - "Peru"
++        - "Colombia"
++        - "Bolivia"
++        - "Ecuador"
+         - "Global — subsettable"
+     validations:
+       required: true
+diff --git a/.github/workflows/check-links.yml b/.github/workflows/check-links.yml
+index 77560cf..a05f55f 100644
+--- a/.github/workflows/check-links.yml
++++ b/.github/workflows/check-links.yml
+@@ -13,8 +13,8 @@ jobs:
+   check:
+     runs-on: ubuntu-latest
+     steps:
+-      - uses: actions/checkout@v4
+-      - uses: actions/setup-node@v4
++      - uses: actions/checkout@v6
++      - uses: actions/setup-node@v6
+         with:
+           node-version: 22
+ 
+diff --git a/.github/workflows/source-submission.yml b/.github/workflows/source-submission.yml
+index 8dbecdb..69ccae4 100644
+--- a/.github/workflows/source-submission.yml
++++ b/.github/workflows/source-submission.yml
+@@ -14,7 +14,7 @@ jobs:
+     if: contains(github.event.issue.labels.*.name, 'new-source')
+     runs-on: ubuntu-latest
+     steps:
+-      - uses: actions/checkout@v4
++      - uses: actions/checkout@v6
+ 
+       - name: Parse issue form
+         id: issue-parser
+@@ -23,7 +23,7 @@ jobs:
+           issue-body: ${{ github.event.issue.body }}
+           template-path: .github/ISSUE_TEMPLATE/new-source.yml
+ 
+-      - uses: actions/setup-node@v4
++      - uses: actions/setup-node@v6
+         with:
+           node-version: 22
+ 
+diff --git a/.github/workflows/validate-catalog.yml b/.github/workflows/validate-catalog.yml
+index 2ea2912..3ca0806 100644
+--- a/.github/workflows/validate-catalog.yml
++++ b/.github/workflows/validate-catalog.yml
+@@ -10,6 +10,8 @@ on:
+     branches: [main]
+     paths:
+       - "data/catalog.js"
++      - "data/catalog.schema.json"
++      - "scripts/validate-catalog.mjs"
+ 
+ permissions:
+   contents: read
+@@ -18,8 +20,8 @@ jobs:
+   validate:
+     runs-on: ubuntu-latest
+     steps:
+-      - uses: actions/checkout@v4
+-      - uses: actions/setup-node@v4
++      - uses: actions/checkout@v6
++      - uses: actions/setup-node@v6
+         with:
+           node-version: 22
+       - run: node scripts/validate-catalog.mjs
+diff --git a/data/catalog.i18n.js b/data/catalog.i18n.js
+index 2bd6d93..81bb706 100644
+--- a/data/catalog.i18n.js
++++ b/data/catalog.i18n.js
+@@ -26,7 +26,8 @@ window.AMAZONIA_CATALOG_I18N = {
+       "ibge-cidades": "Estatísticas oficiais em nível municipal e estadual do Brasil — população, economia, indicadores de educação e saúde —, pesquisáveis por localidade, produzidas pelo instituto nacional de estatística.",
+       "datasus-tabnet": "Uma ferramenta interativa de tabulação para os dados do sistema público de saúde do Brasil — mortalidade, nascimentos, morbidade e registros de estabelecimentos de saúde —, desenvolvida pelo Ministério da Saúde.",
+       "icmbio-dados-geoespaciais": "Dados oficiais de limites das áreas protegidas federais do Brasil, incluindo parques nacionais e reservas biológicas, publicados sob licença de dados abertos pelo órgão que as administra.",
+-      "raisg-maps": "Dados geoespaciais pan-amazônicos sobre terras indígenas, áreas naturais protegidas, projetos de infraestrutura e concessões de exploração de recursos, compilados por uma rede da sociedade civil de nove países."
++      "raisg-maps": "Dados geoespaciais pan-amazônicos sobre terras indígenas, áreas naturais protegidas, projetos de infraestrutura e concessões de exploração de recursos, compilados por uma rede da sociedade civil de nove países.",
++      "geobosques-national-forest-monitoring-platform": "A plataforma nacional peruana de monitoramento de perda florestal e alertas antecipados, cobrindo a floresta amazônica úmida do país com mapas anuais de perda, alertas mensais e camadas de degradação."
+     }
+   },
+   "es": {
+@@ -42,7 +43,8 @@ window.AMAZONIA_CATALOG_I18N = {
+       "ibge-cidades": "Estadísticas oficiales a nivel municipal y estatal de Brasil —población, economía, indicadores de educación y salud—, con búsqueda por localidad, del instituto nacional de estadística.",
+       "datasus-tabnet": "Una herramienta interactiva de tabulación para los datos del sistema público de salud de Brasil —mortalidad, nacimientos, morbilidad y registros de establecimientos de salud—, desarrollada por el Ministerio de Salud.",
+       "icmbio-dados-geoespaciais": "Datos oficiales de límites de las áreas protegidas federales de Brasil, incluidos parques nacionales y reservas biológicas, publicados bajo una licencia de datos abiertos por el organismo que las administra.",
+-      "raisg-maps": "Datos geoespaciales panamazónicos sobre territorios indígenas, áreas naturales protegidas, proyectos de infraestructura y concesiones de extracción de recursos, compilados por una red de la sociedad civil de nueve países."
++      "raisg-maps": "Datos geoespaciales panamazónicos sobre territorios indígenas, áreas naturales protegidas, proyectos de infraestructura y concesiones de extracción de recursos, compilados por una red de la sociedad civil de nueve países.",
++      "geobosques-national-forest-monitoring-platform": "La plataforma nacional peruana de monitoreo de pérdida de bosque y alertas tempranas, que cubre el bosque húmedo amazónico del país con mapas anuales de pérdida, alertas mensuales y capas de degradación."
+     }
+   }
+ };
+diff --git a/data/catalog.js b/data/catalog.js
+index 711baf7..802bef7 100644
+--- a/data/catalog.js
++++ b/data/catalog.js
+@@ -154,5 +154,18 @@ window.AMAZONIA_CATALOG = [
+     description: "Pan-Amazon geospatial data on indigenous territories, protected natural areas, infrastructure projects, and resource-extraction concessions, compiled by a nine-country civil-society network.",
+     url: "https://www.raisg.org/en/maps/",
+     checked: "2026-07-14"
++  },
++  {
++    id: "geobosques-national-forest-monitoring-platform",
++    title: "Geobosques — National Forest Monitoring Platform",
++    provider: "Ministerio del Ambiente (MINAM), Programa Nacional de Conservación de Bosques y Clima",
++    category: "Land use & infrastructure",
++    coverage: "Peru",
++    formats: ["API", "WMS", "GeoTIFF", "Web map"],
++    access: "Provider terms apply",
++    kind: "Data portal",
++    description: "Peru's national forest-loss and early-warning monitoring platform, covering the country's Amazon humid forest with annual loss maps, monthly alerts, and degradation layers.",
++    url: "https://geobosques.minam.gob.pe/geobosque/view/index.php",
++    checked: "2026-07-22"
+   }
+ ];
+diff --git a/data/catalog.schema.json b/data/catalog.schema.json
+index fefd701..d7b3a51 100644
+--- a/data/catalog.schema.json
++++ b/data/catalog.schema.json
+@@ -35,7 +35,7 @@
+     },
+     "coverage": {
+       "type": "string",
+-      "enum": ["Pan-Amazon", "Brazil", "Global — subsettable"],
++      "enum": ["Pan-Amazon", "Brazil", "Peru", "Colombia", "Bolivia", "Ecuador", "Global — subsettable"],
+       "description": "Geographic scope. Note the em dash in \"Global — subsettable\"."
+     },
+     "formats": {
+diff --git a/es/app.js b/es/app.js
+index 1496ed2..c0f9d39 100644
+--- a/es/app.js
++++ b/es/app.js
+@@ -14,7 +14,7 @@
+     { key: "Governance, rights & safeguards", label: "Gobernanza, derechos y salvaguardas", note: "Protección, política, rendición de cuentas" }
+   ];
+   const categoryLabels = Object.fromEntries(categories.map((c) => [c.key, c.label]));
+-  const coverageLabels = { "Pan-Amazon": "Panamazonía", "Brazil": "Brasil", "Global — subsettable": "Global — recortable" };
++  const coverageLabels = { "Pan-Amazon": "Panamazonía", "Brazil": "Brasil", "Peru": "Perú", "Colombia": "Colombia", "Bolivia": "Bolivia", "Ecuador": "Ecuador", "Global — subsettable": "Global — recortable" };
+   const accessLabels = {
+     "Provider terms apply": "Sujeto a los términos del proveedor",
+     "Dataset-specific license": "Licencia específica del conjunto de datos",
+@@ -126,7 +126,7 @@
+   const getVisibleRecords = () => {
+     const query = state.search.trim().toLocaleLowerCase();
+     return catalog.filter((record) => {
+-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, ...record.formats]
++      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], ...record.formats]
+         .join(" ")
+         .toLocaleLowerCase();
+       return (!state.category || record.category === state.category)
+diff --git a/es/index.html b/es/index.html
+index f1cc220..5615c56 100644
+--- a/es/index.html
++++ b/es/index.html
+@@ -56,7 +56,7 @@
+           <a class="button button-secondary" href="#how-it-works">Nuestra política de enlaces</a>
+         </div>
+         <dl class="site-stats" aria-label="Resumen del directorio">
+-          <div><dt id="dataset-count">12</dt><dd>fuentes seleccionadas</dd></div>
++          <div><dt id="dataset-count">13</dt><dd>fuentes seleccionadas</dd></div>
+           <div><dt>6</dt><dd>dominios conectados</dd></div>
+           <div><dt>0</dt><dd>conjuntos de datos espejados</dd></div>
+         </dl>
+@@ -99,6 +99,10 @@
+               <option value="">Toda la cobertura</option>
+               <option value="Pan-Amazon">Panamazonía</option>
+               <option value="Brazil">Brasil</option>
++              <option value="Peru">Perú</option>
++              <option value="Colombia">Colombia</option>
++              <option value="Bolivia">Bolivia</option>
++              <option value="Ecuador">Ecuador</option>
+               <option value="Global — subsettable">Global — recortable</option>
+             </select>
+           </label>
+diff --git a/es/submit.html b/es/submit.html
+index e163755..f392add 100644
+--- a/es/submit.html
++++ b/es/submit.html
+@@ -92,6 +92,10 @@
+                 <option value="">Elige la cobertura</option>
+                 <option value="Pan-Amazon">Panamazonía</option>
+                 <option value="Brazil">Brasil</option>
++                <option value="Peru">Perú</option>
++                <option value="Colombia">Colombia</option>
++                <option value="Bolivia">Bolivia</option>
++                <option value="Ecuador">Ecuador</option>
+                 <option value="Global — subsettable">Global — recortable</option>
+               </select>
+             </label>
+diff --git a/index.html b/index.html
+index 9137831..bb471a2 100644
+--- a/index.html
++++ b/index.html
+@@ -56,7 +56,7 @@
+           <a class="button button-secondary" href="#how-it-works">Our linking policy</a>
+         </div>
+         <dl class="site-stats" aria-label="Directory summary">
+-          <div><dt id="dataset-count">12</dt><dd>curated sources</dd></div>
++          <div><dt id="dataset-count">13</dt><dd>curated sources</dd></div>
+           <div><dt>6</dt><dd>connected domains</dd></div>
+           <div><dt>0</dt><dd>datasets mirrored</dd></div>
+         </dl>
+@@ -99,6 +99,10 @@
+               <option value="">All coverage</option>
+               <option value="Pan-Amazon">Pan-Amazon</option>
+               <option value="Brazil">Brazil</option>
++              <option value="Peru">Peru</option>
++              <option value="Colombia">Colombia</option>
++              <option value="Bolivia">Bolivia</option>
++              <option value="Ecuador">Ecuador</option>
+               <option value="Global — subsettable">Global — subsettable</option>
+             </select>
+           </label>
+diff --git a/pt-br/app.js b/pt-br/app.js
+index 10473b8..fb2a496 100644
+--- a/pt-br/app.js
++++ b/pt-br/app.js
+@@ -14,7 +14,7 @@
+     { key: "Governance, rights & safeguards", label: "Governança, direitos e salvaguardas", note: "Proteção, política, responsabilização" }
+   ];
+   const categoryLabels = Object.fromEntries(categories.map((c) => [c.key, c.label]));
+-  const coverageLabels = { "Pan-Amazon": "Pan-Amazônia", "Brazil": "Brasil", "Global — subsettable": "Global — recortável" };
++  const coverageLabels = { "Pan-Amazon": "Pan-Amazônia", "Brazil": "Brasil", "Peru": "Peru", "Colombia": "Colômbia", "Bolivia": "Bolívia", "Ecuador": "Equador", "Global — subsettable": "Global — recortável" };
+   const accessLabels = {
+     "Provider terms apply": "Sujeito aos termos do provedor",
+     "Dataset-specific license": "Licença específica do conjunto de dados",
+@@ -126,7 +126,7 @@
+   const getVisibleRecords = () => {
+     const query = state.search.trim().toLocaleLowerCase();
+     return catalog.filter((record) => {
+-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, ...record.formats]
++      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], ...record.formats]
+         .join(" ")
+         .toLocaleLowerCase();
+       return (!state.category || record.category === state.category)
+diff --git a/pt-br/index.html b/pt-br/index.html
+index 43fef37..97d4c24 100644
+--- a/pt-br/index.html
++++ b/pt-br/index.html
+@@ -56,7 +56,7 @@
+           <a class="button button-secondary" href="#how-it-works">Nossa política de links</a>
+         </div>
+         <dl class="site-stats" aria-label="Resumo do diretório">
+-          <div><dt id="dataset-count">12</dt><dd>fontes selecionadas</dd></div>
++          <div><dt id="dataset-count">13</dt><dd>fontes selecionadas</dd></div>
+           <div><dt>6</dt><dd>domínios conectados</dd></div>
+           <div><dt>0</dt><dd>conjuntos de dados espelhados</dd></div>
+         </dl>
+@@ -99,6 +99,10 @@
+               <option value="">Toda a cobertura</option>
+               <option value="Pan-Amazon">Pan-Amazônia</option>
+               <option value="Brazil">Brasil</option>
++              <option value="Peru">Peru</option>
++              <option value="Colombia">Colômbia</option>
++              <option value="Bolivia">Bolívia</option>
++              <option value="Ecuador">Equador</option>
+               <option value="Global — subsettable">Global — recortável</option>
+             </select>
+           </label>
+diff --git a/pt-br/submit.html b/pt-br/submit.html
+index ac900da..9b36101 100644
+--- a/pt-br/submit.html
++++ b/pt-br/submit.html
+@@ -92,6 +92,10 @@
+                 <option value="">Escolha a cobertura</option>
+                 <option value="Pan-Amazon">Pan-Amazônia</option>
+                 <option value="Brazil">Brasil</option>
++                <option value="Peru">Peru</option>
++                <option value="Colombia">Colômbia</option>
++                <option value="Bolivia">Bolívia</option>
++                <option value="Ecuador">Equador</option>
+                 <option value="Global — subsettable">Global — recortável</option>
+               </select>
+             </label>
+diff --git a/scripts/validate-catalog.mjs b/scripts/validate-catalog.mjs
+index 37ec3f4..e21d2a4 100644
+--- a/scripts/validate-catalog.mjs
++++ b/scripts/validate-catalog.mjs
+@@ -9,7 +9,7 @@ const validCategories = new Set([
+   "Society, health & livelihoods",
+   "Governance, rights & safeguards"
+ ]);
+-const validCoverage = new Set(["Pan-Amazon", "Brazil", "Global — subsettable"]);
++const validCoverage = new Set(["Pan-Amazon", "Brazil", "Peru", "Colombia", "Bolivia", "Ecuador", "Global — subsettable"]);
+ const validAccess = new Set(["Provider terms apply", "Dataset-specific license", "Publicly available"]);
+ const validKinds = new Set(["Dataset", "Data portal", "Download", "Explorer"]);
+ const requiredFields = ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked"];
+diff --git a/submit.html b/submit.html
+index 7a7003a..6948198 100644
+--- a/submit.html
++++ b/submit.html
+@@ -92,6 +92,10 @@
+                 <option value="">Choose coverage</option>
+                 <option>Pan-Amazon</option>
+                 <option>Brazil</option>
++                <option>Peru</option>
++                <option>Colombia</option>
++                <option>Bolivia</option>
++                <option>Ecuador</option>
+                 <option>Global — subsettable</option>
+               </select>
+             </label>

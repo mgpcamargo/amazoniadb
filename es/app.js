@@ -14,7 +14,7 @@
     { key: "Governance, rights & safeguards", label: "Gobernanza, derechos y salvaguardas", note: "Protección, política, rendición de cuentas" }
   ];
   const categoryLabels = Object.fromEntries(categories.map((c) => [c.key, c.label]));
-  const coverageLabels = { "Pan-Amazon": "Panamazonía", "Brazil": "Brasil", "Global — subsettable": "Global — recortable" };
+  const coverageLabels = { "Pan-Amazon": "Panamazonía", "Brazil": "Brasil", "Peru": "Perú", "Colombia": "Colombia", "Bolivia": "Bolivia", "Ecuador": "Ecuador", "Global — subsettable": "Global — recortable" };
   const accessLabels = {
     "Provider terms apply": "Sujeto a los términos del proveedor",
     "Dataset-specific license": "Licencia específica del conjunto de datos",
@@ -126,7 +126,7 @@
   const getVisibleRecords = () => {
     const query = state.search.trim().toLocaleLowerCase();
     return catalog.filter((record) => {
-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, ...record.formats]
+      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], ...record.formats]
         .join(" ")
         .toLocaleLowerCase();
       return (!state.category || record.category === state.category)
