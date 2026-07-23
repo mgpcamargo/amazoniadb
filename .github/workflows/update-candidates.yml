@@ -1,0 +1,50 @@
+name: Update candidates board
+
+# Always checks out and pushes to main directly (not the pull_request merge
+# ref) — this job's output reflects live GitHub API state, not any single
+# PR's file changes, so there's nothing to review before it lands.
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+  pull_request:
+    types: [opened, reopened, closed, edited, ready_for_review, converted_to_draft]
+  schedule:
+    - cron: "0 */6 * * *"  # safety net, every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Build candidates.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/build-candidates.mjs
+
+      - name: Commit if changed
+        # continue-on-error: pull_request runs triggered by a PR from a fork
+        # get a read-only GITHUB_TOKEN no matter what permissions: says above
+        # — that's GitHub's own security model, not something to work around
+        # here. Letting this step fail quietly for that one case is fine: the
+        # 6-hourly schedule and same-repo triggers still keep the board current.
+        continue-on-error: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/candidates.js
+          git diff --staged --quiet || git commit -m "Update candidates board [skip ci]"
+          git push

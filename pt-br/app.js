@@ -154,6 +154,9 @@
           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
           <li>Verificado em ${escapeHtml(record.checked)}</li>
         </ul>
+        <p class="credit-line">${record.submittedBy
+          ? `<span class="tier-badge tier-community">Enviado pela comunidade, validado</span> · Enviado por <a href="https://github.com/${encodeURIComponent(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
+          : `<span class="tier-badge tier-editorial">Revisado editorialmente</span>`}</p>
         <div class="card-actions">
           <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir na fonte <span class="sr-only">(abre em nova aba)</span></a>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>

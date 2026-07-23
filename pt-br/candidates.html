@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Veja as fontes que aguardam revisão antes de entrar no catálogo da AmazoniaDB.">
+    <meta property="og:site_name" content="AmazoniaDB">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:locale:alternate" content="es_LA">
+    <meta property="og:url" content="https://mgpcamargo.github.io/amazoniadb/pt-br/candidates.html">
+    <meta property="og:title" content="Candidatas — AmazoniaDB">
+    <meta property="og:description" content="Veja as fontes que aguardam revisão antes de entrar no catálogo da AmazoniaDB.">
+    <meta property="og:image" content="https://mgpcamargo.github.io/amazoniadb/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Candidatas — AmazoniaDB">
+    <meta name="twitter:description" content="Veja as fontes que aguardam revisão antes de entrar no catálogo da AmazoniaDB.">
+    <meta name="twitter:image" content="https://mgpcamargo.github.io/amazoniadb/og-image.png">
+    <link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/candidates.html">
+    <link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/candidates.html">
+    <link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/candidates.html">
+    <link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/candidates.html">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <title>Candidatas — AmazoniaDB</title>
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#candidates-list">Pular para a lista de candidatas</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="Página inicial da AmazoniaDB">
+          <span class="brand-mark" aria-hidden="true">A</span>
+          <span>AmazoniaDB</span>
+        </a>
+        <div class="header-links">
+          <a class="header-link" href="index.html#catalog">Ver diretório</a>
+          <a class="header-link" href="submit.html">Preparar uma fonte</a>
+          <nav class="lang-switch" aria-label="Idioma">
+            <a class="lang-link" href="../index.html">EN</a>
+            <span class="lang-current" aria-current="true">PT-BR</span>
+            <a class="lang-link" href="../es/candidates.html">ES</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="candidates-page">
+      <section class="container candidates-intro" aria-labelledby="candidates-page-title">
+        <p class="eyebrow">Candidatas</p>
+        <h1 id="candidates-page-title">Fontes aguardando revisão.</h1>
+        <p>Todo envio pelo formulário de issue chega aqui antes de fazer parte do catálogo público. "Em revisão" significa que passou pela validação automática e tem um pull request rascunho aberto. "Precisa de ajuste" significa que a validação encontrou um problema e ainda não existe um pull request — geralmente um campo obrigatório em branco ou uma opção que não correspondeu exatamente.</p>
+        <p class="candidates-meta" id="candidates-count" aria-live="polite"></p>
+      </section>
+
+      <section class="container" aria-label="Envios pendentes">
+        <div id="candidates-list" class="candidates-list"></div>
+        <p id="candidates-empty" class="empty-state" hidden>Nenhuma fonte está aguardando revisão no momento. <a href="submit.html">Proponha uma</a> ou abra diretamente uma <a href="https://github.com/mgpcamargo/amazoniadb/issues/new?template=new-source.yml" target="_blank" rel="noopener noreferrer">nova submissão de fonte<span class="sr-only"> (abre em nova aba)</span></a>.</p>
+      </section>
+
+      <section class="container candidates-footnote">
+        <p>Esta lista se atualiza automaticamente conforme chegam envios, e pelo menos a cada seis horas de qualquer forma. Ela espelha os dados públicos de issues e pull requests deste repositório no GitHub — nada aqui é enviado ou hospedado pela AmazoniaDB.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>A AmazoniaDB é um índice independente, não uma hospedeira de dados. Nomes e materiais das fontes permanecem com seus respectivos provedores.</p>
+        <a href="index.html">Voltar ao diretório ←</a>
+      </div>
+    </footer>
+
+    <script src="../data/candidates.js"></script>
+    <script src="candidates.js"></script>
+  </body>
+</html>

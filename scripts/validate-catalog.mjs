@@ -13,6 +13,7 @@ const validCoverage = new Set(["Pan-Amazon", "Brazil", "Peru", "Colombia", "Boli
 const validAccess = new Set(["Provider terms apply", "Dataset-specific license", "Publicly available"]);
 const validKinds = new Set(["Dataset", "Data portal", "Download", "Explorer"]);
 const requiredFields = ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked"];
+const githubHandlePattern = /^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/;
 
 const source = await readFile(new URL("../data/catalog.js", import.meta.url), "utf8");
 const context = { window: {} };
@@ -42,6 +43,9 @@ for (const [index, record] of (catalog || []).entries()) {
   if (!Array.isArray(record.formats) || record.formats.length === 0) issues.push(`${label}: formats must be a non-empty array.`);
   if (!/^https:\/\//.test(record.url || "")) issues.push(`${label}: url must begin with https://.`);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(record.checked || "")) issues.push(`${label}: checked must use YYYY-MM-DD.`);
+  if (record.submittedBy != null && !githubHandlePattern.test(record.submittedBy)) {
+    issues.push(`${label}: submittedBy is not a well-formed GitHub handle.`);
+  }
 }
 
 if (issues.length) {

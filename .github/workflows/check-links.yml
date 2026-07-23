@@ -22,9 +22,9 @@ jobs:
         id: links
         run: node scripts/check-links.mjs
 
-      - name: Find existing broken-links issue
+      - name: Find existing catalog-health issue
         id: existing
-        if: steps.links.outputs.broken_count != '0'
+        if: steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0'
         uses: actions/github-script@v7
         with:
           result-encoding: string
@@ -38,32 +38,54 @@ jobs:
             return issues.data.length ? String(issues.data[0].number) : "";
 
       - name: Open new issue
-        if: steps.links.outputs.broken_count != '0' && steps.existing.outputs.result == ''
+        if: (steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0') && steps.existing.outputs.result == ''
         uses: actions/github-script@v7
         env:
           BROKEN_BODY: ${{ steps.links.outputs.broken_body }}
           BROKEN_COUNT: ${{ steps.links.outputs.broken_count }}
+          STALE_BODY: ${{ steps.links.outputs.stale_body }}
+          STALE_COUNT: ${{ steps.links.outputs.stale_count }}
         with:
           script: |
+            const brokenCount = Number(process.env.BROKEN_COUNT);
+            const staleCount = Number(process.env.STALE_COUNT);
+            const titleParts = [];
+            if (brokenCount) titleParts.push(`${brokenCount} broken link${brokenCount === 1 ? "" : "s"}`);
+            if (staleCount) titleParts.push(`${staleCount} stale entr${staleCount === 1 ? "y" : "ies"}`);
+            const bodyParts = [];
+            if (brokenCount) {
+              bodyParts.push(`**Broken links** — some sites block automated checks even when they work fine for real visitors; verify by hand before removing anything.\n\n${process.env.BROKEN_BODY}`);
+            }
+            if (staleCount) {
+              bodyParts.push(`**Stale entries** — not yet checked again in a while. Worth a quick revisit to confirm the link, access terms, and description still hold.\n\n${process.env.STALE_BODY}`);
+            }
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Broken link check: ${process.env.BROKEN_COUNT} source(s) failing`,
+              title: `Catalog health check: ${titleParts.join(", ")}`,
               labels: ["broken-links"],
-              body: `Automated weekly check found link(s) returning errors. Some sites block automated checks even when they work fine for real visitors — verify by hand before removing anything.\n\n${process.env.BROKEN_BODY}`
+              body: bodyParts.join("\n\n---\n\n")
             });
 
       - name: Update existing issue
-        if: steps.links.outputs.broken_count != '0' && steps.existing.outputs.result != ''
+        if: (steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0') && steps.existing.outputs.result != ''
         uses: actions/github-script@v7
         env:
           BROKEN_BODY: ${{ steps.links.outputs.broken_body }}
+          BROKEN_COUNT: ${{ steps.links.outputs.broken_count }}
+          STALE_BODY: ${{ steps.links.outputs.stale_body }}
+          STALE_COUNT: ${{ steps.links.outputs.stale_count }}
           ISSUE_NUMBER: ${{ steps.existing.outputs.result }}
         with:
           script: |
+            const brokenCount = Number(process.env.BROKEN_COUNT);
+            const staleCount = Number(process.env.STALE_COUNT);
+            const bodyParts = ["Re-checked:"];
+            if (brokenCount) bodyParts.push(`**Broken links**\n\n${process.env.BROKEN_BODY}`);
+            if (staleCount) bodyParts.push(`**Stale entries**\n\n${process.env.STALE_BODY}`);
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: Number(process.env.ISSUE_NUMBER),
-              body: `Re-checked — still failing:\n\n${process.env.BROKEN_BODY}`
+              body: bodyParts.join("\n\n---\n\n")
             });

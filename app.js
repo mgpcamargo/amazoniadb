@@ -141,6 +141,9 @@
           <li>${escapeHtml(record.access)}</li>
           <li>Checked ${escapeHtml(record.checked)}</li>
         </ul>
+        <p class="credit-line">${record.submittedBy
+          ? `<span class="tier-badge tier-community">Community-submitted, schema-valid</span> · Submitted by <a href="https://github.com/${encodeURIComponent(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
+          : `<span class="tier-badge tier-editorial">Editorially reviewed</span>`}</p>
         <div class="card-actions">
           <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>

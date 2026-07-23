@@ -30,17 +30,21 @@ The expected fields and controlled vocabulary are also documented in `data/catal
 
 ## Automated source submissions
 
-Two workflows in `.github/workflows/` automate the review-record process:
+Four workflows in `.github/workflows/` automate the review-record process:
 
 - `validate-catalog.yml` runs `scripts/validate-catalog.mjs` on every pull request touching `data/catalog.js`, `data/catalog.schema.json`, or the validator itself, and on push to `main`.
-- `source-submission.yml` fires when a "New source submission" issue is opened (`.github/ISSUE_TEMPLATE/new-source.yml`). It parses the form, builds a record via `scripts/issue-to-entry.mjs`, validates it, and opens a **draft** pull request if it passes. Nothing merges automatically — a maintainer still reviews the diff.
+- `source-submission.yml` fires when a "New source submission" issue is opened (`.github/ISSUE_TEMPLATE/new-source.yml`). It parses the form, builds a record via `scripts/issue-to-entry.mjs`, validates it, and opens a **draft** pull request if it passes. Nothing merges automatically — a maintainer still reviews the diff. It also captures the submitting issue author's GitHub handle as `submittedBy` on the new record.
+- `check-links.yml` runs `scripts/check-links.mjs` weekly (and on demand). It flags both dead links and entries whose `checked` date has gone stale (over 180 days), filing or updating a single tracking issue.
+- `update-candidates.yml` keeps `data/candidates.js` current for the public [candidates board](candidates.html) — a live feed of pending submissions, shown as "in review" (has an open draft PR) or "needs fixing" (validation failed, no PR yet). It runs on issue/PR activity and at least every six hours regardless.
+
+Every catalog entry carries an implicit **verification tier**, visible on its card: entries with `submittedBy` set are tagged "Community-submitted, schema-valid" with a credit line linking to the contributor; entries without it — the original curated set, or anything a maintainer adds by hand — are tagged "Editorially reviewed." There's no separate tier field to maintain; it's derived from whether `submittedBy` is present.
 
 Two one-time repository settings are required before `source-submission.yml` can open pull requests:
 
 1. **Settings → Actions → General → Workflow permissions** — enable "Allow GitHub Actions to create and approve pull requests."
 2. The workflow uses the default `GITHUB_TOKEN`, which is enough to open the draft PR, but pull requests it creates won't automatically re-trigger `validate-catalog.yml` as a separate check (GitHub blocks workflow-token-created PRs from triggering other workflows, to prevent recursive runs). This doesn't let bad data through — the catalog is already validated in the same run, before the PR is opened — it just means the PR won't show its own green check unless you swap the default token for a personal access token stored as a secret.
 
-If your default branch isn't `main`, update the `branches:` filter in `validate-catalog.yml` to match.
+If your default branch isn't `main`, update the `branches:` filter in `validate-catalog.yml`, and the `ref:` in `update-candidates.yml`, to match.
 
 ## Directory policy
 
