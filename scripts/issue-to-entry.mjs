@@ -2,6 +2,11 @@
 // `jsonString` output, passed in via the ISSUEFORM_JSON env var), builds a
 // catalog entry from it, and appends it to data/catalog.js.
 //
+// Also reads SUBMITTED_BY (source-submission.yml passes in
+// github.event.issue.user.login) and embeds it as record.submittedBy. Its
+// presence is what marks a card as community-submitted rather than
+// editorially reviewed on the front end, and drives the card's credit line.
+//
 // Runs inside .github/workflows/source-submission.yml, immediately before
 // validate-catalog.mjs and create-pull-request — if this script exits
 // non-zero, no PR is opened.
@@ -23,19 +28,23 @@ const slugify = (value) =>
     .replace(/(^-|-$)/g, "")
     .slice(0, 64);
 
-const toCatalogObject = (record) => `  {
-    id: ${JSON.stringify(record.id)},
-    title: ${JSON.stringify(record.title)},
-    provider: ${JSON.stringify(record.provider)},
-    category: ${JSON.stringify(record.category)},
-    coverage: ${JSON.stringify(record.coverage)},
-    formats: ${JSON.stringify(record.formats)},
-    access: ${JSON.stringify(record.access)},
-    kind: ${JSON.stringify(record.kind)},
-    description: ${JSON.stringify(record.description)},
-    url: ${JSON.stringify(record.url)},
-    checked: ${JSON.stringify(record.checked)}
-  }`;
+const toCatalogObject = (record) => {
+  const lines = [
+    `    id: ${JSON.stringify(record.id)},`,
+    `    title: ${JSON.stringify(record.title)},`,
+    `    provider: ${JSON.stringify(record.provider)},`,
+    `    category: ${JSON.stringify(record.category)},`,
+    `    coverage: ${JSON.stringify(record.coverage)},`,
+    `    formats: ${JSON.stringify(record.formats)},`,
+    `    access: ${JSON.stringify(record.access)},`,
+    `    kind: ${JSON.stringify(record.kind)},`,
+    `    description: ${JSON.stringify(record.description)},`,
+    `    url: ${JSON.stringify(record.url)},`,
+    `    checked: ${JSON.stringify(record.checked)}${record.submittedBy ? "," : ""}`
+  ];
+  if (record.submittedBy) lines.push(`    submittedBy: ${JSON.stringify(record.submittedBy)}`);
+  return `  {\n${lines.join("\n")}\n  }`;
+};
 
 const raw = process.env.ISSUEFORM_JSON;
 if (!raw) {
@@ -80,6 +89,9 @@ if (!record.formats.length) {
   console.error("Data forms field parsed to an empty list.");
   process.exit(1);
 }
+
+const submittedBy = (process.env.SUBMITTED_BY || "").trim();
+if (submittedBy) record.submittedBy = submittedBy;
 
 const source = await readFile(catalogUrl, "utf8");
 const context = { window: {} };

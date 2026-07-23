@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="See sources currently waiting on review before they join the AmazoniaDB catalog.">
+    <meta property="og:site_name" content="AmazoniaDB">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="pt_BR">
+    <meta property="og:locale:alternate" content="es_LA">
+    <meta property="og:url" content="https://mgpcamargo.github.io/amazoniadb/candidates.html">
+    <meta property="og:title" content="Candidates — AmazoniaDB">
+    <meta property="og:description" content="See sources currently waiting on review before they join the AmazoniaDB catalog.">
+    <meta property="og:image" content="https://mgpcamargo.github.io/amazoniadb/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Candidates — AmazoniaDB">
+    <meta name="twitter:description" content="See sources currently waiting on review before they join the AmazoniaDB catalog.">
+    <meta name="twitter:image" content="https://mgpcamargo.github.io/amazoniadb/og-image.png">
+    <link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/candidates.html">
+    <link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/candidates.html">
+    <link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/candidates.html">
+    <link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/candidates.html">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <title>Candidates — AmazoniaDB</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#candidates-list">Skip to candidates list</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="AmazoniaDB home">
+          <span class="brand-mark" aria-hidden="true">A</span>
+          <span>AmazoniaDB</span>
+        </a>
+        <div class="header-links">
+          <a class="header-link" href="index.html#catalog">Browse directory</a>
+          <a class="header-link" href="submit.html">Prepare a source</a>
+          <nav class="lang-switch" aria-label="Language">
+            <span class="lang-current" aria-current="true">EN</span>
+            <a class="lang-link" href="pt-br/candidates.html">PT-BR</a>
+            <a class="lang-link" href="es/candidates.html">ES</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="candidates-page">
+      <section class="container candidates-intro" aria-labelledby="candidates-page-title">
+        <p class="eyebrow">Candidates</p>
+        <h1 id="candidates-page-title">Sources waiting on review.</h1>
+        <p>Every submission through the issue form lands here before it's part of the public catalog. "In review" means it passed automatic validation and has an open draft pull request. "Needs fixing" means validation caught a problem and no pull request exists yet — usually a blank required field or a dropdown answer that didn't match exactly.</p>
+        <p class="candidates-meta" id="candidates-count" aria-live="polite"></p>
+      </section>
+
+      <section class="container" aria-label="Pending submissions">
+        <div id="candidates-list" class="candidates-list"></div>
+        <p id="candidates-empty" class="empty-state" hidden>No sources are waiting on review right now. <a href="submit.html">Propose one</a>, or open a <a href="https://github.com/mgpcamargo/amazoniadb/issues/new?template=new-source.yml" target="_blank" rel="noopener noreferrer">new source submission<span class="sr-only"> (opens in a new tab)</span></a> directly.</p>
+      </section>
+
+      <section class="container candidates-footnote">
+        <p>This list updates automatically as submissions come in, and at least every six hours regardless. It mirrors GitHub's public issue and pull request data for this repository — nothing here is uploaded to or hosted by AmazoniaDB itself.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>AmazoniaDB is an independent index, not a data host. Source names and materials remain with their respective providers.</p>
+        <a href="index.html">Return to directory ←</a>
+      </div>
+    </footer>
+
+    <script src="data/candidates.js"></script>
+    <script src="candidates.js"></script>
+  </body>
+</html>

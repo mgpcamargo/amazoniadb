@@ -1,0 +1,1 @@
+window.AMAZONIA_CANDIDATES = [];

@@ -6,6 +6,8 @@ Don't know where to start? `SOURCES-TO-VERIFY.md` lists real institutions we hav
 
 The `submit.html` page can create a locally stored candidate record. It is an aid for preparing a submission, not an automatic publishing channel.
 
+Submitted through the issue form? Track it on the [candidates board](candidates.html) — it shows "in review" once a draft pull request opens, or "needs fixing" if validation caught a problem first. If yours is merged, your GitHub handle is credited on the card automatically; nothing to do on your end for that.
+
 ## Two ways to submit
 
 - **Open a pull request** with your entry added to `data/catalog.js` directly (see the record format below). `validate-catalog.yml` runs automatically on the PR.

@@ -7,7 +7,7 @@
   // data/catalog.schema.json) — only `label`/`note` are shown to the user.
   const categories = [
     { key: "Forest & biodiversity", label: "Bosque y biodiversidad", note: "Especies, hábitats, estado del bosque" },
-    { key: "Climate, water & air", label: "Clima, agua y aire", note: "Clima, ríos, carbono, extremos" },
+    { key: "Earth, water & climate", label: "Tierra, agua y clima", note: "Clima, ríos, rocas, extremos" },
     { key: "Land use & infrastructure", label: "Uso del suelo e infraestructura", note: "Cambios, monitoreo, acceso" },
     { key: "Peoples, territories & culture", label: "Pueblos, territorios y cultura", note: "Comunidades, tierras, saberes" },
     { key: "Society, health & livelihoods", label: "Sociedad, salud y medios de vida", note: "Bienestar y economías locales" },
@@ -154,6 +154,9 @@
           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
           <li>Verificado el ${escapeHtml(record.checked)}</li>
         </ul>
+        <p class="credit-line">${record.submittedBy
+          ? `<span class="tier-badge tier-community">Enviado por la comunidad, validado</span> · Enviado por <a href="https://github.com/${encodeURIComponent(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
+          : `<span class="tier-badge tier-editorial">Revisado editorialmente</span>`}</p>
         <div class="card-actions">
           <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir en la fuente <span class="sr-only">(se abre en una pestaña nueva)</span></a>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
