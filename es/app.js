@@ -96,6 +96,58 @@
     }, 1600);
   };
 
+  // Freshness helpers. STALE_DAYS mirrors scripts/check-links.mjs so the
+  // on-card signal always agrees with what the weekly automation flags.
+  const STALE_DAYS = 180;
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const describeFreshness = (checkedDate) => {
+    const days = Math.floor((Date.now() - new Date(`${checkedDate}T00:00:00Z`).getTime()) / MS_PER_DAY);
+    let relative;
+    if (days <= 0) relative = "hoy";
+    else if (days === 1) relative = "ayer";
+    else if (days < 14) relative = `hace ${days} días`;
+    else if (days < 60) relative = `hace ${Math.round(days / 7)} semanas`;
+    else if (days < 730) relative = `hace ${Math.round(days / 30)} meses`;
+    else relative = `hace ${Math.round(days / 365)} años`;
+    return { stale: days > STALE_DAYS, relative };
+  };
+
+  // Citation helpers. BibTeX uses "s.f." (sin fecha) for year rather than
+  // guessing a publication year from the verification date.
+  const buildApaCitation = (record) => `"${record.title}." ${record.provider}. Consultado el ${record.checked}. ${record.url}`;
+  const buildBibtex = (record) => [
+    `@misc{${record.id},`,
+    `  title        = {${record.title}},`,
+    `  author       = {{${record.provider}}},`,
+    `  year         = {s.f.},`,
+    `  howpublished = {\\url{${record.url}}},`,
+    `  note         = {Consultado el ${record.checked}},`,
+    `  urldate      = {${record.checked}}`,
+    `}`
+  ].join("\n");
+
+  // Bulk export helpers — always export the full catalog, not the filtered view.
+  const downloadFile = (filename, content, mime) => {
+    const blob = new Blob([content], { type: mime });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = href;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(href);
+  };
+  const csvCell = (value) => {
+    const str = String(value ?? "");
+    return /[",\n]/.test(str) ? `"${str.replaceAll('"', '""')}"` : str;
+  };
+  const CSV_FIELDS = ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked", "submittedBy", "temporalCoverage", "spatialResolution", "license", "methodologyUrl"];
+  const toCsv = (records) => [
+    CSV_FIELDS.join(","),
+    ...records.map((record) => CSV_FIELDS.map((field) => csvCell(field === "formats" ? (record.formats || []).join("; ") : record[field])).join(","))
+  ].join("\n");
+
   const renderDomains = () => {
     const allButton = `<button class="domain-button" type="button" data-category="" aria-pressed="${state.category === ""}"><strong>Todas las fuentes</strong><span>Ver todos los enlaces seleccionados</span></button>`;
     const buttons = categories.map((category) => `
@@ -140,7 +192,9 @@
     const records = getVisibleRecords();
     resultCount.textContent = `${records.length} ${records.length === 1 ? "fuente encontrada" : "fuentes encontradas"}`;
     emptyState.hidden = records.length !== 0;
-    grid.innerHTML = records.map((record) => `
+    grid.innerHTML = records.map((record) => {
+      const fresh = describeFreshness(record.checked);
+      return `
       <article class="dataset-card">
         <div class="card-topline">
           <span class="category-label">${escapeHtml(categoryLabels[record.category] || record.category)}</span>
@@ -151,17 +205,25 @@
         <p class="description">${escapeHtml(i18n.descriptions[record.id] || record.description)}</p>
         <ul class="metadata" aria-label="Metadatos del conjunto de datos">
           <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
+          ${record.spatialResolution ? `<li>${escapeHtml(record.spatialResolution)}</li>` : ""}
+          ${record.temporalCoverage ? `<li>${escapeHtml(record.temporalCoverage)}</li>` : ""}
           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
-          <li>Verificado el ${escapeHtml(record.checked)}</li>
+          ${record.license ? `<li class="license-pill">${escapeHtml(record.license)}</li>` : ""}
+          <li class="freshness-pill${fresh.stale ? " is-stale" : ""}"><time datetime="${escapeHtml(record.checked)}" title="Verificado el ${escapeHtml(record.checked)}">${fresh.stale ? "Revisión pendiente — verificado" : "Verificado"} ${fresh.relative}</time></li>
         </ul>
         <p class="credit-line">${record.submittedBy
           ? `<span class="tier-badge tier-community">Enviado por la comunidad, validado</span> · Enviado por <a href="https://github.com/${encodeURIComponent(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
           : `<span class="tier-badge tier-editorial">Revisado editorialmente</span>`}</p>
+        ${record.methodologyUrl ? `<p class="methodology-line"><a href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">Documentación de metodología <span class="sr-only">(se abre en una pestaña nueva)</span></a></p>` : ""}
         <div class="card-actions">
           <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir en la fuente <span class="sr-only">(se abre en una pestaña nueva)</span></a>
-          <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
+          <div class="cite-group" role="group" aria-label="Citar este conjunto de datos">
+            <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}" data-cite-format="apa">Citar</button>
+            <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}" data-cite-format="bibtex">BibTeX</button>
+          </div>
         </div>
-      </article>`).join("");
+      </article>`;
+    }).join("");
   };
 
   // One-time structured-data injection so search engines (Google Dataset
@@ -244,9 +306,18 @@
     if (!citeButton) return;
     const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
     if (!record) return;
-    const citation = `"${record.title}." ${record.provider}. Consultado el ${record.checked}. ${record.url}`;
+    const format = citeButton.dataset.citeFormat === "bibtex" ? "bibtex" : "apa";
+    const citation = format === "bibtex" ? buildBibtex(record) : buildApaCitation(record);
     const ok = await copyToClipboard(citation);
-    flashConfirmation(citeButton, ok ? "Copiado" : "No se pudo copiar", "Citar");
+    flashConfirmation(citeButton, ok ? "Copiado" : "No se pudo copiar", format === "bibtex" ? "BibTeX" : "Citar");
+  });
+
+  document.getElementById("export-json")?.addEventListener("click", () => {
+    downloadFile("amazoniadb-catalog.json", JSON.stringify(catalog, null, 2), "application/json");
+  });
+
+  document.getElementById("export-csv")?.addEventListener("click", () => {
+    downloadFile("amazoniadb-catalog.csv", toCsv(catalog), "text/csv");
   });
 
   document.addEventListener("keydown", (event) => {

@@ -4,10 +4,10 @@ Real institutions relevant to AmazoniaDB's domains, not yet in `data/catalog.js`
 
 Pick an unchecked item, verify it, submit it through the issue form or a pull request like any other entry. Check the box once it's merged into the catalog.
 
-Current coverage is Brazil-heavy (10 of 12 entries) with one global and one pan-Amazon source. Everything below is a start at the other 8 Amazon countries.
+Current coverage is Brazil-heavy (10 of 13 entries), with one global, one pan-Amazon, and one Peru source. Everything below is a start at the remaining 7 Amazon countries.
 
 ## Peru
-- [ ] **Geobosques** — geobosques.minam.gob.pe — MINAM's national forest-loss monitoring platform: annual deforestation maps + early-warning alerts, stated as free public access. → *Land use & infrastructure*
+- [x] **Geobosques** — geobosques.minam.gob.pe — MINAM's national forest-loss monitoring platform: annual deforestation maps + early-warning alerts, stated as free public access. → *Land use & infrastructure* — merged as `geobosques-national-forest-monitoring-platform`.
 
 ## Colombia
 - [ ] **IDEAM / SMByC** — ideam.gov.co — national Forest and Carbon Monitoring System; quarterly deforestation alerts, annual forest-loss figures since 2012. → *Land use & infrastructure*

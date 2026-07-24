@@ -7,6 +7,18 @@ AmazoniaDB is a lightweight directory of Amazon socioenvironmental datasets and 
 
 Open `index.html` directly in a browser. The directory works without a build step or server.
 
+## Use the data without the site
+
+Every card has "Cite" and "BibTeX" buttons, and the results header has "Export full catalog" (JSON/CSV) for whatever's currently in `data/catalog.js`.
+
+For programmatic access with no JS execution required, `data/catalog.json` is a plain static export of the same records — fetchable directly (e.g. via the GitHub Pages URL or raw.githubusercontent.com). Regenerate it after any edit to `data/catalog.js`:
+
+```
+node scripts/build-catalog-json.mjs
+```
+
+It isn't currently wired into CI, so it's only as fresh as the last time someone ran that command — check the file's own git history if that matters for your use.
+
 ## Add a source
 
 Use `submit.html` to prepare a candidate record without sending information to any external service. It checks the required fields, produces a review-ready record, and can copy or download the result locally.

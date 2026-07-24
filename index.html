@@ -83,6 +83,7 @@
           <div class="catalog-heading-meta">
             <p id="result-count" class="result-count" aria-live="polite"></p>
             <button id="copy-view-link" class="text-button copy-link-button" type="button">Copy link to this view</button>
+            <p class="export-line">Export full catalog: <button id="export-json" class="text-button" type="button">JSON</button> · <button id="export-csv" class="text-button" type="button">CSV</button></p>
           </div>
         </div>
 
@@ -120,7 +121,12 @@
         </form>
 
         <div id="dataset-grid" class="dataset-grid" aria-live="polite"></div>
-        <p id="empty-state" class="empty-state" hidden>No sources match those filters. Try a broader search.</p>
+        <div id="empty-state" class="empty-state" hidden>
+          <svg class="empty-state-icon" width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M20 20L16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <p class="empty-state-title">No sources match those filters.</p>
+          <p class="empty-state-copy">Try a broader search term, or reset filters to see the full directory.</p>
+          <button class="button button-secondary" type="reset" form="filters">Clear filters</button>
+        </div>
       </section>
 
       <section id="how-it-works" class="principles-section">
