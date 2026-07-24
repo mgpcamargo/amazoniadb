@@ -46,6 +46,32 @@ Two one-time repository settings are required before `source-submission.yml` can
 
 If your default branch isn't `main`, update the `branches:` filter in `validate-catalog.yml`, and the `ref:` in `update-candidates.yml`, to match.
 
+## Data & API
+
+`data/catalog.js` is the source of truth, but it's JS, not JSON — meant to be loaded with a `<script>` tag, not parsed by external tools. For anyone who wants the catalog without parsing JS, there's a plain-JSON mirror:
+
+```
+https://mgpcamargo.github.io/amazoniadb/api/catalog.json
+```
+
+It's regenerated automatically by `validate-catalog.yml` on every push to `main` that touches the catalog (via `scripts/build-api.mjs`) — never edit `api/catalog.json` by hand, it'll just be overwritten on the next push. Shape:
+
+```json
+{
+  "generated": "2026-07-24T00:00:00.000Z",
+  "count": 13,
+  "source": "https://mgpcamargo.github.io/amazoniadb/",
+  "license": "...",
+  "records": [ /* same shape as data/catalog.schema.json */ ]
+}
+```
+
+```js
+const { records } = await fetch("https://mgpcamargo.github.io/amazoniadb/api/catalog.json").then((r) => r.json());
+```
+
+This is a read-only convenience mirror of the index, not a grant of rights to the underlying data — see License below.
+
 ## Directory policy
 
 - AmazoniaDB stores catalog metadata and links, not data files.

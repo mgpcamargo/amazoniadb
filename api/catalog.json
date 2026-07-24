@@ -1,0 +1,220 @@
+{
+  "$schema": "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json",
+  "generated": "2026-07-24T04:48:58.977Z",
+  "count": 13,
+  "source": "https://mgpcamargo.github.io/amazoniadb/",
+  "license": "All rights reserved on this index. Each record links to its original provider, who holds their own rights over the underlying data — this JSON is a convenience mirror of AmazoniaDB's curated list, not a redistribution of provider data.",
+  "records": [
+    {
+      "id": "gbif-species-occurrences",
+      "title": "GBIF Species Occurrence Data",
+      "provider": "Global Biodiversity Information Facility (GBIF)",
+      "category": "Forest & biodiversity",
+      "coverage": "Global — subsettable",
+      "formats": [
+        "API",
+        "Darwin Core Archive",
+        "CSV"
+      ],
+      "access": "Publicly available",
+      "kind": "Data portal",
+      "description": "A global aggregator of species occurrence records — museum specimens, citizen-science observations, and survey data — searchable and filterable to the Amazon basin.",
+      "url": "https://www.gbif.org/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "specieslink-network",
+      "title": "speciesLink Network",
+      "provider": "CRIA (Centro de Referência em Informação Ambiental)",
+      "category": "Forest & biodiversity",
+      "coverage": "Brazil",
+      "formats": [
+        "API",
+        "CSV"
+      ],
+      "access": "Publicly available",
+      "kind": "Data portal",
+      "description": "A Brazilian biodiversity data network aggregating occurrence records for plants, animals, fungi, and microorganisms, enriched with images and land-use context for each collection site.",
+      "url": "https://specieslink.net/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "ana-hidroweb",
+      "title": "Hidroweb — National Hydrometeorological Network",
+      "provider": "Agência Nacional de Águas e Saneamento Básico (ANA)",
+      "category": "Earth, water & climate",
+      "coverage": "Brazil",
+      "formats": [
+        "CSV",
+        "API"
+      ],
+      "access": "Publicly available",
+      "kind": "Data portal",
+      "description": "Station-level river level, streamflow, rainfall, and water-quality records from Brazil's National Hydrometeorological Network, run by the federal water agency.",
+      "url": "https://www.snirh.gov.br/hidroweb",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "inmet-bdmep",
+      "title": "BDMEP — Historical Meteorological Database",
+      "provider": "Instituto Nacional de Meteorologia (INMET)",
+      "category": "Earth, water & climate",
+      "coverage": "Brazil",
+      "formats": [
+        "CSV"
+      ],
+      "access": "Provider terms apply",
+      "kind": "Data portal",
+      "description": "Daily historical weather station records for Brazil since 2000 — temperature, rainfall, humidity, and wind — searchable by station or map.",
+      "url": "https://bdmep.inmet.gov.br/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "mapbiomas-brasil",
+      "title": "MapBiomas Land Cover & Use Maps",
+      "provider": "MapBiomas (multi-institutional collaborative network)",
+      "category": "Land use & infrastructure",
+      "coverage": "Brazil",
+      "formats": [
+        "GeoTIFF",
+        "Google Earth Engine"
+      ],
+      "access": "Provider terms apply",
+      "kind": "Explorer",
+      "description": "Annual land cover and land-use maps for Brazil since 1985, built from satellite image classification, tracking deforestation, fire, and vegetation change by year and biome.",
+      "url": "https://brasil.mapbiomas.org/en/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "inpe-terrabrasilis",
+      "title": "TerraBrasilis — PRODES & DETER Deforestation Monitoring",
+      "provider": "Instituto Nacional de Pesquisas Espaciais (INPE)",
+      "category": "Land use & infrastructure",
+      "coverage": "Brazil",
+      "formats": [
+        "Shapefile",
+        "GeoTIFF",
+        "WMS/WFS"
+      ],
+      "access": "Provider terms apply",
+      "kind": "Explorer",
+      "description": "Brazil's official satellite-based deforestation monitoring system, publishing annual clear-cut mapping (PRODES) and near-real-time alerts (DETER) for the Legal Amazon and other biomes.",
+      "url": "https://terrabrasilis.dpi.inpe.br/en/home-page/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "funai-terras-indigenas",
+      "title": "FUNAI Indigenous Territories Geodata",
+      "provider": "Fundação Nacional dos Povos Indígenas (FUNAI)",
+      "category": "Peoples, territories & culture",
+      "coverage": "Brazil",
+      "formats": [
+        "Shapefile",
+        "KML",
+        "CSV"
+      ],
+      "access": "Provider terms apply",
+      "kind": "Download",
+      "description": "Monthly-updated geospatial boundaries for Brazil's indigenous territories, villages, and regional coordination areas, from the federal indigenous affairs agency's mapping unit.",
+      "url": "https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "isa-terras-indigenas",
+      "title": "Terras Indígenas no Brasil",
+      "provider": "Instituto Socioambiental (ISA)",
+      "category": "Peoples, territories & culture",
+      "coverage": "Brazil",
+      "formats": [
+        "HTML",
+        "PDF"
+      ],
+      "access": "Provider terms apply",
+      "kind": "Explorer",
+      "description": "An independent, long-running database profiling Indigenous territories across Brazil — legal status, location, population, and news — maintained by a civil-society organization since the 1980s.",
+      "url": "https://terrasindigenas.org.br/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "ibge-cidades",
+      "title": "IBGE Cidades",
+      "provider": "Instituto Brasileiro de Geografia e Estatística (IBGE)",
+      "category": "Society, health & livelihoods",
+      "coverage": "Brazil",
+      "formats": [
+        "HTML",
+        "CSV"
+      ],
+      "access": "Publicly available",
+      "kind": "Explorer",
+      "description": "Official municipal and state-level statistics for Brazil — population, economy, education, and health indicators — searchable by place, from the national statistics institute.",
+      "url": "https://cidades.ibge.gov.br/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "datasus-tabnet",
+      "title": "DATASUS TABNET Health Information",
+      "provider": "DATASUS, Ministério da Saúde",
+      "category": "Society, health & livelihoods",
+      "coverage": "Brazil",
+      "formats": [
+        "CSV"
+      ],
+      "access": "Provider terms apply",
+      "kind": "Explorer",
+      "description": "An interactive tabulation tool for Brazil's public health system data — mortality, births, morbidity, and health-facility records — built by the Ministry of Health.",
+      "url": "https://datasus.saude.gov.br/informacoes-de-saude-tabnet/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "icmbio-dados-geoespaciais",
+      "title": "ICMBio Protected Areas Geodata",
+      "provider": "Instituto Chico Mendes de Conservação da Biodiversidade (ICMBio)",
+      "category": "Governance, rights & safeguards",
+      "coverage": "Brazil",
+      "formats": [
+        "Shapefile",
+        "KMZ"
+      ],
+      "access": "Dataset-specific license",
+      "kind": "Download",
+      "description": "Official boundary data for Brazil's federally managed protected areas, including national parks and biological reserves, published under an open data license by the agency that administers them.",
+      "url": "https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "raisg-maps",
+      "title": "RAISG Amazon Maps",
+      "provider": "Red Amazónica de Información Socioambiental Georreferenciada (RAISG)",
+      "category": "Governance, rights & safeguards",
+      "coverage": "Pan-Amazon",
+      "formats": [
+        "Shapefile",
+        "Web map"
+      ],
+      "access": "Provider terms apply",
+      "kind": "Explorer",
+      "description": "Pan-Amazon geospatial data on indigenous territories, protected natural areas, infrastructure projects, and resource-extraction concessions, compiled by a nine-country civil-society network.",
+      "url": "https://www.raisg.org/en/maps/",
+      "checked": "2026-07-14"
+    },
+    {
+      "id": "geobosques-national-forest-monitoring-platform",
+      "title": "Geobosques — National Forest Monitoring Platform",
+      "provider": "Ministerio del Ambiente (MINAM), Programa Nacional de Conservación de Bosques y Clima",
+      "category": "Land use & infrastructure",
+      "coverage": "Peru",
+      "formats": [
+        "API",
+        "WMS",
+        "GeoTIFF",
+        "Web map"
+      ],
+      "access": "Provider terms apply",
+      "kind": "Data portal",
+      "description": "Peru's national forest-loss and early-warning monitoring platform, covering the country's Amazon humid forest with annual loss maps, monthly alerts, and degradation layers.",
+      "url": "https://geobosques.minam.gob.pe/geobosque/view/index.php",
+      "checked": "2026-07-22"
+    }
+  ]
+}

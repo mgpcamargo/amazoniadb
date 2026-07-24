@@ -14,7 +14,7 @@ on:
       - "scripts/validate-catalog.mjs"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   validate:
@@ -25,3 +25,18 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/validate-catalog.mjs
+
+      - name: Regenerate public API mirror
+        if: github.event_name == 'push'
+        run: node scripts/build-api.mjs
+
+      - name: Commit API mirror if changed
+        if: github.event_name == 'push'
+        run: |
+          if ! git diff --quiet -- api/catalog.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add api/catalog.json
+            git commit -m "Regenerate api/catalog.json [skip ci]"
+            git push
+          fi

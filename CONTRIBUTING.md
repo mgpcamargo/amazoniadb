@@ -8,6 +8,8 @@ The `submit.html` page can create a locally stored candidate record. It is an ai
 
 Submitted through the issue form? Track it on the [candidates board](candidates.html) — it shows "in review" once a draft pull request opens, or "needs fixing" if validation caught a problem first. If yours is merged, your GitHub handle is credited on the card automatically; nothing to do on your end for that.
 
+Not sure if something belongs, or want to talk through a source before submitting it? Use [Discussions](../../discussions) rather than opening an issue — it keeps the issue tracker focused on actual submissions and link reports.
+
 ## Two ways to submit
 
 - **Open a pull request** with your entry added to `data/catalog.js` directly (see the record format below). `validate-catalog.yml` runs automatically on the PR.
@@ -23,7 +25,7 @@ Submitted through the issue form? Track it on the [candidates board](candidates.
 
 ## Geographic scope
 
-Default to the Brazilian Amazon — that's where open, well-documented portals are easiest to verify. Use `Pan-Amazon` or `Global — subsettable` only when a source is genuinely the best option for its topic and no comparable Brazil-specific source exists (e.g. a network that only operates at basin scale, like RAISG). A well-verified Brazil-only entry beats a thinner multi-country one added just for coverage.
+Default to the Brazilian Amazon — that's where open, well-documented portals are easiest to verify. `Peru`, `Colombia`, `Bolivia`, and `Ecuador` are available as `coverage` values for a well-verified country-specific source outside Brazil. Use `Pan-Amazon` or `Global — subsettable` only when a source is genuinely the best option for its topic and no comparable country-specific source exists (e.g. a network that only operates at basin scale, like RAISG). A well-verified single-country entry beats a thinner multi-country one added just for coverage.
 
 ## Do not add
 

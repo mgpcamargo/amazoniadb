@@ -3,7 +3,7 @@ import vm from "node:vm";
 
 const validCategories = new Set([
   "Forest & biodiversity",
-  "Climate, water & air",
+  "Earth, water & climate",
   "Land use & infrastructure",
   "Peoples, territories & culture",
   "Society, health & livelihoods",
