@@ -1,6 +1,6 @@
 {
   "$schema": "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json",
-  "generated": "2026-07-24T05:05:07.879Z",
+  "generated": "2026-07-24T20:14:51.619Z",
   "count": 13,
   "source": "https://mgpcamargo.github.io/amazoniadb/",
   "license": "All rights reserved on this index. Each record links to its original provider, who holds their own rights over the underlying data — this JSON is a convenience mirror of AmazoniaDB's curated list, not a redistribution of provider data.",
@@ -20,7 +20,10 @@
       "kind": "Data portal",
       "description": "A global aggregator of species occurrence records — museum specimens, citizen-science observations, and survey data — searchable and filterable to the Amazon basin.",
       "url": "https://www.gbif.org/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Museum specimens to present (continuously updated)",
+      "spatialResolution": "Point occurrence records; accuracy varies per record",
+      "methodologyUrl": "https://techdocs.gbif.org/en/"
     },
     {
       "id": "specieslink-network",
@@ -36,7 +39,10 @@
       "kind": "Data portal",
       "description": "A Brazilian biodiversity data network aggregating occurrence records for plants, animals, fungi, and microorganisms, enriched with images and land-use context for each collection site.",
       "url": "https://specieslink.net/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "2002–present (continuously updated)",
+      "spatialResolution": "Point occurrence records; accuracy varies per record",
+      "methodologyUrl": "https://splink.cria.org.br/documents"
     },
     {
       "id": "ana-hidroweb",
@@ -52,7 +58,10 @@
       "kind": "Data portal",
       "description": "Station-level river level, streamflow, rainfall, and water-quality records from Brazil's National Hydrometeorological Network, run by the federal water agency.",
       "url": "https://www.snirh.gov.br/hidroweb",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Varies by station; many series since the early 2000s, some longer",
+      "spatialResolution": "Station-level (point gauges)",
+      "methodologyUrl": "https://metadados.snirh.gov.br/geonetwork/srv/api/records/6749d278-ca5e-40e9-b648-20d6382f57df/attachments/Cartilha_EstatisticasFluPlu_VF.pdf"
     },
     {
       "id": "inmet-bdmep",
@@ -67,7 +76,10 @@
       "kind": "Data portal",
       "description": "Daily historical weather station records for Brazil since 2000 — temperature, rainfall, humidity, and wind — searchable by station or map.",
       "url": "https://bdmep.inmet.gov.br/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Daily records since 2000; series length varies by station",
+      "spatialResolution": "Station-level (point observations)",
+      "methodologyUrl": "https://portal.inmet.gov.br/paginas/catalogoman"
     },
     {
       "id": "mapbiomas-brasil",
@@ -83,7 +95,10 @@
       "kind": "Explorer",
       "description": "Annual land cover and land-use maps for Brazil since 1985, built from satellite image classification, tracking deforestation, fire, and vegetation change by year and biome.",
       "url": "https://brasil.mapbiomas.org/en/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "1985–2024 (annual)",
+      "spatialResolution": "30 m (Landsat-based classification)",
+      "methodologyUrl": "https://brasil.mapbiomas.org/en/metodo_cobertura_e_uso/"
     },
     {
       "id": "inpe-terrabrasilis",
@@ -100,7 +115,10 @@
       "kind": "Explorer",
       "description": "Brazil's official satellite-based deforestation monitoring system, publishing annual clear-cut mapping (PRODES) and near-real-time alerts (DETER) for the Legal Amazon and other biomes.",
       "url": "https://terrabrasilis.dpi.inpe.br/en/home-page/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "PRODES annual since 1988; DETER near-real-time alerts",
+      "spatialResolution": "~30 m (PRODES, Landsat-class); down to ~250 m historically for DETER alerts",
+      "methodologyUrl": "https://terrabrasilis.dpi.inpe.br/en/about/"
     },
     {
       "id": "funai-terras-indigenas",
@@ -117,7 +135,10 @@
       "kind": "Download",
       "description": "Monthly-updated geospatial boundaries for Brazil's indigenous territories, villages, and regional coordination areas, from the federal indigenous affairs agency's mapping unit.",
       "url": "https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Updated monthly",
+      "spatialResolution": "Vector boundaries (polygon/point), not a fixed pixel resolution",
+      "methodologyUrl": "https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas/geoserver-funai"
     },
     {
       "id": "isa-terras-indigenas",
@@ -133,7 +154,9 @@
       "kind": "Explorer",
       "description": "An independent, long-running database profiling Indigenous territories across Brazil — legal status, location, population, and news — maintained by a civil-society organization since the 1980s.",
       "url": "https://terrasindigenas.org.br/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Ongoing since the 1980s (CEDI/ISA)",
+      "methodologyUrl": "https://terrasindigenas.org.br/pt-br/node/33"
     },
     {
       "id": "ibge-cidades",
@@ -149,7 +172,10 @@
       "kind": "Explorer",
       "description": "Official municipal and state-level statistics for Brazil — population, economy, education, and health indicators — searchable by place, from the national statistics institute.",
       "url": "https://cidades.ibge.gov.br/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Varies by indicator; many annual, some tied to Census years",
+      "spatialResolution": "Municipality and state level",
+      "methodologyUrl": "https://cidades.ibge.gov.br/pesquisas"
     },
     {
       "id": "datasus-tabnet",
@@ -164,7 +190,10 @@
       "kind": "Explorer",
       "description": "An interactive tabulation tool for Brazil's public health system data — mortality, births, morbidity, and health-facility records — built by the Ministry of Health.",
       "url": "https://datasus.saude.gov.br/informacoes-de-saude-tabnet/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Varies by sub-system; several series ongoing since the 1990s–2000s",
+      "spatialResolution": "Municipal and facility level",
+      "methodologyUrl": "https://datasus.saude.gov.br/home/tabnet/"
     },
     {
       "id": "icmbio-dados-geoespaciais",
@@ -180,7 +209,11 @@
       "kind": "Download",
       "description": "Official boundary data for Brazil's federally managed protected areas, including national parks and biological reserves, published under an open data license by the agency that administers them.",
       "url": "https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Updated as boundaries are refined or redefined by decree",
+      "spatialResolution": "Vector boundaries, multi-scale (1:10,000–1:250,000)",
+      "license": "Open Data Commons Public Domain Dedication and License (PDDL)",
+      "methodologyUrl": "https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais"
     },
     {
       "id": "raisg-maps",
@@ -196,7 +229,9 @@
       "kind": "Explorer",
       "description": "Pan-Amazon geospatial data on indigenous territories, protected natural areas, infrastructure projects, and resource-extraction concessions, compiled by a nine-country civil-society network.",
       "url": "https://www.raisg.org/en/maps/",
-      "checked": "2026-07-14"
+      "checked": "2026-07-14",
+      "temporalCoverage": "Periodic updates since 1996; latest full atlas 2020",
+      "methodologyUrl": "https://www.amazoniasocioambiental.org/es/publicacion/amazonia-bajo-presion-2020/"
     },
     {
       "id": "geobosques-national-forest-monitoring-platform",
@@ -214,7 +249,10 @@
       "kind": "Data portal",
       "description": "Peru's national forest-loss and early-warning monitoring platform, covering the country's Amazon humid forest with annual loss maps, monthly alerts, and degradation layers.",
       "url": "https://geobosques.minam.gob.pe/geobosque/view/index.php",
-      "checked": "2026-07-22"
+      "checked": "2026-07-22",
+      "temporalCoverage": "Annual forest-loss maps since 2001; near-real-time early-warning alerts",
+      "spatialResolution": "30 m (Landsat); Sentinel (10 m) used for visual verification",
+      "methodologyUrl": "https://geobosques.minam.gob.pe/geobosque/descargas_geobosque/perdida/documentos/Protocolo_Metodologico_Deteccion_Perdida_de_Bosque.pdf"
     }
   ]
 }
