@@ -10,6 +10,7 @@
   --surface: #fff;
   --placeholder: #819087;
   --card-hover-border: #aab8a9;
+  --header-bg: rgb(251 252 247 / 94%);
   --button-primary-hover: #143c2b;
   /* Fixed regardless of theme: a featured brand panel and a code/JSON
      preview block are both "always dark" treatments by design, not
@@ -40,6 +41,7 @@
   --surface: #16251f;
   --placeholder: #6f8177;
   --card-hover-border: #3d5548;
+  --header-bg: rgb(15 27 22 / 94%);
   --button-primary-hover: #6bb389;
   --shadow: 0 14px 34px rgb(0 0 0 / 32%);
   color-scheme: dark;
@@ -58,7 +60,7 @@ button, select { cursor: pointer; }
 .skip-link:focus { top: 12px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-.site-header { border-bottom: 1px solid var(--line); background: rgb(251 252 247 / 94%); }
+.site-header { border-bottom: 1px solid var(--line); background: var(--header-bg); }
 .header-inner { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-size: 1.05rem; font-weight: 780; letter-spacing: -0.035em; text-decoration: none; }
 .brand-mark { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 50%; background: var(--forest); color: var(--paper); font-family: Georgia, serif; font-size: 1.05rem; }
