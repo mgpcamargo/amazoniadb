@@ -14,6 +14,14 @@
 // rather than showing nothing.
 window.AMAZONIA_CATALOG_I18N = {
   "pt-BR": {
+    spatialResolution: {
+      "Point occurrence records; accuracy varies per record": "Registros de ocorrência; precisão varia por registro",
+      "Station-level (point gauges)": "Por estação (medidores pontuais)",
+      "Station-level (point observations)": "Por estação (observações pontuais)",
+      "Annual maps": "Mapas anuais",
+      "Annual alert data": "Dados de alertas anuais",
+      "Point vector locations": "Locais de vetor pontual"
+    },
     descriptions: {
       "gbif-species-occurrences": "Um agregador global de registros de ocorrência de espécies — espécimes de museu, observações de ciência cidadã e dados de levantamentos —, pesquisável e filtrável para a bacia amazônica.",
       "specieslink-network": "Uma rede brasileira de dados de biodiversidade que agrega registros de ocorrência de plantas, animais, fungos e microrganismos, enriquecidos com imagens e contexto de uso da terra para cada local de coleta.",
@@ -31,6 +39,14 @@ window.AMAZONIA_CATALOG_I18N = {
     }
   },
   "es": {
+    spatialResolution: {
+      "Point occurrence records; accuracy varies per record": "Registros de ocurrencia; precisión varía por registro",
+      "Station-level (point gauges)": "Por estación (medidores puntuales)",
+      "Station-level (point observations)": "Por estación (observaciones puntuales)",
+      "Annual maps": "Mapas anuales",
+      "Annual alert data": "Datos de alertas anuales",
+      "Point vector locations": "Ubicaciones de vector puntual"
+    },
     descriptions: {
       "gbif-species-occurrences": "Un agregador global de registros de ocurrencia de especies —especímenes de museo, observaciones de ciencia ciudadana y datos de relevamientos—, con búsqueda y filtros para la cuenca amazónica.",
       "specieslink-network": "Una red brasileña de datos de biodiversidad que agrega registros de ocurrencia de plantas, animales, hongos y microorganismos, enriquecidos con imágenes y contexto de uso del suelo para cada sitio de recolección.",

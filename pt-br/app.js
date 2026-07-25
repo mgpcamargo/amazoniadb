@@ -1,6 +1,7 @@
 (() => {
   const catalog = window.AMAZONIA_CATALOG || [];
-  const i18n = (window.AMAZONIA_CATALOG_I18N && window.AMAZONIA_CATALOG_I18N["pt-BR"]) || { descriptions: {} };
+  const i18n = (window.AMAZONIA_CATALOG_I18N && window.AMAZONIA_CATALOG_I18N["pt-BR"]) || { descriptions: {}, spatialResolution: {} };
+  const spatialResolutionLabels = i18n.spatialResolution || {};
 
   // `key` matches record.category/coverage/access/kind exactly as stored in
   // ../data/catalog.js (the canonical English values required by
@@ -150,6 +151,7 @@
         <p class="provider">${escapeHtml(record.provider)}</p>
         <p class="description">${escapeHtml(i18n.descriptions[record.id] || record.description)}</p>
         <ul class="metadata" aria-label="Metadados do conjunto de dados">
+          ${record.spatialResolution ? `<li>${escapeHtml(spatialResolutionLabels[record.spatialResolution] || record.spatialResolution)}</li>` : ''}
           <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
           <li>Verificado em ${escapeHtml(record.checked)}</li>
