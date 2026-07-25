@@ -2,6 +2,7 @@
 <html lang="es-419">
   <head>
     <meta charset="utf-8">
+    <script>(function(){try{var t=localStorage.getItem("amazoniadb-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Prepara un registro de fuente listo para revisión en AmazoniaDB sin subir datos.">
     <meta property="og:site_name" content="AmazoniaDB">
@@ -24,6 +25,7 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <title>Preparar una fuente — AmazoniaDB</title>
     <link rel="stylesheet" href="../styles.css">
+    <script src="../theme.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#source-form">Saltar al formulario de fuente</a>
@@ -38,6 +40,10 @@
           <a class="header-link" href="index.html#catalog">Ver directorio</a>
           <a class="header-link" href="../CONTRIBUTING.md">Guía de revisión</a>
           <a class="header-link" href="candidates.html">Candidatas</a>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Modo oscuro">
+            <svg class="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </button>
           <nav class="lang-switch" aria-label="Idioma">
             <a class="lang-link" href="../submit.html">EN</a>
             <a class="lang-link" href="../pt-br/submit.html">PT-BR</a>
@@ -51,7 +57,7 @@
       <section class="container submission-intro" aria-labelledby="source-page-title">
         <p class="eyebrow">Preparación de fuente</p>
         <h1 id="source-page-title">Prepara una fuente para revisión.</h1>
-        <p>AmazoniaDB reúne páginas de proveedores originales. Este formulario crea un registro candidato localmente en tu navegador; no sube datos ni envía nada automáticamente.</p>
+        <p>AmazoniaDB reúne páginas de proveedores originales. Esto arma un registro candidato localmente — nada se sube automáticamente.</p>
       </section>
 
       <section class="container submission-layout" aria-label="Espacio de preparación de fuentes">
@@ -153,14 +159,14 @@
             <button id="copy-record" class="button button-primary" type="button">Copiar registro</button>
             <button id="download-record" class="button button-secondary" type="button">Descargar JSON</button>
           </div>
-          <p class="preview-note">Un candidato todavía necesita revisión humana antes de aparecer en el directorio público.</p>
+          <p class="preview-note">Un candidato todavía necesita revisión humana antes de ser público.</p>
         </aside>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>AmazoniaDB es un índice independiente, no un alojador de datos. Los nombres de las fuentes y los materiales permanecen con sus respectivos proveedores.</p>
+        <p>AmazoniaDB es un índice, no un alojador — las fuentes permanecen con sus proveedores.</p>
         <div class="footer-links">
           <a href="../api/catalog.json">API</a>
           <a href="donate.html">Apoyar este proyecto</a>

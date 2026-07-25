@@ -2,6 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8">
+    <script>(function(){try{var t=localStorage.getItem("amazoniadb-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Um diretório enxuto para encontrar conjuntos de dados socioambientais da Amazônia em suas fontes originais.">
     <meta property="og:site_name" content="AmazoniaDB">
@@ -24,6 +25,7 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <title>AmazoniaDB — Encontre dados na fonte</title>
     <link rel="stylesheet" href="../styles.css">
+    <script src="../theme.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#catalog">Pular para os conjuntos de dados</a>
@@ -38,6 +40,10 @@
           <a class="header-link" href="submit.html">Preparar uma fonte</a>
           <a class="header-link" href="#how-it-works">Como funciona</a>
           <a class="header-link" href="candidates.html">Candidatas</a>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Modo escuro">
+            <svg class="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </button>
           <nav class="lang-switch" aria-label="Idioma">
             <a class="lang-link" href="../index.html">EN</a>
             <span class="lang-current" aria-current="true">PT-BR</span>
@@ -51,7 +57,7 @@
       <section class="hero container" aria-labelledby="hero-title">
         <p class="eyebrow">Diretório independente de interesse público</p>
         <h1 id="hero-title">Encontre dados da Amazônia na fonte.</h1>
-        <p class="hero-copy">Um índice claro e enxuto de conjuntos de dados e repositórios para uso em pesquisa, políticas públicas e pela comunidade em toda a Amazônia.</p>
+        <p class="hero-copy">Um índice enxuto de dados ambientais da Amazônia — para pesquisa, políticas públicas e uso comunitário.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#catalog">Explorar o diretório</a>
           <a class="button button-secondary" href="#how-it-works">Nossa política de links</a>
@@ -83,7 +89,6 @@
           <div class="catalog-heading-meta">
             <p id="result-count" class="result-count" aria-live="polite"></p>
             <button id="copy-view-link" class="text-button copy-link-button" type="button">Copiar link desta visualização</button>
-            <p class="export-line">Exportar catálogo completo: <button id="export-json" class="text-button" type="button">JSON</button> · <button id="export-csv" class="text-button" type="button">CSV</button></p>
           </div>
         </div>
 
@@ -121,12 +126,7 @@
         </form>
 
         <div id="dataset-grid" class="dataset-grid" aria-live="polite"></div>
-        <div id="empty-state" class="empty-state" hidden>
-          <svg class="empty-state-icon" width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M20 20L16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          <p class="empty-state-title">Nenhuma fonte corresponde a esses filtros.</p>
-          <p class="empty-state-copy">Tente um termo de busca mais amplo, ou limpe os filtros para ver o diretório completo.</p>
-          <button class="button button-secondary" type="reset" form="filters">Limpar filtros</button>
-        </div>
+        <p id="empty-state" class="empty-state" hidden>Nenhuma fonte corresponde a esses filtros. Tente uma busca mais ampla.</p>
       </section>
 
       <section id="how-it-works" class="principles-section">
@@ -134,12 +134,12 @@
           <div>
             <p class="eyebrow">Como a AmazoniaDB funciona</p>
             <h2>Nós indexamos. Os provedores publicam.</h2>
-            <p>Cada card aponta para a página ou o repositório do publicador original. A AmazoniaDB armazena metadados descritivos do catálogo, não os arquivos originais.</p>
+            <p>Cada card aponta para o publicador original. Guardamos metadados, não arquivos.</p>
           </div>
           <ol class="principles-list">
-            <li><strong>Fonte em primeiro lugar.</strong><span>Cada entrada nomeia e vincula a instituição que a publica.</span></li>
-            <li><strong>Termos permanecem visíveis.</strong><span>As condições de uso pertencem a cada provedor e devem ser verificadas antes da reutilização.</span></li>
-            <li><strong>Cuidado com dados sensíveis.</strong><span>Não listamos localizações sensíveis precisas nem informações que possam colocar em risco pessoas, territórios ou espécies.</span></li>
+            <li><strong>Fonte em primeiro lugar.</strong><span>Cada entrada vincula ao seu publicador.</span></li>
+            <li><strong>Termos permanecem visíveis.</strong><span>Verifique os termos de cada provedor antes de reutilizar.</span></li>
+            <li><strong>Cuidado com dados sensíveis.</strong><span>Omitimos o que possa colocar em risco pessoas, territórios ou espécies.</span></li>
           </ol>
         </div>
       </section>
@@ -150,7 +150,7 @@
           <h2 id="contribute-title">Um diretório pensado para crescer até milhares de fontes.</h2>
         </div>
         <div>
-          <p>Novas entradas devem incluir um link direto ao publicador, a cobertura geográfica, uma breve descrição em linguagem simples, as condições de acesso e uma data de verificação. Isso mantém o catálogo útil sem copiar dados que não pertencem aqui.</p>
+          <p>Cada entrada precisa de um link ao publicador, cobertura, uma descrição simples, condições de acesso e uma data de verificação — útil, sem copiar dados que não são nossos.</p>
           <a class="button button-primary" href="submit.html">Preparar um registro de fonte</a>
         </div>
       </section>
@@ -158,7 +158,7 @@
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>A AmazoniaDB é um índice independente, não um repositório de dados. Nomes de fontes e materiais permanecem com seus respectivos provedores.</p>
+        <p>A AmazoniaDB é um índice, não um repositório — as fontes permanecem com seus provedores.</p>
         <div class="footer-links">
           <a href="../api/catalog.json">API</a>
           <a href="donate.html">Apoiar este projeto</a>

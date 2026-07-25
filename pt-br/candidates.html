@@ -2,6 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8">
+    <script>(function(){try{var t=localStorage.getItem("amazoniadb-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Veja as fontes que aguardam revisão antes de entrar no catálogo da AmazoniaDB.">
     <meta property="og:site_name" content="AmazoniaDB">
@@ -24,6 +25,7 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <title>Candidatas — AmazoniaDB</title>
     <link rel="stylesheet" href="../styles.css">
+    <script src="../theme.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#candidates-list">Pular para a lista de candidatas</a>
@@ -37,6 +39,10 @@
         <div class="header-links">
           <a class="header-link" href="index.html#catalog">Ver diretório</a>
           <a class="header-link" href="submit.html">Preparar uma fonte</a>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Modo escuro">
+            <svg class="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </button>
           <nav class="lang-switch" aria-label="Idioma">
             <a class="lang-link" href="../index.html">EN</a>
             <span class="lang-current" aria-current="true">PT-BR</span>
@@ -50,23 +56,23 @@
       <section class="container candidates-intro" aria-labelledby="candidates-page-title">
         <p class="eyebrow">Candidatas</p>
         <h1 id="candidates-page-title">Fontes aguardando revisão.</h1>
-        <p>Todo envio pelo formulário de issue chega aqui antes de fazer parte do catálogo público. "Em revisão" significa que passou pela validação automática e tem um pull request rascunho aberto. "Precisa de ajuste" significa que a validação encontrou um problema e ainda não existe um pull request — geralmente um campo obrigatório em branco ou uma opção que não correspondeu exatamente.</p>
+        <p>Todo envio chega aqui antes de ser público. "Em revisão" passou na validação e tem um pull request rascunho. "Precisa de ajuste" falhou na validação — geralmente um campo em branco ou opção incorreta.</p>
         <p class="candidates-meta" id="candidates-count" aria-live="polite"></p>
       </section>
 
       <section class="container" aria-label="Envios pendentes">
         <div id="candidates-list" class="candidates-list"></div>
-        <p id="candidates-empty" class="empty-state" hidden>Nenhuma fonte está aguardando revisão no momento. <a href="submit.html">Proponha uma</a> ou abra diretamente uma <a href="https://github.com/mgpcamargo/amazoniadb/issues/new?template=new-source.yml" target="_blank" rel="noopener noreferrer">nova submissão de fonte<span class="sr-only"> (abre em nova aba)</span></a>.</p>
+        <p id="candidates-empty" class="empty-state" hidden>Nada aguardando revisão no momento. <a href="submit.html">Proponha uma fonte</a> ou abra diretamente uma <a href="https://github.com/mgpcamargo/amazoniadb/issues/new?template=new-source.yml" target="_blank" rel="noopener noreferrer">submissão<span class="sr-only"> (abre em nova aba)</span></a>.</p>
       </section>
 
       <section class="container candidates-footnote">
-        <p>Esta lista se atualiza automaticamente conforme chegam envios, e pelo menos a cada seis horas de qualquer forma. Ela espelha os dados públicos de issues e pull requests deste repositório no GitHub — nada aqui é enviado ou hospedado pela AmazoniaDB.</p>
+        <p>Atualiza conforme chegam envios, e pelo menos a cada seis horas. Espelha os dados públicos de issues e pull requests do GitHub — nada aqui é hospedado pela AmazoniaDB.</p>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>A AmazoniaDB é um índice independente, não uma hospedeira de dados. Nomes e materiais das fontes permanecem com seus respectivos provedores.</p>
+        <p>A AmazoniaDB é um índice, não um repositório — as fontes permanecem com seus provedores.</p>
         <div class="footer-links">
           <a href="../api/catalog.json">API</a>
           <a href="donate.html">Apoiar este projeto</a>

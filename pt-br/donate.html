@@ -2,6 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8">
+    <script>(function(){try{var t=localStorage.getItem("amazoniadb-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Por que a AmazoniaDB pede apoio, e no que o financiamento realmente é usado.">
     <meta property="og:site_name" content="AmazoniaDB">
@@ -24,6 +25,7 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <title>Apoiar este projeto — AmazoniaDB</title>
     <link rel="stylesheet" href="../styles.css">
+    <script src="../theme.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#donate-title">Pular para o conteúdo</a>
@@ -38,6 +40,10 @@
           <a class="header-link" href="index.html#catalog">Explorar diretório</a>
           <a class="header-link" href="candidates.html">Candidatas</a>
           <a class="header-link" href="submit.html">Preparar uma fonte</a>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Modo escuro">
+            <svg class="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </button>
           <nav class="lang-switch" aria-label="Idioma">
             <a class="lang-link" href="../donate.html">EN</a>
             <span class="lang-current" aria-current="true">PT-BR</span>
@@ -51,16 +57,16 @@
       <section class="container submission-intro" aria-labelledby="donate-title">
         <p class="eyebrow">Apoiar a AmazoniaDB</p>
         <h1 id="donate-title">Mantenha este diretório independente.</h1>
-        <p>A AmazoniaDB não exibe anúncios, não vende dados e não aceita posicionamento pago — cada entrada está aqui porque foi merecida, não porque alguém pagou por ela. Isso só continua verdadeiro se o trabalho de manutenção por trás disso for financiado de alguma outra forma.</p>
+        <p>Sem anúncios, sem venda de dados, sem posicionamento pago — cada entrada ganhou seu lugar. Isso só se mantém se a manutenção for financiada de algum jeito.</p>
       </section>
 
       <section class="container donate-section" aria-labelledby="funds-title">
         <h2 id="funds-title">No que o apoio realmente é usado</h2>
         <ul class="donate-list">
-          <li>Revisar manualmente cada submissão da comunidade antes de mesclá-la — o nível "revisado editorialmente" significa que alguém de fato conferiu.</li>
-          <li>A verificação automática semanal que detecta links quebrados e entradas não reverificadas há mais de 180 dias.</li>
-          <li>Hospedagem e manutenção do pipeline de submissões em funcionamento.</li>
-          <li>Tempo dedicado a expandir a cobertura para novos domínios e países à medida que o diretório cresce.</li>
+          <li>Revisar manualmente cada submissão antes de mesclá-la.</li>
+          <li>A verificação semanal de links quebrados e entradas desatualizadas.</li>
+          <li>Hospedagem e manutenção do pipeline de submissões.</li>
+          <li>Expandir a cobertura para novos domínios e países.</li>
         </ul>
       </section>
 
@@ -76,7 +82,7 @@
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>A AmazoniaDB é um índice independente, não um repositório de dados. Nomes de fontes e materiais permanecem com seus respectivos provedores.</p>
+        <p>A AmazoniaDB é um índice, não um repositório — as fontes permanecem com seus provedores.</p>
         <div class="footer-links">
           <a href="../api/catalog.json">API</a>
           <a href="index.html">Voltar ao diretório ←</a>

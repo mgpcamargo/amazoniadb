@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <script>(function(){try{var t=localStorage.getItem("amazoniadb-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="See sources currently waiting on review before they join the AmazoniaDB catalog.">
     <meta property="og:site_name" content="AmazoniaDB">
@@ -24,6 +25,7 @@
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <title>Candidates — AmazoniaDB</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="theme.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#candidates-list">Skip to candidates list</a>
@@ -37,6 +39,10 @@
         <div class="header-links">
           <a class="header-link" href="index.html#catalog">Browse directory</a>
           <a class="header-link" href="submit.html">Prepare a source</a>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark mode">
+            <svg class="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </button>
           <nav class="lang-switch" aria-label="Language">
             <span class="lang-current" aria-current="true">EN</span>
             <a class="lang-link" href="pt-br/candidates.html">PT-BR</a>
@@ -50,23 +56,23 @@
       <section class="container candidates-intro" aria-labelledby="candidates-page-title">
         <p class="eyebrow">Candidates</p>
         <h1 id="candidates-page-title">Sources waiting on review.</h1>
-        <p>Every submission through the issue form lands here before it's part of the public catalog. "In review" means it passed automatic validation and has an open draft pull request. "Needs fixing" means validation caught a problem and no pull request exists yet — usually a blank required field or a dropdown answer that didn't match exactly.</p>
+        <p>Every submission lands here before it's public. "In review" passed validation and has a draft pull request. "Needs fixing" failed validation — usually a blank field or dropdown mismatch.</p>
         <p class="candidates-meta" id="candidates-count" aria-live="polite"></p>
       </section>
 
       <section class="container" aria-label="Pending submissions">
         <div id="candidates-list" class="candidates-list"></div>
-        <p id="candidates-empty" class="empty-state" hidden>No sources are waiting on review right now. <a href="submit.html">Propose one</a>, or open a <a href="https://github.com/mgpcamargo/amazoniadb/issues/new?template=new-source.yml" target="_blank" rel="noopener noreferrer">new source submission<span class="sr-only"> (opens in a new tab)</span></a> directly.</p>
+        <p id="candidates-empty" class="empty-state" hidden>Nothing's waiting on review right now. <a href="submit.html">Propose one</a>, or open a <a href="https://github.com/mgpcamargo/amazoniadb/issues/new?template=new-source.yml" target="_blank" rel="noopener noreferrer">source submission<span class="sr-only"> (opens in a new tab)</span></a> directly.</p>
       </section>
 
       <section class="container candidates-footnote">
-        <p>This list updates automatically as submissions come in, and at least every six hours regardless. It mirrors GitHub's public issue and pull request data for this repository — nothing here is uploaded to or hosted by AmazoniaDB itself.</p>
+        <p>Updates as submissions come in, and at least every six hours regardless. It mirrors GitHub's public issue and pull-request data — nothing here is hosted by AmazoniaDB.</p>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>AmazoniaDB is an independent index, not a data host. Source names and materials remain with their respective providers.</p>
+        <p>AmazoniaDB is an index, not a host — sources stay with their providers.</p>
         <div class="footer-links">
           <a href="api/catalog.json">API</a>
           <a href="donate.html">Support this project</a>

@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <script>(function(){try{var t=localStorage.getItem("amazoniadb-theme");if(t!=="light"&&t!=="dark"){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Why AmazoniaDB asks for support, and what funding actually covers.">
     <meta property="og:site_name" content="AmazoniaDB">
@@ -24,6 +25,7 @@
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <title>Support this project — AmazoniaDB</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="theme.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#donate-title">Skip to content</a>
@@ -38,6 +40,10 @@
           <a class="header-link" href="index.html#catalog">Browse directory</a>
           <a class="header-link" href="candidates.html">Candidates</a>
           <a class="header-link" href="submit.html">Prepare a source</a>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark mode">
+            <svg class="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg class="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </button>
           <nav class="lang-switch" aria-label="Language">
             <span class="lang-current" aria-current="true">EN</span>
             <a class="lang-link" href="pt-br/donate.html">PT-BR</a>
@@ -51,16 +57,16 @@
       <section class="container submission-intro" aria-labelledby="donate-title">
         <p class="eyebrow">Support AmazoniaDB</p>
         <h1 id="donate-title">Keep this directory independent.</h1>
-        <p>AmazoniaDB doesn't run ads, sell data, or take paid placement — every entry is here because it earned it, not because someone paid for it. That only stays true if the maintenance work behind it is funded some other way.</p>
+        <p>No ads, no data sales, no paid placement — every entry earned its spot. That only holds if maintenance is funded some other way.</p>
       </section>
 
       <section class="container donate-section" aria-labelledby="funds-title">
         <h2 id="funds-title">What support actually covers</h2>
         <ul class="donate-list">
-          <li>Reviewing every community submission by hand before it's merged — the "editorially reviewed" tier means someone actually checked it.</li>
-          <li>The weekly automated check that catches dead links and entries that haven't been re-verified in 180+ days.</li>
+          <li>Reviewing every submission by hand before it's merged.</li>
+          <li>The weekly check for dead links and stale entries.</li>
           <li>Hosting and keeping the submission pipeline running.</li>
-          <li>Time spent expanding coverage into new domains and countries as the directory grows.</li>
+          <li>Expanding coverage into new domains and countries.</li>
         </ul>
       </section>
 
@@ -70,13 +76,13 @@
           <!-- Replace this href with your actual donation platform link (GitHub Sponsors, Ko-fi, Open Collective, etc.) before this page goes live. -->
           <a class="button button-primary" href="#" rel="noopener">Support on [platform] ↗</a>
         </p>
-        <p class="donate-note">Not able to give? Proposing a source or flagging a broken link helps just as much — see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
+        <p class="donate-note">Can't give? Proposing a source or flagging a broken link helps just as much — see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>AmazoniaDB is an independent index, not a data host. Source names and materials remain with their respective providers.</p>
+        <p>AmazoniaDB is an index, not a host — sources stay with their providers.</p>
         <div class="footer-links">
           <a href="api/catalog.json">API</a>
           <a href="index.html">Return to directory ←</a>
