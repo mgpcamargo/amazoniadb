@@ -22,6 +22,7 @@
     "Publicly available": "Disponível publicamente"
   };
   const kindLabels = { "Dataset": "Conjunto de dados", "Data portal": "Portal de dados", "Download": "Download", "Explorer": "Explorador" };
+  const detailLabels = { timeframe: "Cobre", resolution: "Resolução", license: "Licença", methodology: "Metodologia" };
 
   const state = { category: "", search: "", coverage: "", access: "" };
   const domainNav = document.getElementById("domain-nav");
@@ -141,7 +142,13 @@
     const records = getVisibleRecords();
     resultCount.textContent = `${records.length} ${records.length === 1 ? "fonte encontrada" : "fontes encontradas"}`;
     emptyState.hidden = records.length !== 0;
-    grid.innerHTML = records.map((record) => `
+    grid.innerHTML = records.map((record) => {
+      const detailItems = [
+        record.temporalCoverage ? `<li><strong>${detailLabels.timeframe}:</strong> ${escapeHtml(record.temporalCoverage)}</li>` : "",
+        record.spatialResolution ? `<li><strong>${detailLabels.resolution}:</strong> ${escapeHtml(spatialResolutionLabels[record.spatialResolution] || record.spatialResolution)}</li>` : "",
+        record.license ? `<li><strong>${detailLabels.license}:</strong> ${escapeHtml(record.license)}</li>` : ""
+      ].filter(Boolean).join("");
+      return `
       <article class="dataset-card">
         <div class="card-topline">
           <span class="category-label">${escapeHtml(categoryLabels[record.category] || record.category)}</span>
@@ -150,17 +157,21 @@
         <h3>${escapeHtml(record.title)}</h3>
         <p class="provider">${escapeHtml(record.provider)}</p>
         <p class="description">${escapeHtml(i18n.descriptions[record.id] || record.description)}</p>
+        ${detailItems ? `<ul class="dataset-details" aria-label="Detalhe adicional do conjunto de dados">${detailItems}</ul>` : ""}
         <ul class="metadata" aria-label="Metadados do conjunto de dados">
-          ${record.spatialResolution ? `<li>${escapeHtml(spatialResolutionLabels[record.spatialResolution] || record.spatialResolution)}</li>` : ''}
           <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
           <li>Verificado em ${escapeHtml(record.checked)}</li>
         </ul>
         <div class="card-actions">
-          <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir na fonte <span class="sr-only">(abre em nova aba)</span></a>
+          <div class="card-links">
+            <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir na fonte <span class="sr-only">(abre em nova aba)</span></a>
+            ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">${detailLabels.methodology} <span class="sr-only">(abre em nova aba)</span></a>` : ""}
+          </div>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
         </div>
-      </article>`).join("");
+      </article>`;
+    }).join("");
   };
 
   // One-time structured-data injection so search engines (Google Dataset

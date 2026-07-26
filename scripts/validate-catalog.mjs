@@ -46,6 +46,14 @@ for (const [index, record] of (catalog || []).entries()) {
   if (record.submittedBy != null && !githubHandlePattern.test(record.submittedBy)) {
     issues.push(`${label}: submittedBy is not a well-formed GitHub handle.`);
   }
+  for (const field of ["temporalCoverage", "spatialResolution", "license"]) {
+    if (record[field] != null && record[field] === "") {
+      issues.push(`${label}: ${field} is set but empty — omit the field instead of using an empty string.`);
+    }
+  }
+  if (record.methodologyUrl != null && !/^https?:\/\//.test(record.methodologyUrl)) {
+    issues.push(`${label}: methodologyUrl must begin with http:// or https://.`);
+  }
 }
 
 if (issues.length) {

@@ -95,6 +95,38 @@ body:
       description: What the source contains and how it's structured — not what you infer from it.
     validations:
       required: true
+  - type: input
+    id: temporal_coverage
+    attributes:
+      label: Temporal coverage (optional)
+      description: The timeframe the data covers, in the source's own terms, e.g. "1985–2024 (annual)" or "Updated monthly." Leave blank if there's no clear fixed range (e.g. a continuously-updated occurrence database).
+      placeholder: "e.g. 1985–2024 (annual)"
+    validations:
+      required: false
+  - type: input
+    id: spatial_resolution
+    attributes:
+      label: Spatial resolution (optional)
+      description: The spatial grain of the data, e.g. "30 m (Landsat-based classification)" or "Municipality level." Leave blank if a fixed resolution isn't a meaningful concept for this source.
+      placeholder: "e.g. 30 m (Landsat-based classification)"
+    validations:
+      required: false
+  - type: input
+    id: methodology_url
+    attributes:
+      label: Methodology or documentation URL (optional)
+      description: A direct link to the provider's methodology, technical note, or documentation — distinct from the publisher URL above. Must start with https:// or http://
+      placeholder: "https://provider.org/methodology"
+    validations:
+      required: false
+  - type: input
+    id: license
+    attributes:
+      label: Named license (optional)
+      description: Only fill this in when the provider explicitly names a specific open-data license (e.g. CC-BY-4.0, PDDL, ODbL). Leave blank if there's just a general terms note — that's what the access dropdown above is for.
+      placeholder: "e.g. Open Data Commons Public Domain Dedication and License (PDDL)"
+    validations:
+      required: false
   - type: checkboxes
     id: review_checks
     attributes:

@@ -127,7 +127,13 @@
     const records = getVisibleRecords();
     resultCount.textContent = `${records.length} ${records.length === 1 ? "source" : "sources"} found`;
     emptyState.hidden = records.length !== 0;
-    grid.innerHTML = records.map((record) => `
+    grid.innerHTML = records.map((record) => {
+      const detailItems = [
+        record.temporalCoverage ? `<li><strong>Timeframe:</strong> ${escapeHtml(record.temporalCoverage)}</li>` : "",
+        record.spatialResolution ? `<li><strong>Resolution:</strong> ${escapeHtml(record.spatialResolution)}</li>` : "",
+        record.license ? `<li><strong>License:</strong> ${escapeHtml(record.license)}</li>` : ""
+      ].filter(Boolean).join("");
+      return `
       <article class="dataset-card">
         <div class="card-topline">
           <span class="category-label">${escapeHtml(record.category)}</span>
@@ -136,16 +142,21 @@
         <h3>${escapeHtml(record.title)}</h3>
         <p class="provider">${escapeHtml(record.provider)}</p>
         <p class="description">${escapeHtml(record.description)}</p>
+        ${detailItems ? `<ul class="dataset-details" aria-label="Additional dataset detail">${detailItems}</ul>` : ""}
         <ul class="metadata" aria-label="Dataset metadata">
           <li>${escapeHtml(record.coverage)}</li>
           <li>${escapeHtml(record.access)}</li>
           <li>Checked ${escapeHtml(record.checked)}</li>
         </ul>
         <div class="card-actions">
-          <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
+          <div class="card-links">
+            <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
+            ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">Methodology <span class="sr-only">(opens in a new tab)</span></a>` : ""}
+          </div>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
         </div>
-      </article>`).join("");
+      </article>`;
+    }).join("");
   };
 
   // One-time structured-data injection so search engines (Google Dataset

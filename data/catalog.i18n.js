@@ -1,13 +1,18 @@
-// Translated plain-language descriptions for each data/catalog.js entry,
-// keyed by record id. Used by pt-br/app.js and es/app.js.
+// Translated content for each data/catalog.js entry, used by pt-br/app.js
+// and es/app.js. Two dictionaries: `descriptions` (keyed by record id) and
+// `spatialResolution` (keyed by the exact English value, since several
+// records share the same phrase). Keep spatialResolution in sync with the
+// distinct values actually in data/catalog.js — a stale entry here just
+// silently never matches; a missing one silently falls back to English.
 //
-// This file only carries `description`, since `title` and `provider` are
-// treated as proper names and left unchanged across locales (several are
-// already in Portuguese, e.g. "IBGE Cidades", "Terras Indígenas no Brasil").
-// `category`, `coverage`, `access`, and `kind` are NOT translated here —
-// those stay as the canonical English enum values in data/catalog.js
-// (required by data/catalog.schema.json and scripts/validate-catalog.mjs)
-// and are mapped to display labels locally inside each locale's app.js.
+// `title` and `provider` are treated as proper names and left unchanged
+// across locales (several are already in Portuguese, e.g. "IBGE Cidades",
+// "Terras Indígenas no Brasil"). `category`, `coverage`, `access`, and
+// `kind` are NOT translated here — those stay as the canonical English enum
+// values in data/catalog.js (required by data/catalog.schema.json and
+// scripts/validate-catalog.mjs) and are mapped to display labels locally
+// inside each locale's app.js. `temporalCoverage` and `license` are shown
+// as-is in every locale (not translated) — see each app.js for why.
 //
 // If a new entry is added to data/catalog.js and doesn't have a matching
 // id here yet, the locale app.js falls back to the English description
@@ -18,9 +23,13 @@ window.AMAZONIA_CATALOG_I18N = {
       "Point occurrence records; accuracy varies per record": "Registros de ocorrência; precisão varia por registro",
       "Station-level (point gauges)": "Por estação (medidores pontuais)",
       "Station-level (point observations)": "Por estação (observações pontuais)",
-      "Annual maps": "Mapas anuais",
-      "Annual alert data": "Dados de alertas anuais",
-      "Point vector locations": "Locais de vetor pontual"
+      "30 m (Landsat-based classification)": "30 m (classificação baseada em Landsat)",
+      "~30 m (PRODES, Landsat-class); down to ~250 m historically for DETER alerts": "~30 m (PRODES, classe Landsat); até ~250 m historicamente para alertas DETER",
+      "Vector boundaries (polygon/point), not a fixed pixel resolution": "Limites vetoriais (polígono/ponto), sem resolução de pixel fixa",
+      "Municipality and state level": "Nível municipal e estadual",
+      "Municipal and facility level": "Nível municipal e por unidade de saúde",
+      "Vector boundaries, multi-scale (1:10,000–1:250,000)": "Limites vetoriais, multiescala (1:10.000–1:250.000)",
+      "30 m (Landsat); Sentinel (10 m) used for visual verification": "30 m (Landsat); Sentinel (10 m) usado para verificação visual"
     },
     descriptions: {
       "gbif-species-occurrences": "Um agregador global de registros de ocorrência de espécies — espécimes de museu, observações de ciência cidadã e dados de levantamentos —, pesquisável e filtrável para a bacia amazônica.",
@@ -43,9 +52,13 @@ window.AMAZONIA_CATALOG_I18N = {
       "Point occurrence records; accuracy varies per record": "Registros de ocurrencia; precisión varía por registro",
       "Station-level (point gauges)": "Por estación (medidores puntuales)",
       "Station-level (point observations)": "Por estación (observaciones puntuales)",
-      "Annual maps": "Mapas anuales",
-      "Annual alert data": "Datos de alertas anuales",
-      "Point vector locations": "Ubicaciones de vector puntual"
+      "30 m (Landsat-based classification)": "30 m (clasificación basada en Landsat)",
+      "~30 m (PRODES, Landsat-class); down to ~250 m historically for DETER alerts": "~30 m (PRODES, clase Landsat); hasta ~250 m históricamente para alertas DETER",
+      "Vector boundaries (polygon/point), not a fixed pixel resolution": "Límites vectoriales (polígono/punto), sin resolución de píxel fija",
+      "Municipality and state level": "Nivel municipal y estatal",
+      "Municipal and facility level": "Nivel municipal y por unidad de salud",
+      "Vector boundaries, multi-scale (1:10,000–1:250,000)": "Límites vectoriales, multiescala (1:10.000–1:250.000)",
+      "30 m (Landsat); Sentinel (10 m) used for visual verification": "30 m (Landsat); Sentinel (10 m) utilizado para verificación visual"
     },
     descriptions: {
       "gbif-species-occurrences": "Un agregador global de registros de ocurrencia de especies —especímenes de museo, observaciones de ciencia ciudadana y datos de relevamientos—, con búsqueda y filtros para la cuenca amazónica.",

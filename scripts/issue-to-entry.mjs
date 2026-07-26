@@ -28,22 +28,29 @@ const slugify = (value) =>
     .replace(/(^-|-$)/g, "")
     .slice(0, 64);
 
+// Optional fields are appended only when present, in this order. Listed
+// separately from the required lines below so adding another optional
+// field later is a one-line change here, not a hand-placed comma.
+const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl", "submittedBy"];
+
 const toCatalogObject = (record) => {
-  const lines = [
-    `    id: ${JSON.stringify(record.id)},`,
-    `    title: ${JSON.stringify(record.title)},`,
-    `    provider: ${JSON.stringify(record.provider)},`,
-    `    category: ${JSON.stringify(record.category)},`,
-    `    coverage: ${JSON.stringify(record.coverage)},`,
-    `    formats: ${JSON.stringify(record.formats)},`,
-    `    access: ${JSON.stringify(record.access)},`,
-    `    kind: ${JSON.stringify(record.kind)},`,
-    `    description: ${JSON.stringify(record.description)},`,
-    `    url: ${JSON.stringify(record.url)},`,
-    `    checked: ${JSON.stringify(record.checked)}${record.submittedBy ? "," : ""}`
+  const requiredLines = [
+    `    id: ${JSON.stringify(record.id)}`,
+    `    title: ${JSON.stringify(record.title)}`,
+    `    provider: ${JSON.stringify(record.provider)}`,
+    `    category: ${JSON.stringify(record.category)}`,
+    `    coverage: ${JSON.stringify(record.coverage)}`,
+    `    formats: ${JSON.stringify(record.formats)}`,
+    `    access: ${JSON.stringify(record.access)}`,
+    `    kind: ${JSON.stringify(record.kind)}`,
+    `    description: ${JSON.stringify(record.description)}`,
+    `    url: ${JSON.stringify(record.url)}`,
+    `    checked: ${JSON.stringify(record.checked)}`
   ];
-  if (record.submittedBy) lines.push(`    submittedBy: ${JSON.stringify(record.submittedBy)}`);
-  return `  {\n${lines.join("\n")}\n  }`;
+  const optionalLines = OPTIONAL_RECORD_KEYS
+    .filter((key) => record[key])
+    .map((key) => `    ${key}: ${JSON.stringify(record[key])}`);
+  return `  {\n${[...requiredLines, ...optionalLines].join(",\n")}\n  }`;
 };
 
 const raw = process.env.ISSUEFORM_JSON;
@@ -89,6 +96,18 @@ if (!record.formats.length) {
   console.error("Data forms field parsed to an empty list.");
   process.exit(1);
 }
+
+// Optional enrichment fields. Read after the required-field check above on
+// purpose: attaching them to `record` any earlier would make a blank
+// optional field fail as though it were a missing required one.
+const temporalCoverage = (fields.temporal_coverage || "").trim();
+if (temporalCoverage) record.temporalCoverage = temporalCoverage;
+const spatialResolution = (fields.spatial_resolution || "").trim();
+if (spatialResolution) record.spatialResolution = spatialResolution;
+const methodologyUrl = (fields.methodology_url || "").trim();
+if (methodologyUrl) record.methodologyUrl = methodologyUrl;
+const license = (fields.license || "").trim();
+if (license) record.license = license;
 
 const submittedBy = (process.env.SUBMITTED_BY || "").trim();
 if (submittedBy) record.submittedBy = submittedBy;

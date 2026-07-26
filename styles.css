@@ -147,6 +147,13 @@ input::placeholder { color: var(--placeholder); }
 .cite-button { flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: none; color: var(--quiet); font-size: 0.76rem; font-weight: 650; white-space: nowrap; }
 .cite-button:hover { border-color: var(--forest); color: var(--forest); }
 .cite-button.copied { border-color: var(--moss); color: var(--moss); background: var(--sand); }
+.dataset-details { display: flex; flex-direction: column; gap: 3px; margin: 10px 0 0; padding: 0; list-style: none; }
+.dataset-details li { color: var(--quiet); font-size: 0.78rem; line-height: 1.35; }
+.dataset-details li strong { color: var(--ink); font-weight: 650; }
+.card-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.methodology-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--quiet); font-size: 0.8rem; font-weight: 650; }
+.methodology-link::after { content: "↗"; font-size: 0.95rem; }
+.methodology-link:hover { color: var(--forest); }
 .empty-state { margin: 0; padding: 34px; border: 1px dashed var(--line); color: var(--quiet); text-align: center; }
 
 .principles-section { padding: 86px 0; background: var(--panel); color: var(--on-panel); }
