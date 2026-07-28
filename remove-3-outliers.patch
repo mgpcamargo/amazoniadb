@@ -1,0 +1,98 @@
+diff --git a/data/catalog.js b/data/catalog.js
+index e38c48a..2419d47 100644
+--- a/data/catalog.js
++++ b/data/catalog.js
+@@ -266,54 +266,6 @@ window.AMAZONIA_CATALOG = [
+     temporalCoverage: "2020–2024 composite",
+     spatialResolution: "~4.78 m"
+   },
+-  {
+-    id: "trajetorias-brazilian-amazon",
+-    title: "Trajetorias — Environmental, Epidemiological & Economic Indicators for the Brazilian Amazon",
+-    provider: "Laboratório de Investigação em Sistemas Socioambientais, INPE, with a multi-institution research consortium",
+-    category: "Society, health & livelihoods",
+-    coverage: "Brazil",
+-    formats: ["CSV"],
+-    access: "Dataset-specific license",
+-    kind: "Dataset",
+-    description: "A harmonized municipality-level dataset combining land-use change, human mobility, climate anomalies, vector-borne disease burden (malaria, dengue, leishmaniasis), and multidimensional poverty indices for all municipalities of the Brazilian Legal Amazon, built from four national censuses and PRODES/DEGRAD/DETER satellite records.",
+-    url: "https://doi.org/10.5281/zenodo.7098053",
+-    checked: "2026-07-25",
+-    temporalCoverage: "2000–2017 (fixed census timestamps: 2000, 2006, 2010, 2017)",
+-    spatialResolution: "Municipality level (Brazilian Legal Amazon)",
+-    license: "Creative Commons Attribution (CC-BY)",
+-    methodologyUrl: "https://www.nature.com/articles/s41597-023-01962-1"
+-  },
+-  {
+-    id: "sentinel1-sar-airstrips-amazon",
+-    title: "Sentinel-1 SAR Imagery for Clandestine Airstrip Detection in the Brazilian Amazon",
+-    provider: "Multi-author academic collaboration (deep learning / remote sensing research group)",
+-    category: "Land use & infrastructure",
+-    coverage: "Brazil",
+-    formats: ["GeoTIFF","TXT","Shapefile"],
+-    access: "Provider terms apply",
+-    kind: "Dataset",
+-    description: "A labeled Sentinel-1 SAR benchmark built to train and evaluate deep-learning detectors for unauthorized airstrips in the Amazon, covering 2,869 catalogued airstrip locations sourced from MapBiomas. Built specifically to exploit radar's ability to see through the persistent cloud cover that limits optical-imagery monitoring.",
+-    url: "https://data.mendeley.com/datasets/x7rn78ymtn",
+-    checked: "2026-07-25",
+-    temporalCoverage: "2021–2024",
+-    spatialResolution: "Sentinel-1 10 m (Interferometric Wide swath mode)"
+-  },
+-  {
+-    id: "tiputini-uas-lidar-multispectral",
+-    title: "Comprehensive UAS Data for Amazon Rainforest at Tiputini Biodiversity Station",
+-    provider: "Purdue University, in collaboration with Universidad San Francisco de Quito and Boston University",
+-    category: "Forest & biodiversity",
+-    coverage: "Ecuador",
+-    formats: ["Cloud Optimized GeoTIFF","Cloud Optimized Point Cloud (LAZ)"],
+-    access: "Publicly available",
+-    kind: "Dataset",
+-    description: "The first large-scale, seamless, open uncrewed-aerial-system dataset for the Amazon, covering over 700 hectares of the Tiputini Biodiversity Station in Ecuador. Combines a 5 cm multispectral orthomosaic with high-density LiDAR point clouds, DTM, DSM, and canopy height model products collected within a single multi-day campaign.",
+-    url: "https://doi.org/10.4231/FV2H-VR18",
+-    checked: "2026-07-25",
+-    temporalCoverage: "Single mission, 2024–2025",
+-    spatialResolution: "5 cm (multispectral orthomosaic); >300 points/m² (LiDAR)",
+-    methodologyUrl: "https://www.nature.com/articles/s41597-026-06894-0"
+-  },
+   {
+     id: "amazon-mining-watch",
+     title: "Amazon Mining Watch",
+diff --git a/es/index.html b/es/index.html
+index 1de77bb..a2daae0 100644
+--- a/es/index.html
++++ b/es/index.html
+@@ -63,7 +63,7 @@
+           <a class="button button-secondary" href="#how-it-works">Nuestra política de enlaces</a>
+         </div>
+         <dl class="site-stats" aria-label="Resumen del directorio">
+-          <div><dt id="dataset-count">33</dt><dd>fuentes seleccionadas</dd></div>
++          <div><dt id="dataset-count">30</dt><dd>fuentes seleccionadas</dd></div>
+           <div><dt>6</dt><dd>dominios conectados</dd></div>
+         </dl>
+       </section>
+diff --git a/index.html b/index.html
+index b436988..a3d0031 100644
+--- a/index.html
++++ b/index.html
+@@ -63,7 +63,7 @@
+           <a class="button button-secondary" href="#how-it-works">Our linking policy</a>
+         </div>
+         <dl class="site-stats" aria-label="Directory summary">
+-          <div><dt id="dataset-count">33</dt><dd>curated sources</dd></div>
++          <div><dt id="dataset-count">30</dt><dd>curated sources</dd></div>
+           <div><dt>6</dt><dd>connected domains</dd></div>
+         </dl>
+       </section>
+diff --git a/pt-br/index.html b/pt-br/index.html
+index 94ec476..e110c02 100644
+--- a/pt-br/index.html
++++ b/pt-br/index.html
+@@ -63,7 +63,7 @@
+           <a class="button button-secondary" href="#how-it-works">Nossa política de links</a>
+         </div>
+         <dl class="site-stats" aria-label="Resumo do diretório">
+-          <div><dt id="dataset-count">33</dt><dd>fontes selecionadas</dd></div>
++          <div><dt id="dataset-count">30</dt><dd>fontes selecionadas</dd></div>
+           <div><dt>6</dt><dd>domínios conectados</dd></div>
+         </dl>
+       </section>

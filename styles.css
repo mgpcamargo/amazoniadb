@@ -140,21 +140,24 @@ input::placeholder { color: var(--placeholder); }
 .description { margin-bottom: 18px; color: var(--quiet); font-size: 0.91rem; line-height: 1.52; }
 .metadata { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 16px; padding: 0; list-style: none; }
 .metadata li { border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; color: var(--quiet); font-size: 0.72rem; line-height: 1.1; }
+.metadata li a { color: var(--forest); text-decoration: underline; text-underline-offset: 0.16em; }
+.citation-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.cite-button, .bibtex-button { flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: none; color: var(--quiet); font-size: 0.76rem; font-weight: 650; white-space: nowrap; }
+.cite-button:hover, .bibtex-button:hover { border-color: var(--forest); color: var(--forest); }
+.cite-button.copied, .bibtex-button.copied { border-color: var(--moss); color: var(--moss); background: var(--sand); }
 .card-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.dataset-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--forest); font-size: 0.88rem; font-weight: 780; }
+.dataset-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--forest); font-size: 0.88rem; font-weight: 780; text-decoration: none; }
 .dataset-link::after { content: "↗"; font-size: 1rem; }
 .dataset-link:hover { color: var(--focus); }
-.cite-button { flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: none; color: var(--quiet); font-size: 0.76rem; font-weight: 650; white-space: nowrap; }
-.cite-button:hover { border-color: var(--forest); color: var(--forest); }
-.cite-button.copied { border-color: var(--moss); color: var(--moss); background: var(--sand); }
 .dataset-details { display: flex; flex-direction: column; gap: 3px; margin: 10px 0 0; padding: 0; list-style: none; }
 .dataset-details li { color: var(--quiet); font-size: 0.78rem; line-height: 1.35; }
 .dataset-details li strong { color: var(--ink); font-weight: 650; }
-.card-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.methodology-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--quiet); font-size: 0.8rem; font-weight: 650; }
+.card-links { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.methodology-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--quiet); font-size: 0.8rem; font-weight: 650; text-decoration: none; }
 .methodology-link::after { content: "↗"; font-size: 0.95rem; }
 .methodology-link:hover { color: var(--forest); }
 .empty-state { margin: 0; padding: 34px; border: 1px dashed var(--line); color: var(--quiet); text-align: center; }
+.empty-state a { color: var(--forest); font-weight: 700; text-decoration: underline; text-underline-offset: 0.16em; }
 
 .principles-section { padding: 86px 0; background: var(--panel); color: var(--on-panel); }
 .principles-section h2 { color: #fff; max-width: 480px; }

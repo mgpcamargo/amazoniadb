@@ -18,24 +18,32 @@
     .replace(/(^-|-$)/g, "")
     .slice(0, 64);
 
-  const toCatalogObject = (record) => `{
-  id: "${record.id}",
-  title: ${JSON.stringify(record.title)},
-  provider: ${JSON.stringify(record.provider)},
-  category: ${JSON.stringify(record.category)},
-  coverage: ${JSON.stringify(record.coverage)},
-  formats: ${JSON.stringify(record.formats)},
-  access: ${JSON.stringify(record.access)},
-  kind: ${JSON.stringify(record.kind)},
-  description: ${JSON.stringify(record.description)},
-  url: ${JSON.stringify(record.url)},
-  checked: ${JSON.stringify(record.checked)}
-}`;
+  const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl"];
+
+  const toCatalogObject = (record) => {
+    const requiredLines = [
+      `  id: "${record.id}"`,
+      `  title: ${JSON.stringify(record.title)}`,
+      `  provider: ${JSON.stringify(record.provider)}`,
+      `  category: ${JSON.stringify(record.category)}`,
+      `  coverage: ${JSON.stringify(record.coverage)}`,
+      `  formats: ${JSON.stringify(record.formats)}`,
+      `  access: ${JSON.stringify(record.access)}`,
+      `  kind: ${JSON.stringify(record.kind)}`,
+      `  description: ${JSON.stringify(record.description)}`,
+      `  url: ${JSON.stringify(record.url)}`,
+      `  checked: ${JSON.stringify(record.checked)}`
+    ];
+    const optionalLines = OPTIONAL_RECORD_KEYS
+      .filter((key) => record[key])
+      .map((key) => `  ${key}: ${JSON.stringify(record[key])}`);
+    return `{\n${[...requiredLines, ...optionalLines].join(",\n")}\n}`;
+  };
 
   const generateRecord = () => {
     const values = new FormData(form);
     const id = slugify(values.get("title"));
-    return {
+    const record = {
       id,
       title: values.get("title").trim(),
       provider: values.get("provider").trim(),
@@ -48,6 +56,11 @@
       url: values.get("url").trim(),
       checked: new Date().toISOString().slice(0, 10)
     };
+    for (const key of OPTIONAL_RECORD_KEYS) {
+      const value = (values.get(key) || "").trim();
+      if (value) record[key] = value;
+    }
+    return record;
   };
 
   const showRecord = (record) => {

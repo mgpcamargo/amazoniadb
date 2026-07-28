@@ -30,6 +30,8 @@ Add an object to `data/catalog.js`. Every entry should have:
 - a direct `url` to the publisher's dataset or repository page;
 - `coverage`, `formats`, `access`, `kind`, a plain-language `description`, and a `checked` date.
 
+Optionally, an entry can also carry `temporalCoverage`, `spatialResolution`, `license`, and `methodologyUrl` — each shown on the card when present, and each collected (as optional fields) by both `submit.html` and the GitHub issue submission form. Omit rather than guess when one doesn't apply.
+
 Use only a page controlled by the original publisher. Do not imply a dataset is open, downloadable, or redistributable without checking its terms. Do not add sensitive locations, personal data, or community knowledge that should not be indexed.
 
 Run the catalog check after an edit:

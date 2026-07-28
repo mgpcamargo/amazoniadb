@@ -1,0 +1,1010 @@
+diff --git a/README.md b/README.md
+index 7faedeb..533db7f 100644
+--- a/README.md
++++ b/README.md
+@@ -30,6 +30,8 @@ Add an object to `data/catalog.js`. Every entry should have:
+ - a direct `url` to the publisher's dataset or repository page;
+ - `coverage`, `formats`, `access`, `kind`, a plain-language `description`, and a `checked` date.
+ 
++Optionally, an entry can also carry `temporalCoverage`, `spatialResolution`, `license`, and `methodologyUrl` — each shown on the card when present, and each collected (as optional fields) by both `submit.html` and the GitHub issue submission form. Omit rather than guess when one doesn't apply.
++
+ Use only a page controlled by the original publisher. Do not imply a dataset is open, downloadable, or redistributable without checking its terms. Do not add sensitive locations, personal data, or community knowledge that should not be indexed.
+ 
+ Run the catalog check after an edit:
+diff --git a/app.js b/app.js
+index 8b057ca..fbde96a 100644
+--- a/app.js
++++ b/app.js
+@@ -1,5 +1,22 @@
+ (() => {
+   const catalog = window.AMAZONIA_CATALOG || [];
++
++  // Precomputed once per record, not per keystroke, so filtering stays cheap
++  // as the catalog grows toward the "thousands of sources" this is designed
++  // for. Includes the optional enrichment fields (temporal coverage, spatial
++  // resolution, license) so a search for something like "Landsat" or "CC-BY"
++  // matches text that's now actually visible on the card, not just the
++  // always-present required fields. methodologyUrl is left out on purpose —
++  // it's a URL, not text anyone searches for, and including it risked noisy
++  // matches on unrelated URL fragments.
++  catalog.forEach((record) => {
++    record._searchBlob = [
++      record.title, record.provider, record.category, record.coverage,
++      record.description, record.temporalCoverage, record.spatialResolution,
++      record.license, ...record.formats
++    ].filter(Boolean).join(" ").toLocaleLowerCase();
++  });
++
+   const categories = [
+     { name: "Forest & biodiversity", note: "Species, habitats, forest condition" },
+     { name: "Earth, water & climate", note: "Weather, rivers, bedrock, extremes" },
+@@ -13,6 +30,7 @@
+   const domainNav = document.getElementById("domain-nav");
+   const grid = document.getElementById("dataset-grid");
+   const emptyState = document.getElementById("empty-state");
++  const emptyStateDefaultHtml = emptyState.innerHTML;
+   const resultCount = document.getElementById("result-count");
+   const count = document.getElementById("dataset-count");
+   const search = document.getElementById("search");
+@@ -50,6 +68,65 @@
+     .replaceAll('"', "&quot;")
+     .replaceAll("'", "&#039;");
+ 
++  // Coalesces rapid keystrokes into a single re-render instead of one per
++  // character typed.
++  const debounce = (fn, delay) => {
++    let timeoutId;
++    return (...args) => {
++      window.clearTimeout(timeoutId);
++      timeoutId = window.setTimeout(() => fn(...args), delay);
++    };
++  };
++
++  const escapeBibtex = (value) => String(value)
++    .replaceAll("\\", "\\textbackslash{}")
++    .replaceAll("{", "\\{")
++    .replaceAll("}", "\\}")
++    .replaceAll("&", "\\&")
++    .replaceAll("%", "\\%")
++    .replaceAll("$", "\\$")
++    .replaceAll("#", "\\#")
++    .replaceAll("_", "\\_")
++    .replaceAll("~", "\\textasciitilde{}")
++    .replaceAll("^", "\\textasciicircum{}");
++
++  // record.url goes inside \url{...} unescaped on purpose — that command
++  // (from the url/hyperref packages almost everyone's BibTeX setup already
++  // has) reads its argument close to verbatim, so escaping it would corrupt
++  // the link instead of protecting it.
++  const buildBibtex = (record) => `@misc{${record.id},
++  title        = {${escapeBibtex(record.title)}},
++  author       = {${escapeBibtex(record.provider)}},
++  howpublished = {\\url{${record.url}}},
++  year         = {${record.checked.slice(0, 4)}},
++  note         = {Accessed via AmazoniaDB, ${record.checked}}
++}`;
++
++  const downloadFile = (filename, content, mimeType) => {
++    const blob = new Blob([content], { type: mimeType });
++    const url = URL.createObjectURL(blob);
++    const link = document.createElement("a");
++    link.href = url;
++    link.download = filename;
++    document.body.appendChild(link);
++    link.click();
++    link.remove();
++    URL.revokeObjectURL(url);
++  };
++
++  const toCsvValue = (value) => {
++    const str = Array.isArray(value) ? value.join("; ") : String(value ?? "");
++    const escaped = str.replaceAll('"', '""');
++    return /[",\n]/.test(str) ? `"${escaped}"` : escaped;
++  };
++
++  const CSV_COLUMNS = ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked", "temporalCoverage", "spatialResolution", "license", "methodologyUrl", "submittedBy"];
++
++  const catalogToCsv = () => {
++    const rows = catalog.map((record) => CSV_COLUMNS.map((column) => toCsvValue(record[column])).join(","));
++    return [CSV_COLUMNS.join(","), ...rows].join("\n");
++  };
++
+   // Clipboard helper shared by the "copy link to this view" and "cite" buttons.
+   // Falls back to a hidden textarea + execCommand for older browsers.
+   const copyToClipboard = async (text) => {
+@@ -112,21 +189,26 @@
+ 
+   const getVisibleRecords = () => {
+     const query = state.search.trim().toLocaleLowerCase();
+-    return catalog.filter((record) => {
+-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, ...record.formats]
+-        .join(" ")
+-        .toLocaleLowerCase();
+-      return (!state.category || record.category === state.category)
+-        && (!state.coverage || record.coverage === state.coverage)
+-        && (!state.access || record.access === state.access)
+-        && (!query || searchText.includes(query));
+-    });
++    return catalog.filter((record) => (!state.category || record.category === state.category)
++      && (!state.coverage || record.coverage === state.coverage)
++      && (!state.access || record.access === state.access)
++      && (!query || record._searchBlob.includes(query)));
+   };
+ 
+   const renderCatalog = () => {
+     const records = getVisibleRecords();
+     resultCount.textContent = `${records.length} ${records.length === 1 ? "source" : "sources"} found`;
+     emptyState.hidden = records.length !== 0;
++    if (records.length === 0) {
++      // Colombia/Bolivia are real filter options with zero matching records
++      // right now. Rather than a generic "no matches" for what's actually a
++      // known catalog gap, name it and point at the same submit flow the
++      // category gap-prompt above already uses.
++      const coverageTotal = state.coverage ? catalog.filter((record) => record.coverage === state.coverage).length : null;
++      emptyState.innerHTML = coverageTotal === 0
++        ? `${escapeHtml(state.coverage)} isn't covered yet — know a source? <a href="submit.html">Propose one →</a>`
++        : emptyStateDefaultHtml;
++    }
+     grid.innerHTML = records.map((record) => {
+       const detailItems = [
+         record.temporalCoverage ? `<li><strong>Timeframe:</strong> ${escapeHtml(record.temporalCoverage)}</li>` : "",
+@@ -147,13 +229,19 @@
+           <li>${escapeHtml(record.coverage)}</li>
+           <li>${escapeHtml(record.access)}</li>
+           <li>Checked ${escapeHtml(record.checked)}</li>
++          <li>${record.submittedBy
++            ? `Community-submitted, schema-valid — <a href="https://github.com/${escapeHtml(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
++            : "Editorially reviewed"}</li>
+         </ul>
+         <div class="card-actions">
+           <div class="card-links">
+             <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
+             ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">Methodology <span class="sr-only">(opens in a new tab)</span></a>` : ""}
+           </div>
+-          <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
++          <div class="citation-actions">
++            <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
++            <button class="bibtex-button" type="button" data-bibtex-id="${escapeHtml(record.id)}">BibTeX</button>
++          </div>
+         </div>
+       </article>`;
+     }).join("");
+@@ -177,7 +265,7 @@
+         "url": record.url,
+         "keywords": [record.category, record.coverage],
+         "provider": { "@type": "Organization", "name": record.provider },
+-        "license": record.access,
++        "license": record.license || record.access,
+         "isAccessibleForFree": record.access === "Publicly available",
+         "dateModified": record.checked,
+         "distribution": record.formats.map((format) => ({ "@type": "DataDownload", "encodingFormat": format }))
+@@ -199,11 +287,12 @@
+     document.getElementById("catalog").scrollIntoView({ behavior: "smooth", block: "start" });
+   });
+ 
+-  search.addEventListener("input", () => {
++  const applySearch = debounce(() => {
+     state.search = search.value;
+     renderCatalog();
+     syncUrl();
+-  });
++  }, 150);
++  search.addEventListener("input", applySearch);
+ 
+   coverage.addEventListener("change", () => {
+     state.coverage = coverage.value;
+@@ -234,7 +323,24 @@
+     flashConfirmation(copyLinkButton, ok ? "Link copied" : "Couldn't copy", original);
+   });
+ 
++  document.getElementById("export-json")?.addEventListener("click", () => {
++    downloadFile("amazoniadb-catalog.json", JSON.stringify(catalog, null, 2), "application/json");
++  });
++
++  document.getElementById("export-csv")?.addEventListener("click", () => {
++    downloadFile("amazoniadb-catalog.csv", catalogToCsv(), "text/csv;charset=utf-8");
++  });
++
+   grid.addEventListener("click", async (event) => {
++    const bibtexButton = event.target.closest("button[data-bibtex-id]");
++    if (bibtexButton) {
++      const record = catalog.find((entry) => entry.id === bibtexButton.dataset.bibtexId);
++      if (record) {
++        const ok = await copyToClipboard(buildBibtex(record));
++        flashConfirmation(bibtexButton, ok ? "Copied" : "Couldn't copy", "BibTeX");
++      }
++      return;
++    }
+     const citeButton = event.target.closest("button[data-cite-id]");
+     if (!citeButton) return;
+     const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
+diff --git a/es/app.js b/es/app.js
+index 302958f..fdda139 100644
+--- a/es/app.js
++++ b/es/app.js
+@@ -3,6 +3,21 @@
+   const i18n = (window.AMAZONIA_CATALOG_I18N && window.AMAZONIA_CATALOG_I18N["es"]) || { descriptions: {}, spatialResolution: {} };
+   const spatialResolutionLabels = i18n.spatialResolution || {};
+ 
++  // Precomputed once per record, not per keystroke — see app.js for why.
++  // Uses the same translated text shown on the card (description, spatial
++  // resolution) so a search matches what's actually visible here, not just
++  // the underlying English source values. methodologyUrl is left out on
++  // purpose — it's a URL, not text anyone searches for.
++  catalog.forEach((record) => {
++    record._searchBlob = [
++      record.title, record.provider, record.category, record.coverage,
++      i18n.descriptions[record.id] || record.description,
++      record.temporalCoverage,
++      spatialResolutionLabels[record.spatialResolution] || record.spatialResolution,
++      record.license, ...record.formats
++    ].filter(Boolean).join(" ").toLocaleLowerCase();
++  });
++
+   // `key` matches record.category/coverage/access/kind exactly as stored in
+   // ../data/catalog.js (the canonical English values required by
+   // data/catalog.schema.json) — only `label`/`note` are shown to the user.
+@@ -28,6 +43,7 @@
+   const domainNav = document.getElementById("domain-nav");
+   const grid = document.getElementById("dataset-grid");
+   const emptyState = document.getElementById("empty-state");
++  const emptyStateDefaultHtml = emptyState.innerHTML;
+   const resultCount = document.getElementById("result-count");
+   const count = document.getElementById("dataset-count");
+   const search = document.getElementById("search");
+@@ -65,6 +81,61 @@
+     .replaceAll('"', "&quot;")
+     .replaceAll("'", "&#039;");
+ 
++  // Coalesces rapid keystrokes into a single re-render instead of one per
++  // character typed.
++  const debounce = (fn, delay) => {
++    let timeoutId;
++    return (...args) => {
++      window.clearTimeout(timeoutId);
++      timeoutId = window.setTimeout(() => fn(...args), delay);
++    };
++  };
++
++  const escapeBibtex = (value) => String(value)
++    .replaceAll("\\", "\\textbackslash{}")
++    .replaceAll("{", "\\{")
++    .replaceAll("}", "\\}")
++    .replaceAll("&", "\\&")
++    .replaceAll("%", "\\%")
++    .replaceAll("$", "\\$")
++    .replaceAll("#", "\\#")
++    .replaceAll("_", "\\_")
++    .replaceAll("~", "\\textasciitilde{}")
++    .replaceAll("^", "\\textasciicircum{}");
++
++  const buildBibtex = (record) => `@misc{${record.id},
++  title        = {${escapeBibtex(record.title)}},
++  author       = {${escapeBibtex(record.provider)}},
++  howpublished = {\\url{${record.url}}},
++  year         = {${record.checked.slice(0, 4)}},
++  note         = {Consultado vía AmazoniaDB el ${record.checked}}
++}`;
++
++  const downloadFile = (filename, content, mimeType) => {
++    const blob = new Blob([content], { type: mimeType });
++    const url = URL.createObjectURL(blob);
++    const link = document.createElement("a");
++    link.href = url;
++    link.download = filename;
++    document.body.appendChild(link);
++    link.click();
++    link.remove();
++    URL.revokeObjectURL(url);
++  };
++
++  const toCsvValue = (value) => {
++    const str = Array.isArray(value) ? value.join("; ") : String(value ?? "");
++    const escaped = str.replaceAll('"', '""');
++    return /[",\n]/.test(str) ? `"${escaped}"` : escaped;
++  };
++
++  const CSV_COLUMNS = ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked", "temporalCoverage", "spatialResolution", "license", "methodologyUrl", "submittedBy"];
++
++  const catalogToCsv = () => {
++    const rows = catalog.map((record) => CSV_COLUMNS.map((column) => toCsvValue(record[column])).join(","));
++    return [CSV_COLUMNS.join(","), ...rows].join("\n");
++  };
++
+   // Clipboard helper shared by the "copy link to this view" and "cite" buttons.
+   // Falls back to a hidden textarea + execCommand for older browsers.
+   const copyToClipboard = async (text) => {
+@@ -127,21 +198,26 @@
+ 
+   const getVisibleRecords = () => {
+     const query = state.search.trim().toLocaleLowerCase();
+-    return catalog.filter((record) => {
+-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], ...record.formats]
+-        .join(" ")
+-        .toLocaleLowerCase();
+-      return (!state.category || record.category === state.category)
+-        && (!state.coverage || record.coverage === state.coverage)
+-        && (!state.access || record.access === state.access)
+-        && (!query || searchText.includes(query));
+-    });
++    return catalog.filter((record) => (!state.category || record.category === state.category)
++      && (!state.coverage || record.coverage === state.coverage)
++      && (!state.access || record.access === state.access)
++      && (!query || record._searchBlob.includes(query)));
+   };
+ 
+   const renderCatalog = () => {
+     const records = getVisibleRecords();
+     resultCount.textContent = `${records.length} ${records.length === 1 ? "fuente encontrada" : "fuentes encontradas"}`;
+     emptyState.hidden = records.length !== 0;
++    if (records.length === 0) {
++      // Colombia/Bolivia are real filter options with zero matching records
++      // right now. Rather than a generic "no matches" for what's actually a
++      // known catalog gap, name it and point at the same submit flow the
++      // category gap-prompt above already uses.
++      const coverageTotal = state.coverage ? catalog.filter((record) => record.coverage === state.coverage).length : null;
++      emptyState.innerHTML = coverageTotal === 0
++        ? `Todavía no hay fuentes para ${escapeHtml(coverageLabels[state.coverage] || state.coverage)} — ¿conoces una? <a href="submit.html">Proponer una fuente →</a>`
++        : emptyStateDefaultHtml;
++    }
+     grid.innerHTML = records.map((record) => {
+       const detailItems = [
+         record.temporalCoverage ? `<li><strong>${detailLabels.timeframe}:</strong> ${escapeHtml(record.temporalCoverage)}</li>` : "",
+@@ -162,13 +238,19 @@
+           <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
+           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
+           <li>Verificado el ${escapeHtml(record.checked)}</li>
++          <li>${record.submittedBy
++            ? `Enviado por la comunidad, validado por el schema — <a href="https://github.com/${escapeHtml(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
++            : "Revisión editorial"}</li>
+         </ul>
+         <div class="card-actions">
+           <div class="card-links">
+             <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir en la fuente <span class="sr-only">(se abre en una pestaña nueva)</span></a>
+             ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">${detailLabels.methodology} <span class="sr-only">(se abre en una pestaña nueva)</span></a>` : ""}
+           </div>
+-          <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
++          <div class="citation-actions">
++            <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
++            <button class="bibtex-button" type="button" data-bibtex-id="${escapeHtml(record.id)}">BibTeX</button>
++          </div>
+         </div>
+       </article>`;
+     }).join("");
+@@ -192,7 +274,7 @@
+         "url": record.url,
+         "keywords": [categoryLabels[record.category] || record.category, coverageLabels[record.coverage] || record.coverage],
+         "provider": { "@type": "Organization", "name": record.provider },
+-        "license": accessLabels[record.access] || record.access,
++        "license": record.license || accessLabels[record.access] || record.access,
+         "isAccessibleForFree": record.access === "Publicly available",
+         "dateModified": record.checked,
+         "distribution": record.formats.map((format) => ({ "@type": "DataDownload", "encodingFormat": format }))
+@@ -214,11 +296,12 @@
+     document.getElementById("catalog").scrollIntoView({ behavior: "smooth", block: "start" });
+   });
+ 
+-  search.addEventListener("input", () => {
++  const applySearch = debounce(() => {
+     state.search = search.value;
+     renderCatalog();
+     syncUrl();
+-  });
++  }, 150);
++  search.addEventListener("input", applySearch);
+ 
+   coverage.addEventListener("change", () => {
+     state.coverage = coverage.value;
+@@ -249,7 +332,24 @@
+     flashConfirmation(copyLinkButton, ok ? "Enlace copiado" : "No se pudo copiar", original);
+   });
+ 
++  document.getElementById("export-json")?.addEventListener("click", () => {
++    downloadFile("amazoniadb-catalog.json", JSON.stringify(catalog, null, 2), "application/json");
++  });
++
++  document.getElementById("export-csv")?.addEventListener("click", () => {
++    downloadFile("amazoniadb-catalog.csv", catalogToCsv(), "text/csv;charset=utf-8");
++  });
++
+   grid.addEventListener("click", async (event) => {
++    const bibtexButton = event.target.closest("button[data-bibtex-id]");
++    if (bibtexButton) {
++      const record = catalog.find((entry) => entry.id === bibtexButton.dataset.bibtexId);
++      if (record) {
++        const ok = await copyToClipboard(buildBibtex(record));
++        flashConfirmation(bibtexButton, ok ? "Copiado" : "No se pudo copiar", "BibTeX");
++      }
++      return;
++    }
+     const citeButton = event.target.closest("button[data-cite-id]");
+     if (!citeButton) return;
+     const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
+diff --git a/es/index.html b/es/index.html
+index 1de77bb..c352fd9 100644
+--- a/es/index.html
++++ b/es/index.html
+@@ -88,6 +88,8 @@
+           <div class="catalog-heading-meta">
+             <p id="result-count" class="result-count" aria-live="polite"></p>
+             <button id="copy-view-link" class="text-button copy-link-button" type="button">Copiar enlace a esta vista</button>
++            <button id="export-json" class="text-button" type="button">Exportar JSON</button>
++            <button id="export-csv" class="text-button" type="button">Exportar CSV</button>
+           </div>
+         </div>
+ 
+@@ -124,7 +126,7 @@
+           <button id="clear-filters" class="text-button" type="reset">Limpiar filtros</button>
+         </form>
+ 
+-        <div id="dataset-grid" class="dataset-grid" aria-live="polite"></div>
++        <div id="dataset-grid" class="dataset-grid"></div>
+         <p id="empty-state" class="empty-state" hidden>Ninguna fuente coincide con esos filtros. Prueba una búsqueda más amplia.</p>
+       </section>
+ 
+diff --git a/es/submit.html b/es/submit.html
+index 055b90b..871072b 100644
+--- a/es/submit.html
++++ b/es/submit.html
+@@ -130,6 +130,26 @@
+               <input id="formats" name="formats" type="text" placeholder="ej.: GeoTIFF, CSV, API" required>
+               <small>Separa los formatos con comas.</small>
+             </label>
++            <label class="wide-field" for="temporalCoverage">
++              <span>Cobertura temporal (opcional)</span>
++              <input id="temporalCoverage" name="temporalCoverage" type="text" placeholder="ej.: 1985–2024 (anual)">
++              <small>Déjalo en blanco si no hay un rango fijo claro.</small>
++            </label>
++            <label class="wide-field" for="spatialResolution">
++              <span>Resolución espacial (opcional)</span>
++              <input id="spatialResolution" name="spatialResolution" type="text" placeholder="ej.: 30 m (clasificación basada en Landsat)">
++              <small>Déjalo en blanco si una resolución fija no es un concepto relevante para esta fuente.</small>
++            </label>
++            <label class="wide-field" for="methodologyUrl">
++              <span>URL de metodología o documentación (opcional)</span>
++              <input id="methodologyUrl" name="methodologyUrl" type="url" inputmode="url" pattern="https?://.*" placeholder="https://proveedor.org/metodologia">
++              <small>Distinta de la URL de la publicadora indicada arriba.</small>
++            </label>
++            <label class="wide-field" for="license">
++              <span>Licencia nombrada (opcional)</span>
++              <input id="license" name="license" type="text" placeholder="ej.: Creative Commons Atribución 4.0 (CC-BY-4.0)">
++              <small>Solo cuando el proveedor nombra una licencia de datos abiertos específica — una nota general de términos va en el menú de acceso de arriba.</small>
++            </label>
+             <label class="wide-field" for="description">
+               <span>Descripción en lenguaje sencillo *</span>
+               <textarea id="description" name="description" rows="4" minlength="20" placeholder="Describe qué contiene la fuente y cómo puede usarse en el contexto amazónico." required></textarea>
+diff --git a/es/submit.js b/es/submit.js
+index da18e56..999ec7a 100644
+--- a/es/submit.js
++++ b/es/submit.js
+@@ -18,24 +18,32 @@
+     .replace(/(^-|-$)/g, "")
+     .slice(0, 64);
+ 
+-  const toCatalogObject = (record) => `{
+-  id: "${record.id}",
+-  title: ${JSON.stringify(record.title)},
+-  provider: ${JSON.stringify(record.provider)},
+-  category: ${JSON.stringify(record.category)},
+-  coverage: ${JSON.stringify(record.coverage)},
+-  formats: ${JSON.stringify(record.formats)},
+-  access: ${JSON.stringify(record.access)},
+-  kind: ${JSON.stringify(record.kind)},
+-  description: ${JSON.stringify(record.description)},
+-  url: ${JSON.stringify(record.url)},
+-  checked: ${JSON.stringify(record.checked)}
+-}`;
++  const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl"];
++
++  const toCatalogObject = (record) => {
++    const requiredLines = [
++      `  id: "${record.id}"`,
++      `  title: ${JSON.stringify(record.title)}`,
++      `  provider: ${JSON.stringify(record.provider)}`,
++      `  category: ${JSON.stringify(record.category)}`,
++      `  coverage: ${JSON.stringify(record.coverage)}`,
++      `  formats: ${JSON.stringify(record.formats)}`,
++      `  access: ${JSON.stringify(record.access)}`,
++      `  kind: ${JSON.stringify(record.kind)}`,
++      `  description: ${JSON.stringify(record.description)}`,
++      `  url: ${JSON.stringify(record.url)}`,
++      `  checked: ${JSON.stringify(record.checked)}`
++    ];
++    const optionalLines = OPTIONAL_RECORD_KEYS
++      .filter((key) => record[key])
++      .map((key) => `  ${key}: ${JSON.stringify(record[key])}`);
++    return `{\n${[...requiredLines, ...optionalLines].join(",\n")}\n}`;
++  };
+ 
+   const generateRecord = () => {
+     const values = new FormData(form);
+     const id = slugify(values.get("title"));
+-    return {
++    const record = {
+       id,
+       title: values.get("title").trim(),
+       provider: values.get("provider").trim(),
+@@ -48,6 +56,11 @@
+       url: values.get("url").trim(),
+       checked: new Date().toISOString().slice(0, 10)
+     };
++    for (const key of OPTIONAL_RECORD_KEYS) {
++      const value = (values.get(key) || "").trim();
++      if (value) record[key] = value;
++    }
++    return record;
+   };
+ 
+   const showRecord = (record) => {
+diff --git a/index.html b/index.html
+index b436988..a8353ab 100644
+--- a/index.html
++++ b/index.html
+@@ -88,6 +88,8 @@
+           <div class="catalog-heading-meta">
+             <p id="result-count" class="result-count" aria-live="polite"></p>
+             <button id="copy-view-link" class="text-button copy-link-button" type="button">Copy link to this view</button>
++            <button id="export-json" class="text-button" type="button">Export JSON</button>
++            <button id="export-csv" class="text-button" type="button">Export CSV</button>
+           </div>
+         </div>
+ 
+@@ -124,7 +126,7 @@
+           <button id="clear-filters" class="text-button" type="reset">Clear filters</button>
+         </form>
+ 
+-        <div id="dataset-grid" class="dataset-grid" aria-live="polite"></div>
++        <div id="dataset-grid" class="dataset-grid"></div>
+         <p id="empty-state" class="empty-state" hidden>No sources match those filters. Try a broader search.</p>
+       </section>
+ 
+diff --git a/pt-br/app.js b/pt-br/app.js
+index 3353567..1ac3524 100644
+--- a/pt-br/app.js
++++ b/pt-br/app.js
+@@ -3,6 +3,21 @@
+   const i18n = (window.AMAZONIA_CATALOG_I18N && window.AMAZONIA_CATALOG_I18N["pt-BR"]) || { descriptions: {}, spatialResolution: {} };
+   const spatialResolutionLabels = i18n.spatialResolution || {};
+ 
++  // Precomputed once per record, not per keystroke — see app.js for why.
++  // Uses the same translated text shown on the card (description, spatial
++  // resolution) so a search matches what's actually visible here, not just
++  // the underlying English source values. methodologyUrl is left out on
++  // purpose — it's a URL, not text anyone searches for.
++  catalog.forEach((record) => {
++    record._searchBlob = [
++      record.title, record.provider, record.category, record.coverage,
++      i18n.descriptions[record.id] || record.description,
++      record.temporalCoverage,
++      spatialResolutionLabels[record.spatialResolution] || record.spatialResolution,
++      record.license, ...record.formats
++    ].filter(Boolean).join(" ").toLocaleLowerCase();
++  });
++
+   // `key` matches record.category/coverage/access/kind exactly as stored in
+   // ../data/catalog.js (the canonical English values required by
+   // data/catalog.schema.json) — only `label`/`note` are shown to the user.
+@@ -28,6 +43,7 @@
+   const domainNav = document.getElementById("domain-nav");
+   const grid = document.getElementById("dataset-grid");
+   const emptyState = document.getElementById("empty-state");
++  const emptyStateDefaultHtml = emptyState.innerHTML;
+   const resultCount = document.getElementById("result-count");
+   const count = document.getElementById("dataset-count");
+   const search = document.getElementById("search");
+@@ -65,6 +81,61 @@
+     .replaceAll('"', "&quot;")
+     .replaceAll("'", "&#039;");
+ 
++  // Coalesces rapid keystrokes into a single re-render instead of one per
++  // character typed.
++  const debounce = (fn, delay) => {
++    let timeoutId;
++    return (...args) => {
++      window.clearTimeout(timeoutId);
++      timeoutId = window.setTimeout(() => fn(...args), delay);
++    };
++  };
++
++  const escapeBibtex = (value) => String(value)
++    .replaceAll("\\", "\\textbackslash{}")
++    .replaceAll("{", "\\{")
++    .replaceAll("}", "\\}")
++    .replaceAll("&", "\\&")
++    .replaceAll("%", "\\%")
++    .replaceAll("$", "\\$")
++    .replaceAll("#", "\\#")
++    .replaceAll("_", "\\_")
++    .replaceAll("~", "\\textasciitilde{}")
++    .replaceAll("^", "\\textasciicircum{}");
++
++  const buildBibtex = (record) => `@misc{${record.id},
++  title        = {${escapeBibtex(record.title)}},
++  author       = {${escapeBibtex(record.provider)}},
++  howpublished = {\\url{${record.url}}},
++  year         = {${record.checked.slice(0, 4)}},
++  note         = {Acessado via AmazoniaDB em ${record.checked}}
++}`;
++
++  const downloadFile = (filename, content, mimeType) => {
++    const blob = new Blob([content], { type: mimeType });
++    const url = URL.createObjectURL(blob);
++    const link = document.createElement("a");
++    link.href = url;
++    link.download = filename;
++    document.body.appendChild(link);
++    link.click();
++    link.remove();
++    URL.revokeObjectURL(url);
++  };
++
++  const toCsvValue = (value) => {
++    const str = Array.isArray(value) ? value.join("; ") : String(value ?? "");
++    const escaped = str.replaceAll('"', '""');
++    return /[",\n]/.test(str) ? `"${escaped}"` : escaped;
++  };
++
++  const CSV_COLUMNS = ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked", "temporalCoverage", "spatialResolution", "license", "methodologyUrl", "submittedBy"];
++
++  const catalogToCsv = () => {
++    const rows = catalog.map((record) => CSV_COLUMNS.map((column) => toCsvValue(record[column])).join(","));
++    return [CSV_COLUMNS.join(","), ...rows].join("\n");
++  };
++
+   // Clipboard helper shared by the "copy link to this view" and "cite" buttons.
+   // Falls back to a hidden textarea + execCommand for older browsers.
+   const copyToClipboard = async (text) => {
+@@ -127,21 +198,26 @@
+ 
+   const getVisibleRecords = () => {
+     const query = state.search.trim().toLocaleLowerCase();
+-    return catalog.filter((record) => {
+-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], ...record.formats]
+-        .join(" ")
+-        .toLocaleLowerCase();
+-      return (!state.category || record.category === state.category)
+-        && (!state.coverage || record.coverage === state.coverage)
+-        && (!state.access || record.access === state.access)
+-        && (!query || searchText.includes(query));
+-    });
++    return catalog.filter((record) => (!state.category || record.category === state.category)
++      && (!state.coverage || record.coverage === state.coverage)
++      && (!state.access || record.access === state.access)
++      && (!query || record._searchBlob.includes(query)));
+   };
+ 
+   const renderCatalog = () => {
+     const records = getVisibleRecords();
+     resultCount.textContent = `${records.length} ${records.length === 1 ? "fonte encontrada" : "fontes encontradas"}`;
+     emptyState.hidden = records.length !== 0;
++    if (records.length === 0) {
++      // Colombia/Bolivia are real filter options with zero matching records
++      // right now. Rather than a generic "no matches" for what's actually a
++      // known catalog gap, name it and point at the same submit flow the
++      // category gap-prompt above already uses.
++      const coverageTotal = state.coverage ? catalog.filter((record) => record.coverage === state.coverage).length : null;
++      emptyState.innerHTML = coverageTotal === 0
++        ? `Ainda não há fontes para ${escapeHtml(coverageLabels[state.coverage] || state.coverage)} — conhece uma? <a href="submit.html">Propor uma fonte →</a>`
++        : emptyStateDefaultHtml;
++    }
+     grid.innerHTML = records.map((record) => {
+       const detailItems = [
+         record.temporalCoverage ? `<li><strong>${detailLabels.timeframe}:</strong> ${escapeHtml(record.temporalCoverage)}</li>` : "",
+@@ -162,13 +238,19 @@
+           <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
+           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
+           <li>Verificado em ${escapeHtml(record.checked)}</li>
++          <li>${record.submittedBy
++            ? `Enviado pela comunidade, validado pelo schema — <a href="https://github.com/${escapeHtml(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
++            : "Revisão editorial"}</li>
+         </ul>
+         <div class="card-actions">
+           <div class="card-links">
+             <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir na fonte <span class="sr-only">(abre em nova aba)</span></a>
+             ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">${detailLabels.methodology} <span class="sr-only">(abre em nova aba)</span></a>` : ""}
+           </div>
+-          <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
++          <div class="citation-actions">
++            <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
++            <button class="bibtex-button" type="button" data-bibtex-id="${escapeHtml(record.id)}">BibTeX</button>
++          </div>
+         </div>
+       </article>`;
+     }).join("");
+@@ -192,7 +274,7 @@
+         "url": record.url,
+         "keywords": [categoryLabels[record.category] || record.category, coverageLabels[record.coverage] || record.coverage],
+         "provider": { "@type": "Organization", "name": record.provider },
+-        "license": accessLabels[record.access] || record.access,
++        "license": record.license || accessLabels[record.access] || record.access,
+         "isAccessibleForFree": record.access === "Publicly available",
+         "dateModified": record.checked,
+         "distribution": record.formats.map((format) => ({ "@type": "DataDownload", "encodingFormat": format }))
+@@ -214,11 +296,12 @@
+     document.getElementById("catalog").scrollIntoView({ behavior: "smooth", block: "start" });
+   });
+ 
+-  search.addEventListener("input", () => {
++  const applySearch = debounce(() => {
+     state.search = search.value;
+     renderCatalog();
+     syncUrl();
+-  });
++  }, 150);
++  search.addEventListener("input", applySearch);
+ 
+   coverage.addEventListener("change", () => {
+     state.coverage = coverage.value;
+@@ -249,7 +332,24 @@
+     flashConfirmation(copyLinkButton, ok ? "Link copiado" : "Não foi possível copiar", original);
+   });
+ 
++  document.getElementById("export-json")?.addEventListener("click", () => {
++    downloadFile("amazoniadb-catalog.json", JSON.stringify(catalog, null, 2), "application/json");
++  });
++
++  document.getElementById("export-csv")?.addEventListener("click", () => {
++    downloadFile("amazoniadb-catalog.csv", catalogToCsv(), "text/csv;charset=utf-8");
++  });
++
+   grid.addEventListener("click", async (event) => {
++    const bibtexButton = event.target.closest("button[data-bibtex-id]");
++    if (bibtexButton) {
++      const record = catalog.find((entry) => entry.id === bibtexButton.dataset.bibtexId);
++      if (record) {
++        const ok = await copyToClipboard(buildBibtex(record));
++        flashConfirmation(bibtexButton, ok ? "Copiado" : "Não foi possível copiar", "BibTeX");
++      }
++      return;
++    }
+     const citeButton = event.target.closest("button[data-cite-id]");
+     if (!citeButton) return;
+     const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
+diff --git a/pt-br/index.html b/pt-br/index.html
+index 94ec476..e87b126 100644
+--- a/pt-br/index.html
++++ b/pt-br/index.html
+@@ -88,6 +88,8 @@
+           <div class="catalog-heading-meta">
+             <p id="result-count" class="result-count" aria-live="polite"></p>
+             <button id="copy-view-link" class="text-button copy-link-button" type="button">Copiar link desta visualização</button>
++            <button id="export-json" class="text-button" type="button">Exportar JSON</button>
++            <button id="export-csv" class="text-button" type="button">Exportar CSV</button>
+           </div>
+         </div>
+ 
+@@ -124,7 +126,7 @@
+           <button id="clear-filters" class="text-button" type="reset">Limpar filtros</button>
+         </form>
+ 
+-        <div id="dataset-grid" class="dataset-grid" aria-live="polite"></div>
++        <div id="dataset-grid" class="dataset-grid"></div>
+         <p id="empty-state" class="empty-state" hidden>Nenhuma fonte corresponde a esses filtros. Tente uma busca mais ampla.</p>
+       </section>
+ 
+diff --git a/pt-br/submit.html b/pt-br/submit.html
+index 500a630..1aa915b 100644
+--- a/pt-br/submit.html
++++ b/pt-br/submit.html
+@@ -130,6 +130,26 @@
+               <input id="formats" name="formats" type="text" placeholder="ex.: GeoTIFF, CSV, API" required>
+               <small>Separe os formatos com vírgulas.</small>
+             </label>
++            <label class="wide-field" for="temporalCoverage">
++              <span>Cobertura temporal (opcional)</span>
++              <input id="temporalCoverage" name="temporalCoverage" type="text" placeholder="ex.: 1985–2024 (anual)">
++              <small>Deixe em branco se não houver um intervalo fixo claro.</small>
++            </label>
++            <label class="wide-field" for="spatialResolution">
++              <span>Resolução espacial (opcional)</span>
++              <input id="spatialResolution" name="spatialResolution" type="text" placeholder="ex.: 30 m (classificação baseada em Landsat)">
++              <small>Deixe em branco se resolução fixa não for um conceito relevante para esta fonte.</small>
++            </label>
++            <label class="wide-field" for="methodologyUrl">
++              <span>URL de metodologia ou documentação (opcional)</span>
++              <input id="methodologyUrl" name="methodologyUrl" type="url" inputmode="url" pattern="https?://.*" placeholder="https://provedor.org/metodologia">
++              <small>Diferente da URL da publicadora acima.</small>
++            </label>
++            <label class="wide-field" for="license">
++              <span>Licença nomeada (opcional)</span>
++              <input id="license" name="license" type="text" placeholder="ex.: Creative Commons Atribuição 4.0 (CC-BY-4.0)">
++              <small>Somente quando o provedor nomeia uma licença de dados abertos específica — uma nota geral de termos vai no menu de acesso acima.</small>
++            </label>
+             <label class="wide-field" for="description">
+               <span>Descrição em linguagem simples *</span>
+               <textarea id="description" name="description" rows="4" minlength="20" placeholder="Descreva o que a fonte contém e como ela pode ser usada no contexto amazônico." required></textarea>
+diff --git a/pt-br/submit.js b/pt-br/submit.js
+index 4dfa9cc..b32a684 100644
+--- a/pt-br/submit.js
++++ b/pt-br/submit.js
+@@ -18,24 +18,32 @@
+     .replace(/(^-|-$)/g, "")
+     .slice(0, 64);
+ 
+-  const toCatalogObject = (record) => `{
+-  id: "${record.id}",
+-  title: ${JSON.stringify(record.title)},
+-  provider: ${JSON.stringify(record.provider)},
+-  category: ${JSON.stringify(record.category)},
+-  coverage: ${JSON.stringify(record.coverage)},
+-  formats: ${JSON.stringify(record.formats)},
+-  access: ${JSON.stringify(record.access)},
+-  kind: ${JSON.stringify(record.kind)},
+-  description: ${JSON.stringify(record.description)},
+-  url: ${JSON.stringify(record.url)},
+-  checked: ${JSON.stringify(record.checked)}
+-}`;
++  const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl"];
++
++  const toCatalogObject = (record) => {
++    const requiredLines = [
++      `  id: "${record.id}"`,
++      `  title: ${JSON.stringify(record.title)}`,
++      `  provider: ${JSON.stringify(record.provider)}`,
++      `  category: ${JSON.stringify(record.category)}`,
++      `  coverage: ${JSON.stringify(record.coverage)}`,
++      `  formats: ${JSON.stringify(record.formats)}`,
++      `  access: ${JSON.stringify(record.access)}`,
++      `  kind: ${JSON.stringify(record.kind)}`,
++      `  description: ${JSON.stringify(record.description)}`,
++      `  url: ${JSON.stringify(record.url)}`,
++      `  checked: ${JSON.stringify(record.checked)}`
++    ];
++    const optionalLines = OPTIONAL_RECORD_KEYS
++      .filter((key) => record[key])
++      .map((key) => `  ${key}: ${JSON.stringify(record[key])}`);
++    return `{\n${[...requiredLines, ...optionalLines].join(",\n")}\n}`;
++  };
+ 
+   const generateRecord = () => {
+     const values = new FormData(form);
+     const id = slugify(values.get("title"));
+-    return {
++    const record = {
+       id,
+       title: values.get("title").trim(),
+       provider: values.get("provider").trim(),
+@@ -48,6 +56,11 @@
+       url: values.get("url").trim(),
+       checked: new Date().toISOString().slice(0, 10)
+     };
++    for (const key of OPTIONAL_RECORD_KEYS) {
++      const value = (values.get(key) || "").trim();
++      if (value) record[key] = value;
++    }
++    return record;
+   };
+ 
+   const showRecord = (record) => {
+diff --git a/styles.css b/styles.css
+index 5c4ec01..bb28cc1 100644
+--- a/styles.css
++++ b/styles.css
+@@ -140,21 +140,24 @@ input::placeholder { color: var(--placeholder); }
+ .description { margin-bottom: 18px; color: var(--quiet); font-size: 0.91rem; line-height: 1.52; }
+ .metadata { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 16px; padding: 0; list-style: none; }
+ .metadata li { border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; color: var(--quiet); font-size: 0.72rem; line-height: 1.1; }
++.metadata li a { color: var(--forest); text-decoration: underline; text-underline-offset: 0.16em; }
++.citation-actions { display: flex; gap: 8px; flex-shrink: 0; }
++.cite-button, .bibtex-button { flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: none; color: var(--quiet); font-size: 0.76rem; font-weight: 650; white-space: nowrap; }
++.cite-button:hover, .bibtex-button:hover { border-color: var(--forest); color: var(--forest); }
++.cite-button.copied, .bibtex-button.copied { border-color: var(--moss); color: var(--moss); background: var(--sand); }
+ .card-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+-.dataset-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--forest); font-size: 0.88rem; font-weight: 780; }
++.dataset-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--forest); font-size: 0.88rem; font-weight: 780; text-decoration: none; }
+ .dataset-link::after { content: "↗"; font-size: 1rem; }
+ .dataset-link:hover { color: var(--focus); }
+-.cite-button { flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: none; color: var(--quiet); font-size: 0.76rem; font-weight: 650; white-space: nowrap; }
+-.cite-button:hover { border-color: var(--forest); color: var(--forest); }
+-.cite-button.copied { border-color: var(--moss); color: var(--moss); background: var(--sand); }
+ .dataset-details { display: flex; flex-direction: column; gap: 3px; margin: 10px 0 0; padding: 0; list-style: none; }
+ .dataset-details li { color: var(--quiet); font-size: 0.78rem; line-height: 1.35; }
+ .dataset-details li strong { color: var(--ink); font-weight: 650; }
+-.card-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+-.methodology-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--quiet); font-size: 0.8rem; font-weight: 650; }
++.card-links { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
++.methodology-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--quiet); font-size: 0.8rem; font-weight: 650; text-decoration: none; }
+ .methodology-link::after { content: "↗"; font-size: 0.95rem; }
+ .methodology-link:hover { color: var(--forest); }
+ .empty-state { margin: 0; padding: 34px; border: 1px dashed var(--line); color: var(--quiet); text-align: center; }
++.empty-state a { color: var(--forest); font-weight: 700; text-decoration: underline; text-underline-offset: 0.16em; }
+ 
+ .principles-section { padding: 86px 0; background: var(--panel); color: var(--on-panel); }
+ .principles-section h2 { color: #fff; max-width: 480px; }
+diff --git a/submit.html b/submit.html
+index b6de428..2958e62 100644
+--- a/submit.html
++++ b/submit.html
+@@ -130,6 +130,26 @@
+               <input id="formats" name="formats" type="text" placeholder="e.g. GeoTIFF, CSV, API" required>
+               <small>Separate formats with commas.</small>
+             </label>
++            <label class="wide-field" for="temporalCoverage">
++              <span>Temporal coverage (optional)</span>
++              <input id="temporalCoverage" name="temporalCoverage" type="text" placeholder="e.g. 1985–2024 (annual)">
++              <small>Leave blank if there's no clear fixed range.</small>
++            </label>
++            <label class="wide-field" for="spatialResolution">
++              <span>Spatial resolution (optional)</span>
++              <input id="spatialResolution" name="spatialResolution" type="text" placeholder="e.g. 30 m (Landsat-based classification)">
++              <small>Leave blank if a fixed resolution isn't a meaningful concept for this source.</small>
++            </label>
++            <label class="wide-field" for="methodologyUrl">
++              <span>Methodology or documentation URL (optional)</span>
++              <input id="methodologyUrl" name="methodologyUrl" type="url" inputmode="url" pattern="https?://.*" placeholder="https://provider.org/methodology">
++              <small>Distinct from the publisher URL above.</small>
++            </label>
++            <label class="wide-field" for="license">
++              <span>Named license (optional)</span>
++              <input id="license" name="license" type="text" placeholder="e.g. Creative Commons Attribution 4.0 (CC-BY-4.0)">
++              <small>Only when the provider names a specific open-data license — a general terms note belongs in the access dropdown instead.</small>
++            </label>
+             <label class="wide-field" for="description">
+               <span>Plain-language description *</span>
+               <textarea id="description" name="description" rows="4" minlength="20" placeholder="Describe what the source contains and how it can be used in the Amazon context." required></textarea>
+diff --git a/submit.js b/submit.js
+index 8e5a381..b30664d 100644
+--- a/submit.js
++++ b/submit.js
+@@ -18,24 +18,32 @@
+     .replace(/(^-|-$)/g, "")
+     .slice(0, 64);
+ 
+-  const toCatalogObject = (record) => `{
+-  id: "${record.id}",
+-  title: ${JSON.stringify(record.title)},
+-  provider: ${JSON.stringify(record.provider)},
+-  category: ${JSON.stringify(record.category)},
+-  coverage: ${JSON.stringify(record.coverage)},
+-  formats: ${JSON.stringify(record.formats)},
+-  access: ${JSON.stringify(record.access)},
+-  kind: ${JSON.stringify(record.kind)},
+-  description: ${JSON.stringify(record.description)},
+-  url: ${JSON.stringify(record.url)},
+-  checked: ${JSON.stringify(record.checked)}
+-}`;
++  const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl"];
++
++  const toCatalogObject = (record) => {
++    const requiredLines = [
++      `  id: "${record.id}"`,
++      `  title: ${JSON.stringify(record.title)}`,
++      `  provider: ${JSON.stringify(record.provider)}`,
++      `  category: ${JSON.stringify(record.category)}`,
++      `  coverage: ${JSON.stringify(record.coverage)}`,
++      `  formats: ${JSON.stringify(record.formats)}`,
++      `  access: ${JSON.stringify(record.access)}`,
++      `  kind: ${JSON.stringify(record.kind)}`,
++      `  description: ${JSON.stringify(record.description)}`,
++      `  url: ${JSON.stringify(record.url)}`,
++      `  checked: ${JSON.stringify(record.checked)}`
++    ];
++    const optionalLines = OPTIONAL_RECORD_KEYS
++      .filter((key) => record[key])
++      .map((key) => `  ${key}: ${JSON.stringify(record[key])}`);
++    return `{\n${[...requiredLines, ...optionalLines].join(",\n")}\n}`;
++  };
+ 
+   const generateRecord = () => {
+     const values = new FormData(form);
+     const id = slugify(values.get("title"));
+-    return {
++    const record = {
+       id,
+       title: values.get("title").trim(),
+       provider: values.get("provider").trim(),
+@@ -48,6 +56,14 @@
+       url: values.get("url").trim(),
+       checked: new Date().toISOString().slice(0, 10)
+     };
++    // Optional enrichment — attached only when filled in, and only after the
++    // record above is complete, so leaving one blank never reads as a
++    // missing required field.
++    for (const key of OPTIONAL_RECORD_KEYS) {
++      const value = (values.get(key) || "").trim();
++      if (value) record[key] = value;
++    }
++    return record;
+   };
+ 
+   const showRecord = (record) => {
