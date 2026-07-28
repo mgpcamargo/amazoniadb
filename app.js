@@ -1,22 +1,5 @@
 (() => {
   const catalog = window.AMAZONIA_CATALOG || [];
-
-  // Precomputed once per record, not per keystroke, so filtering stays cheap
-  // as the catalog grows toward the "thousands of sources" this is designed
-  // for. Includes the optional enrichment fields (temporal coverage, spatial
-  // resolution, license) so a search for something like "Landsat" or "CC-BY"
-  // matches text that's now actually visible on the card, not just the
-  // always-present required fields. methodologyUrl is left out on purpose —
-  // it's a URL, not text anyone searches for, and including it risked noisy
-  // matches on unrelated URL fragments.
-  catalog.forEach((record) => {
-    record._searchBlob = [
-      record.title, record.provider, record.category, record.coverage,
-      record.description, record.temporalCoverage, record.spatialResolution,
-      record.license, ...record.formats
-    ].filter(Boolean).join(" ").toLocaleLowerCase();
-  });
-
   const categories = [
     { name: "Forest & biodiversity", note: "Species, habitats, forest condition" },
     { name: "Earth, water & climate", note: "Weather, rivers, bedrock, extremes" },
@@ -30,7 +13,6 @@
   const domainNav = document.getElementById("domain-nav");
   const grid = document.getElementById("dataset-grid");
   const emptyState = document.getElementById("empty-state");
-  const emptyStateDefaultHtml = emptyState.innerHTML;
   const resultCount = document.getElementById("result-count");
   const count = document.getElementById("dataset-count");
   const search = document.getElementById("search");
@@ -68,65 +50,6 @@
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 
-  // Coalesces rapid keystrokes into a single re-render instead of one per
-  // character typed.
-  const debounce = (fn, delay) => {
-    let timeoutId;
-    return (...args) => {
-      window.clearTimeout(timeoutId);
-      timeoutId = window.setTimeout(() => fn(...args), delay);
-    };
-  };
-
-  const escapeBibtex = (value) => String(value)
-    .replaceAll("\\", "\\textbackslash{}")
-    .replaceAll("{", "\\{")
-    .replaceAll("}", "\\}")
-    .replaceAll("&", "\\&")
-    .replaceAll("%", "\\%")
-    .replaceAll("$", "\\$")
-    .replaceAll("#", "\\#")
-    .replaceAll("_", "\\_")
-    .replaceAll("~", "\\textasciitilde{}")
-    .replaceAll("^", "\\textasciicircum{}");
-
-  // record.url goes inside \url{...} unescaped on purpose — that command
-  // (from the url/hyperref packages almost everyone's BibTeX setup already
-  // has) reads its argument close to verbatim, so escaping it would corrupt
-  // the link instead of protecting it.
-  const buildBibtex = (record) => `@misc{${record.id},
-  title        = {${escapeBibtex(record.title)}},
-  author       = {${escapeBibtex(record.provider)}},
-  howpublished = {\\url{${record.url}}},
-  year         = {${record.checked.slice(0, 4)}},
-  note         = {Accessed via AmazoniaDB, ${record.checked}}
-}`;
-
-  const downloadFile = (filename, content, mimeType) => {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  const toCsvValue = (value) => {
-    const str = Array.isArray(value) ? value.join("; ") : String(value ?? "");
-    const escaped = str.replaceAll('"', '""');
-    return /[",\n]/.test(str) ? `"${escaped}"` : escaped;
-  };
-
-  const CSV_COLUMNS = ["id", "title", "provider", "category", "coverage", "formats", "access", "kind", "description", "url", "checked", "temporalCoverage", "spatialResolution", "license", "methodologyUrl", "submittedBy"];
-
-  const catalogToCsv = () => {
-    const rows = catalog.map((record) => CSV_COLUMNS.map((column) => toCsvValue(record[column])).join(","));
-    return [CSV_COLUMNS.join(","), ...rows].join("\n");
-  };
-
   // Clipboard helper shared by the "copy link to this view" and "cite" buttons.
   // Falls back to a hidden textarea + execCommand for older browsers.
   const copyToClipboard = async (text) => {
@@ -160,6 +83,17 @@
     }, 1600);
   };
 
+  // Fires a GoatCounter custom event if analytics is loaded; a silent no-op
+  // otherwise (ad-blocker, offline, or the site code hasn't been set up
+  // yet). Never lets analytics failure affect the actual feature.
+  const trackEvent = (path) => {
+    try {
+      window.goatcounter?.count?.({ path, event: true });
+    } catch {
+      // analytics is enhancement, not a dependency — never throw here
+    }
+  };
+
   const renderDomains = () => {
     const allButton = `<button class="domain-button" type="button" data-category="" aria-pressed="${state.category === ""}"><strong>All sources</strong><span>See every curated link</span></button>`;
     const buttons = categories.map((category) => `
@@ -189,26 +123,21 @@
 
   const getVisibleRecords = () => {
     const query = state.search.trim().toLocaleLowerCase();
-    return catalog.filter((record) => (!state.category || record.category === state.category)
-      && (!state.coverage || record.coverage === state.coverage)
-      && (!state.access || record.access === state.access)
-      && (!query || record._searchBlob.includes(query)));
+    return catalog.filter((record) => {
+      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, ...record.formats]
+        .join(" ")
+        .toLocaleLowerCase();
+      return (!state.category || record.category === state.category)
+        && (!state.coverage || record.coverage === state.coverage)
+        && (!state.access || record.access === state.access)
+        && (!query || searchText.includes(query));
+    });
   };
 
   const renderCatalog = () => {
     const records = getVisibleRecords();
     resultCount.textContent = `${records.length} ${records.length === 1 ? "source" : "sources"} found`;
     emptyState.hidden = records.length !== 0;
-    if (records.length === 0) {
-      // Colombia/Bolivia are real filter options with zero matching records
-      // right now. Rather than a generic "no matches" for what's actually a
-      // known catalog gap, name it and point at the same submit flow the
-      // category gap-prompt above already uses.
-      const coverageTotal = state.coverage ? catalog.filter((record) => record.coverage === state.coverage).length : null;
-      emptyState.innerHTML = coverageTotal === 0
-        ? `${escapeHtml(state.coverage)} isn't covered yet — know a source? <a href="submit.html">Propose one →</a>`
-        : emptyStateDefaultHtml;
-    }
     grid.innerHTML = records.map((record) => {
       const detailItems = [
         record.temporalCoverage ? `<li><strong>Timeframe:</strong> ${escapeHtml(record.temporalCoverage)}</li>` : "",
@@ -229,19 +158,13 @@
           <li>${escapeHtml(record.coverage)}</li>
           <li>${escapeHtml(record.access)}</li>
           <li>Checked ${escapeHtml(record.checked)}</li>
-          <li>${record.submittedBy
-            ? `Community-submitted, schema-valid — <a href="https://github.com/${escapeHtml(record.submittedBy)}" target="_blank" rel="noopener noreferrer">@${escapeHtml(record.submittedBy)}</a>`
-            : "Editorially reviewed"}</li>
         </ul>
         <div class="card-actions">
           <div class="card-links">
             <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
             ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">Methodology <span class="sr-only">(opens in a new tab)</span></a>` : ""}
           </div>
-          <div class="citation-actions">
-            <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
-            <button class="bibtex-button" type="button" data-bibtex-id="${escapeHtml(record.id)}">BibTeX</button>
-          </div>
+          <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
         </div>
       </article>`;
     }).join("");
@@ -265,7 +188,7 @@
         "url": record.url,
         "keywords": [record.category, record.coverage],
         "provider": { "@type": "Organization", "name": record.provider },
-        "license": record.license || record.access,
+        "license": record.access,
         "isAccessibleForFree": record.access === "Publicly available",
         "dateModified": record.checked,
         "distribution": record.formats.map((format) => ({ "@type": "DataDownload", "encodingFormat": format }))
@@ -281,18 +204,18 @@
     const button = event.target.closest("button[data-category]");
     if (!button) return;
     state.category = button.dataset.category;
+    trackEvent(`/filter-domain/${button.dataset.category || "all"}`);
     renderDomains();
     renderCatalog();
     syncUrl();
     document.getElementById("catalog").scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  const applySearch = debounce(() => {
+  search.addEventListener("input", () => {
     state.search = search.value;
     renderCatalog();
     syncUrl();
-  }, 150);
-  search.addEventListener("input", applySearch);
+  });
 
   coverage.addEventListener("change", () => {
     state.coverage = coverage.value;
@@ -323,30 +246,14 @@
     flashConfirmation(copyLinkButton, ok ? "Link copied" : "Couldn't copy", original);
   });
 
-  document.getElementById("export-json")?.addEventListener("click", () => {
-    downloadFile("amazoniadb-catalog.json", JSON.stringify(catalog, null, 2), "application/json");
-  });
-
-  document.getElementById("export-csv")?.addEventListener("click", () => {
-    downloadFile("amazoniadb-catalog.csv", catalogToCsv(), "text/csv;charset=utf-8");
-  });
-
   grid.addEventListener("click", async (event) => {
-    const bibtexButton = event.target.closest("button[data-bibtex-id]");
-    if (bibtexButton) {
-      const record = catalog.find((entry) => entry.id === bibtexButton.dataset.bibtexId);
-      if (record) {
-        const ok = await copyToClipboard(buildBibtex(record));
-        flashConfirmation(bibtexButton, ok ? "Copied" : "Couldn't copy", "BibTeX");
-      }
-      return;
-    }
     const citeButton = event.target.closest("button[data-cite-id]");
     if (!citeButton) return;
     const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
     if (!record) return;
     const citation = `"${record.title}." ${record.provider}. Accessed ${record.checked}. ${record.url}`;
     const ok = await copyToClipboard(citation);
+    trackEvent(`/cite/${record.id}`);
     flashConfirmation(citeButton, ok ? "Copied" : "Couldn't copy", "Cite");
   });
 

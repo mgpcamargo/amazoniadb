@@ -26,6 +26,10 @@
     <title>AmazoniaDB — Encontre dados na fonte</title>
     <link rel="stylesheet" href="../styles.css">
     <script src="../theme.js" defer></script>
+    <!-- Analytics: privacy-respecting, no cookies, no persistent identifiers.
+         Free tier is non-commercial-only — see https://www.goatcounter.com/help/plans
+         Replace AMAZONIADB_GOATCOUNTER_CODE with the real site code after signup. -->
+    <script data-goatcounter="https://AMAZONIADB_GOATCOUNTER_CODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#catalog">Pular para os conjuntos de dados</a>
@@ -63,7 +67,7 @@
           <a class="button button-secondary" href="#how-it-works">Nossa política de links</a>
         </div>
         <dl class="site-stats" aria-label="Resumo do diretório">
-          <div><dt id="dataset-count">46</dt><dd>fontes selecionadas</dd></div>
+          <div><dt id="dataset-count">33</dt><dd>fontes selecionadas</dd></div>
           <div><dt>6</dt><dd>domínios conectados</dd></div>
         </dl>
       </section>
@@ -88,8 +92,6 @@
           <div class="catalog-heading-meta">
             <p id="result-count" class="result-count" aria-live="polite"></p>
             <button id="copy-view-link" class="text-button copy-link-button" type="button">Copiar link desta visualização</button>
-            <button id="export-json" class="text-button" type="button">Exportar JSON</button>
-            <button id="export-csv" class="text-button" type="button">Exportar CSV</button>
           </div>
         </div>
 
@@ -126,7 +128,7 @@
           <button id="clear-filters" class="text-button" type="reset">Limpar filtros</button>
         </form>
 
-        <div id="dataset-grid" class="dataset-grid"></div>
+        <div id="dataset-grid" class="dataset-grid" aria-live="polite"></div>
         <p id="empty-state" class="empty-state" hidden>Nenhuma fonte corresponde a esses filtros. Tente uma busca mais ampla.</p>
       </section>
 

@@ -26,6 +26,10 @@
     <title>Preparar una fuente — AmazoniaDB</title>
     <link rel="stylesheet" href="../styles.css">
     <script src="../theme.js" defer></script>
+    <!-- Analytics: privacy-respecting, no cookies, no persistent identifiers.
+         Free tier is non-commercial-only — see https://www.goatcounter.com/help/plans
+         Replace AMAZONIADB_GOATCOUNTER_CODE with the real site code after signup. -->
+    <script data-goatcounter="https://AMAZONIADB_GOATCOUNTER_CODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#source-form">Saltar al formulario de fuente</a>
@@ -129,26 +133,6 @@
               <span>Formatos de datos *</span>
               <input id="formats" name="formats" type="text" placeholder="ej.: GeoTIFF, CSV, API" required>
               <small>Separa los formatos con comas.</small>
-            </label>
-            <label class="wide-field" for="temporalCoverage">
-              <span>Cobertura temporal (opcional)</span>
-              <input id="temporalCoverage" name="temporalCoverage" type="text" placeholder="ej.: 1985–2024 (anual)">
-              <small>Déjalo en blanco si no hay un rango fijo claro.</small>
-            </label>
-            <label class="wide-field" for="spatialResolution">
-              <span>Resolución espacial (opcional)</span>
-              <input id="spatialResolution" name="spatialResolution" type="text" placeholder="ej.: 30 m (clasificación basada en Landsat)">
-              <small>Déjalo en blanco si una resolución fija no es un concepto relevante para esta fuente.</small>
-            </label>
-            <label class="wide-field" for="methodologyUrl">
-              <span>URL de metodología o documentación (opcional)</span>
-              <input id="methodologyUrl" name="methodologyUrl" type="url" inputmode="url" pattern="https?://.*" placeholder="https://proveedor.org/metodologia">
-              <small>Distinta de la URL de la publicadora indicada arriba.</small>
-            </label>
-            <label class="wide-field" for="license">
-              <span>Licencia nombrada (opcional)</span>
-              <input id="license" name="license" type="text" placeholder="ej.: Creative Commons Atribución 4.0 (CC-BY-4.0)">
-              <small>Solo cuando el proveedor nombra una licencia de datos abiertos específica — una nota general de términos va en el menú de acceso de arriba.</small>
             </label>
             <label class="wide-field" for="description">
               <span>Descripción en lenguaje sencillo *</span>

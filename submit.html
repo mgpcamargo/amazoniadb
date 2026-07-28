@@ -26,6 +26,10 @@
     <title>Prepare a source — AmazoniaDB</title>
     <link rel="stylesheet" href="styles.css">
     <script src="theme.js" defer></script>
+    <!-- Analytics: privacy-respecting, no cookies, no persistent identifiers.
+         Free tier is non-commercial-only — see https://www.goatcounter.com/help/plans
+         Replace AMAZONIADB_GOATCOUNTER_CODE with the real site code after signup. -->
+    <script data-goatcounter="https://AMAZONIADB_GOATCOUNTER_CODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#source-form">Skip to source form</a>
@@ -129,26 +133,6 @@
               <span>Data forms *</span>
               <input id="formats" name="formats" type="text" placeholder="e.g. GeoTIFF, CSV, API" required>
               <small>Separate formats with commas.</small>
-            </label>
-            <label class="wide-field" for="temporalCoverage">
-              <span>Temporal coverage (optional)</span>
-              <input id="temporalCoverage" name="temporalCoverage" type="text" placeholder="e.g. 1985–2024 (annual)">
-              <small>Leave blank if there's no clear fixed range.</small>
-            </label>
-            <label class="wide-field" for="spatialResolution">
-              <span>Spatial resolution (optional)</span>
-              <input id="spatialResolution" name="spatialResolution" type="text" placeholder="e.g. 30 m (Landsat-based classification)">
-              <small>Leave blank if a fixed resolution isn't a meaningful concept for this source.</small>
-            </label>
-            <label class="wide-field" for="methodologyUrl">
-              <span>Methodology or documentation URL (optional)</span>
-              <input id="methodologyUrl" name="methodologyUrl" type="url" inputmode="url" pattern="https?://.*" placeholder="https://provider.org/methodology">
-              <small>Distinct from the publisher URL above.</small>
-            </label>
-            <label class="wide-field" for="license">
-              <span>Named license (optional)</span>
-              <input id="license" name="license" type="text" placeholder="e.g. Creative Commons Attribution 4.0 (CC-BY-4.0)">
-              <small>Only when the provider names a specific open-data license — a general terms note belongs in the access dropdown instead.</small>
             </label>
             <label class="wide-field" for="description">
               <span>Plain-language description *</span>
