@@ -65,15 +65,18 @@ If your default branch isn't `main`, update the `branches:` filter in `validate-
 `data/catalog.js` is the source of truth, but it's JS, not JSON — meant to be loaded with a `<script>` tag, not parsed by external tools. For anyone who wants the catalog without parsing JS, there's a plain-JSON mirror:
 
 ```
-https://mgpcamargo.github.io/amazoniadb/api/catalog.json
+https://mgpcamargo.github.io/amazoniadb/api/v1/catalog.json
 ```
 
-It's regenerated automatically by `validate-catalog.yml` on every push to `main` that touches the catalog (via `scripts/build-api.mjs`) — never edit `api/catalog.json` by hand, it'll just be overwritten on the next push. Shape:
+Versioned (`v1/`, not a bare `api/catalog.json`) so the response shape can change later without silently breaking whoever's already reading it — a new version lands at `v2/` alongside it, with `v1/` kept working until it's formally deprecated. See [CHANGELOG.md](CHANGELOG.md) for what's changed.
+
+It's regenerated automatically by `validate-catalog.yml` on every push to `main` that touches the catalog (via `scripts/build-api.mjs`) — never edit `api/v1/catalog.json` by hand, it'll just be overwritten on the next push. Shape:
 
 ```json
 {
-  "generated": "2026-07-24T00:00:00.000Z",
-  "count": 13,
+  "apiVersion": 1,
+  "generated": "2026-07-28T00:00:00.000Z",
+  "count": 46,
   "source": "https://mgpcamargo.github.io/amazoniadb/",
   "license": "...",
   "records": [ /* same shape as data/catalog.schema.json */ ]
@@ -81,7 +84,7 @@ It's regenerated automatically by `validate-catalog.yml` on every push to `main`
 ```
 
 ```js
-const { records } = await fetch("https://mgpcamargo.github.io/amazoniadb/api/catalog.json").then((r) => r.json());
+const { records } = await fetch("https://mgpcamargo.github.io/amazoniadb/api/v1/catalog.json").then((r) => r.json());
 ```
 
 This is a read-only convenience mirror of the index, not a grant of rights to the underlying data — see License below.

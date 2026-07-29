@@ -165,6 +165,7 @@
             ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">Methodology <span class="sr-only">(opens in a new tab)</span></a>` : ""}
           </div>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
+          <button class="cite-button" type="button" data-report-id="${escapeHtml(record.id)}">Report link</button>
         </div>
       </article>`;
     }).join("");
@@ -248,13 +249,25 @@
 
   grid.addEventListener("click", async (event) => {
     const citeButton = event.target.closest("button[data-cite-id]");
-    if (!citeButton) return;
-    const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
-    if (!record) return;
-    const citation = `"${record.title}." ${record.provider}. Accessed ${record.checked}. ${record.url}`;
-    const ok = await copyToClipboard(citation);
-    trackEvent(`/cite/${record.id}`);
-    flashConfirmation(citeButton, ok ? "Copied" : "Couldn't copy", "Cite");
+    if (citeButton) {
+      const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
+      if (!record) return;
+      const citation = `"${record.title}." ${record.provider}. Accessed ${record.checked}. ${record.url}`;
+      const ok = await copyToClipboard(citation);
+      trackEvent(`/cite/${record.id}`);
+      flashConfirmation(citeButton, ok ? "Copied" : "Couldn't copy", "Cite");
+      return;
+    }
+
+    const reportButton = event.target.closest("button[data-report-id]");
+    if (reportButton) {
+      const record = catalog.find((entry) => entry.id === reportButton.dataset.reportId);
+      if (!record) return;
+      trackEvent(`/report-link/${record.id}`);
+      const subject = encodeURIComponent(`Dead link report: ${record.title}`);
+      const body = encodeURIComponent(`Entry: ${record.id}\nURL: ${record.url}\n\nWhat happened when you visited it? (error message, blank page, wrong content, etc.)\n\n`);
+      window.location.href = `mailto:marcelogpcamargo@gmail.com?subject=${subject}&body=${body}`;
+    }
   });
 
   document.addEventListener("keydown", (event) => {
