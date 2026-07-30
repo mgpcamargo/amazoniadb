@@ -1,24 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="AmazoniaDB">
-  <rect width="192" height="192" rx="42" fill="#F7FAEE"/>
-  <g fill="none" stroke="#174A35" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M96 165V101"/>
-    <path d="M96 101L72 80 60 54 96 30"/>
-    <path d="M96 101L120 80 132 54 96 30"/>
-    <path d="M72 80L42 82"/>
-    <path d="M120 80L150 82"/>
-    <path d="M60 54L42 82"/>
-    <path d="M132 54L150 82"/>
-    <path d="M96 165C81 174 68 177 55 178"/>
-    <path d="M96 165C111 174 124 177 137 178"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AmazoniaDB">
+  <rect width="64" height="64" rx="15" fill="#F7FAEE"/>
+  <path d="M31 54C30 44 30 35 32 27C33 24 35 24 36 28C37 36 37 45 37 54C35 57 33 57 31 54Z" fill="#174A35"/>
+  <g fill="none" stroke="#174A35" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M34 30C31 21 30 15 29 10"/><path d="M34 31C40 25 45 19 49 16"/><path d="M33 31C26 28 20 24 15 23"/>
+    <path d="M34 51C28 55 23 56 17 57"/><path d="M34 51C39 55 45 56 50 56"/>
   </g>
-  <g fill="#ECF4D8" stroke="#174A35" stroke-width="6">
-    <circle cx="96" cy="30" r="11"/>
-    <circle cx="60" cy="54" r="11"/>
-    <circle cx="132" cy="54" r="11"/>
-    <circle cx="42" cy="82" r="11"/>
-    <circle cx="72" cy="80" r="11"/>
-    <circle cx="120" cy="80" r="11"/>
-    <circle cx="150" cy="82" r="11"/>
-  </g>
-  <circle cx="96" cy="101" r="12" fill="#9BC36B" stroke="#174A35" stroke-width="6"/>
+  <g fill="#E8F0C8" stroke="#174A35" stroke-width="2.5"><path d="M23 12C26 5 35 5 39 10C42 14 39 19 34 20C28 21 23 18 23 12Z"/><path d="M43 21C46 14 55 14 58 19C60 23 56 28 51 28C46 28 42 26 43 21Z"/><path d="M9 28C12 21 21 21 24 26C26 30 22 35 17 35C12 35 8 33 9 28Z"/></g>
 </svg>
