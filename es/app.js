@@ -23,6 +23,11 @@
   };
   const kindLabels = { "Dataset": "Conjunto de datos", "Data portal": "Portal de datos", "Download": "Descarga", "Explorer": "Explorador" };
   const detailLabels = { timeframe: "Período", resolution: "Resolución", license: "Licencia", methodology: "Documentación" };
+  const detailIcons = Object.freeze({
+    timeframe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>',
+    resolution: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v14H5zM12 5v14M5 12h14"/></svg>',
+    license: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M10 14l2 2 4-4"/></svg>'
+  });
 
   const state = { category: "", search: "", coverage: "", access: "", source: "" };
   const domainNav = document.getElementById("domain-nav");
@@ -176,10 +181,11 @@
     resultCount.textContent = `${records.length} ${records.length === 1 ? "fuente encontrada" : "fuentes encontradas"}`;
     emptyState.hidden = records.length !== 0;
     grid.innerHTML = records.map((record) => {
+      const detailItem = (icon, label, value) => `<li aria-label="${escapeHtml(`${label}: ${value}`)}"><span class="detail-icon" aria-hidden="true">${detailIcons[icon]}</span><span>${escapeHtml(value)}</span></li>`;
       const detailItems = [
-        record.temporalCoverage ? `<li><strong>${detailLabels.timeframe}:</strong> ${escapeHtml(temporalCoverageLabels[record.id] || record.temporalCoverage)}</li>` : "",
-        record.spatialResolution ? `<li><strong>${detailLabels.resolution}:</strong> ${escapeHtml(spatialResolutionLabels[record.spatialResolution] || record.spatialResolution)}</li>` : "",
-        record.license ? `<li><strong>${detailLabels.license}:</strong> ${escapeHtml(licenseLabels[record.id] || record.license)}</li>` : ""
+        record.temporalCoverage ? detailItem("timeframe", detailLabels.timeframe, temporalCoverageLabels[record.id] || record.temporalCoverage) : "",
+        record.spatialResolution ? detailItem("resolution", detailLabels.resolution, spatialResolutionLabels[record.spatialResolution] || record.spatialResolution) : "",
+        record.license ? detailItem("license", detailLabels.license, licenseLabels[record.id] || record.license) : ""
       ].filter(Boolean).join("");
       return `
       <article class="dataset-card${state.source === record.id ? " is-discovery" : ""}" data-record-id="${escapeHtml(record.id)}" aria-labelledby="source-${escapeHtml(record.id)}-title"${state.source === record.id ? " tabindex=\"-1\"" : ""}>

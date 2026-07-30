@@ -8,9 +8,9 @@ import vm from "node:vm";
 
 const root = new URL("../", import.meta.url);
 const htmlFiles = [
-  "index.html", "candidates.html", "donate.html", "submit.html",
-  "pt-br/index.html", "pt-br/candidates.html", "pt-br/donate.html", "pt-br/submit.html",
-  "es/index.html", "es/candidates.html", "es/donate.html", "es/submit.html"
+  "index.html", "donate.html", "submit.html",
+  "pt-br/index.html", "pt-br/donate.html", "pt-br/submit.html",
+  "es/index.html", "es/donate.html", "es/submit.html"
 ];
 const homePages = [
   { file: "index.html", app: "app.js", locale: "en" },
@@ -44,7 +44,7 @@ const selectOptionValues = (html, id) => {
 
 const evaluateBrowserData = async () => {
   const context = { window: {} };
-  for (const file of ["data/catalog.js", "data/category-presentation.js", "data/catalog.i18n.js", "data/candidates.js"]) {
+  for (const file of ["data/catalog.js", "data/category-presentation.js", "data/catalog.i18n.js"]) {
     vm.runInNewContext(await read(file), context, { filename: file });
   }
   return context.window;
@@ -170,6 +170,9 @@ const runExplorerSmokeTest = async (page, browserData) => {
   if (resetRecords !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: clicking an active category must restore the full catalog.`);
   const documentationLinks = (elements["dataset-grid"].innerHTML.match(/class="methodology-link"/g) || []).length;
   if (documentationLinks !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: every source card must expose a documentation link.`);
+  const expectedDetailIcons = browserData.AMAZONIA_CATALOG.reduce((total, record) => total + [record.temporalCoverage, record.spatialResolution, record.license].filter(Boolean).length, 0);
+  const renderedDetailIcons = (elements["dataset-grid"].innerHTML.match(/class="detail-icon"/g) || []).length;
+  if (renderedDetailIcons !== expectedDetailIcons) fail(`${page.file}: visible timeframe, resolution, and license details must use compact icons.`);
   elements["discover-source"].listener("click")?.();
   const discoveryRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
   if (discoveryRecords !== 1 || elements["discovery-result"].hidden) fail(`${page.file}: discovery must focus one verified source.`);
@@ -222,6 +225,11 @@ for (const file of htmlFiles) {
     fail(`${file}: contains a public placeholder.`);
   }
   if (/goatcounter\.com\/count/i.test(html)) fail(`${file}: contains the unused placeholder analytics script.`);
+  if (/candidates\.html|candidates\.js/i.test(html)) fail(`${file}: must not expose the retired candidates board.`);
+}
+
+if (!(await read("styles.css")).includes('.domain-button[data-domain="life"] .domain-icon')) {
+  fail("styles.css: the forests icon needs its own color treatment.");
 }
 
 for (const page of homePages) {
@@ -263,18 +271,9 @@ for (const [file, labels] of Object.entries(submitCategoryLabels)) {
     if (!html.includes(`>${label}</option>`)) fail(`${file}: category option must use the V2 public taxonomy (${label}).`);
   }
 }
-if (!(await read("submit.js")).includes("methodologyUrl.setCustomValidity")) fail("submit.js: methodology URL must be validated before a local candidate is generated.");
+if (!(await read("submit.js")).includes("methodologyUrl.setCustomValidity")) fail("submit.js: methodology URL must be validated before a local source record is generated.");
 
-for (const [file, expectedScript] of [
-  ["candidates.html", "candidates.js"], ["pt-br/candidates.html", "../candidates.js"], ["es/candidates.html", "../candidates.js"]
-]) {
-  if (!(await read(file)).includes(`src="${expectedScript}"`)) fail(`${file}: does not load ${expectedScript}.`);
-}
-
-for (const file of ["pt-br/candidates.html", "es/candidates.html"]) {
-  if (!(await read(file)).includes('href="../candidates.html">EN</a>')) fail(`${file}: English language switch must stay on the candidates board.`);
-}
-for (const file of ["es/index.html", "es/candidates.html", "es/donate.html", "es/submit.html"]) {
+for (const file of ["es/index.html", "es/donate.html", "es/submit.html"]) {
   if (!/<html\s+lang=["']es-419["']/.test(await read(file))) fail(`${file}: Spanish document language must be es-419.`);
 }
 
@@ -299,12 +298,8 @@ if (!deployWorkflow.includes("workflow_call:") || !deployWorkflow.includes("- Qu
 if (deployWorkflow.includes("- Update candidates board") || deployWorkflow.includes("- Source submission to draft PR")) {
   fail("deploy-pages workflow: generated writers must call it directly, not fan out through workflow_run.");
 }
-for (const [file, output] of [
-  [".github/workflows/validate-catalog.yml", "api_changed"],
-  [".github/workflows/update-candidates.yml", "candidates_changed"],
-  [".github/workflows/source-submission.yml", "candidates_changed"]
-]) {
-  const workflow = file === ".github/workflows/source-submission.yml" ? sourceWorkflow : await read(file);
+for (const [file, output] of [[".github/workflows/validate-catalog.yml", "api_changed"]]) {
+  const workflow = await read(file);
   if (!workflow.includes("uses: ./.github/workflows/deploy-pages.yml") || !workflow.includes(output)) {
     fail(`${file}: generated updates must report changes and call the Pages deploy workflow directly.`);
   }
@@ -316,7 +311,7 @@ const expectedSitemapLocations = [
   "https://mgpcamargo.github.io/amazoniadb/",
   "https://mgpcamargo.github.io/amazoniadb/pt-br/",
   "https://mgpcamargo.github.io/amazoniadb/es/",
-  ...["submit.html", "candidates.html", "donate.html"].flatMap((page) => [
+  ...["submit.html", "donate.html"].flatMap((page) => [
     `https://mgpcamargo.github.io/amazoniadb/${page}`,
     `https://mgpcamargo.github.io/amazoniadb/pt-br/${page}`,
     `https://mgpcamargo.github.io/amazoniadb/es/${page}`
@@ -332,9 +327,7 @@ const browserData = await evaluateBrowserData();
 const catalog = browserData.AMAZONIA_CATALOG;
 const presentation = browserData.AMAZONIA_CATEGORY_PRESENTATION;
 const translations = browserData.AMAZONIA_CATALOG_I18N;
-const candidates = browserData.AMAZONIA_CANDIDATES;
 if (!Array.isArray(catalog) || !catalog.length) fail("data/catalog.js did not load a non-empty catalog.");
-if (!Array.isArray(candidates)) fail("data/candidates.js did not load an array.");
 if (!presentation || Object.keys(presentation).length !== 6) fail("data/category-presentation.js must define exactly six categories.");
 if (JSON.stringify(Object.keys(presentation || {})) !== JSON.stringify(requiredCategories)) fail("category presentation keys must match the six catalog categories in order.");
 for (const [key, item] of Object.entries(presentation || {})) {
@@ -385,6 +378,6 @@ if (errors.length) {
   errors.forEach((error) => console.error(`- ${error}`));
   process.exitCode = 1;
 } else {
-  notes.push(`${catalog.length} catalog records`, "six localized category tiles", "twelve public HTML pages", "API mirror aligned");
+  notes.push(`${catalog.length} catalog records`, "six localized category tiles", "nine public HTML pages", "API mirror aligned");
   console.log(`Quality check passed: ${notes.join("; ")}.`);
 }

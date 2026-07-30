@@ -4,9 +4,9 @@ AmazoniaDB is a directory, not a mirror. A useful contribution is a trustworthy 
 
 Don't know where to start? `SOURCES-TO-VERIFY.md` lists real institutions we haven't added yet — pick one, verify it, submit it.
 
-The `submit.html` page can create a locally stored candidate record. It is an aid for preparing a submission, not an automatic publishing channel.
+The `submit.html` page can create a local source record. It is an aid for preparing a submission, not an automatic publishing channel.
 
-Submitted through the issue form? Track it on the [candidates board](https://mgpcamargo.github.io/amazoniadb/candidates.html) — it shows "in review" once a draft pull request opens, or "needs fixing" if validation caught a problem first. If merged, the submitting GitHub handle is retained in source control for review provenance; it is not presented as a public quality badge.
+Submitted through the issue form? A draft pull request is created when validation passes; a maintainer reviews it before it is merged. If merged, the submitting GitHub handle is retained in source control for review provenance; it is not presented as a public quality badge.
 
 Not sure if something belongs, or want to talk through a source before submitting it? Use [Discussions](../../discussions) rather than opening an issue — it keeps the issue tracker focused on actual submissions and link reports.
 

@@ -7,6 +7,11 @@
     ...(item.locales.en || {})
   }));
   const categoryLabels = Object.fromEntries(categories.map((category) => [category.key, category.label]));
+  const detailIcons = Object.freeze({
+    timeframe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>',
+    resolution: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v14H5zM12 5v14M5 12h14"/></svg>',
+    license: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M10 14l2 2 4-4"/></svg>'
+  });
 
   const state = { category: "", search: "", coverage: "", access: "", source: "" };
   const domainNav = document.getElementById("domain-nav");
@@ -160,10 +165,11 @@
     resultCount.textContent = `${records.length} ${records.length === 1 ? "source" : "sources"} found`;
     emptyState.hidden = records.length !== 0;
     grid.innerHTML = records.map((record) => {
+      const detailItem = (icon, label, value) => `<li aria-label="${escapeHtml(`${label}: ${value}`)}"><span class="detail-icon" aria-hidden="true">${detailIcons[icon]}</span><span>${escapeHtml(value)}</span></li>`;
       const detailItems = [
-        record.temporalCoverage ? `<li><strong>Timeframe:</strong> ${escapeHtml(record.temporalCoverage)}</li>` : "",
-        record.spatialResolution ? `<li><strong>Resolution:</strong> ${escapeHtml(record.spatialResolution)}</li>` : "",
-        record.license ? `<li><strong>License:</strong> ${escapeHtml(record.license)}</li>` : ""
+        record.temporalCoverage ? detailItem("timeframe", "Timeframe", record.temporalCoverage) : "",
+        record.spatialResolution ? detailItem("resolution", "Resolution", record.spatialResolution) : "",
+        record.license ? detailItem("license", "License", record.license) : ""
       ].filter(Boolean).join("");
       return `
       <article class="dataset-card${state.source === record.id ? " is-discovery" : ""}" data-record-id="${escapeHtml(record.id)}" aria-labelledby="source-${escapeHtml(record.id)}-title"${state.source === record.id ? " tabindex=\"-1\"" : ""}>

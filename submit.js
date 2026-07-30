@@ -23,46 +23,46 @@
   const language = pageLanguage.startsWith("pt") ? "pt-BR" : pageLanguage.startsWith("es") ? "es" : "en";
   const copy = {
     en: {
-      generatedTitle: "Candidate record generated.",
+      generatedTitle: "Source record generated.",
       generatedCopy: "Copy it into the catalog or download it for a reviewer. Confirm the source terms again before publishing.",
       httpsOnly: "Use an https:// URL.",
       httpOrHttpsOnly: "Use an http:// or https:// URL.",
       incomplete: "Complete the required source and review fields before generating a record.",
       invalidTitle: "Use a source title that contains letters or numbers.",
-      generated: "Candidate generated locally. Review it before adding it to the public catalog.",
+      generated: "Source record generated locally. Review it before adding it to the public catalog.",
       initialTitle: "A review-ready record will appear here.",
-      initialCopy: "Fill in the details, then generate a candidate. Nothing leaves this browser.",
-      copied: "Candidate copied to your clipboard.",
+      initialCopy: "Fill in the details, then generate a record. Nothing leaves this browser.",
+      copied: "Source record copied to your clipboard.",
       copyUnavailable: "Copy is unavailable in this browser. Select the record text and copy it manually.",
-      downloaded: "Candidate JSON downloaded."
+      downloaded: "Source record JSON downloaded."
     },
     "pt-BR": {
-      generatedTitle: "Registro candidato gerado.",
+      generatedTitle: "Registro de fonte gerado.",
       generatedCopy: "Copie-o para o catálogo ou baixe-o para uma pessoa revisora. Confirme novamente os termos da fonte antes de publicar.",
       httpsOnly: "Use uma URL com https://.",
       httpOrHttpsOnly: "Use uma URL com http:// ou https://.",
       incomplete: "Preencha os campos obrigatórios da fonte e da revisão antes de gerar um registro.",
       invalidTitle: "Use um título de fonte com letras ou números.",
-      generated: "Candidato gerado localmente. Revise-o antes de adicioná-lo ao catálogo público.",
+      generated: "Registro de fonte gerado localmente. Revise-o antes de adicioná-lo ao catálogo público.",
       initialTitle: "Um registro pronto para revisão aparecerá aqui.",
-      initialCopy: "Preencha os detalhes e gere um candidato. Nada sai deste navegador.",
-      copied: "Candidato copiado para a área de transferência.",
+      initialCopy: "Preencha os detalhes e gere um registro. Nada sai deste navegador.",
+      copied: "Registro de fonte copiado para a área de transferência.",
       copyUnavailable: "A cópia não está disponível neste navegador. Selecione o texto do registro e copie-o manualmente.",
-      downloaded: "JSON do candidato baixado."
+      downloaded: "JSON do registro de fonte baixado."
     },
     es: {
-      generatedTitle: "Registro candidato generado.",
+      generatedTitle: "Registro de fuente generado.",
       generatedCopy: "Cópialo al catálogo o descárgalo para una persona revisora. Confirma de nuevo las condiciones de la fuente antes de publicarlo.",
       httpsOnly: "Usa una URL con https://.",
       httpOrHttpsOnly: "Usa una URL con http:// o https://.",
       incomplete: "Completa los campos obligatorios de la fuente y la revisión antes de generar un registro.",
       invalidTitle: "Usa un título de fuente que contenga letras o números.",
-      generated: "Candidato generado localmente. Revísalo antes de añadirlo al catálogo público.",
+      generated: "Registro de fuente generado localmente. Revísalo antes de añadirlo al catálogo público.",
       initialTitle: "Aquí aparecerá un registro listo para revisión.",
-      initialCopy: "Completa los detalles y genera un candidato. Nada sale de este navegador.",
-      copied: "Candidato copiado al portapapeles.",
+      initialCopy: "Completa los detalles y genera un registro. Nada sale de este navegador.",
+      copied: "Registro de fuente copiado al portapapeles.",
       copyUnavailable: "La copia no está disponible en este navegador. Selecciona el texto del registro y cópialo manualmente.",
-      downloaded: "JSON del candidato descargado."
+      downloaded: "JSON del registro de fuente descargado."
     }
   }[language];
 

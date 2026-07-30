@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build:api": "node scripts/build-api.mjs",
-    "check:syntax": "node --check app.js && node --check pt-br/app.js && node --check es/app.js && node --check candidates.js && node --check submit.js && node --check theme.js && node --check data/category-presentation.js && node --check data/catalog.js && node --check data/catalog.i18n.js && node --check data/candidates.js && node --check scripts/build-api.mjs && node --check scripts/build-candidates.mjs && node --check scripts/check-links.mjs && node --check scripts/issue-to-entry.mjs && node --check scripts/quality-check.mjs && node --check scripts/test-source-submission.mjs && node --check scripts/validate-catalog.mjs",
+    "check:syntax": "node --check app.js && node --check pt-br/app.js && node --check es/app.js && node --check submit.js && node --check theme.js && node --check data/category-presentation.js && node --check data/catalog.js && node --check data/catalog.i18n.js && node --check scripts/build-api.mjs && node --check scripts/check-links.mjs && node --check scripts/issue-to-entry.mjs && node --check scripts/quality-check.mjs && node --check scripts/test-source-submission.mjs && node --check scripts/validate-catalog.mjs",
     "check:quality": "node scripts/quality-check.mjs",
     "validate:catalog": "node scripts/validate-catalog.mjs",
     "test:source-submission": "node scripts/test-source-submission.mjs",
