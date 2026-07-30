@@ -5,6 +5,7 @@ on:
     paths:
       - "data/catalog.js"
       - "data/catalog.schema.json"
+      - "data/tag-presentation.js"
       - "scripts/validate-catalog.mjs"
       - "scripts/build-api.mjs"
   push:
@@ -12,6 +13,7 @@ on:
     paths:
       - "data/catalog.js"
       - "data/catalog.schema.json"
+      - "data/tag-presentation.js"
       - "scripts/validate-catalog.mjs"
       - "scripts/build-api.mjs"
 

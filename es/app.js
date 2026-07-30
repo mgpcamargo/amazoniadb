@@ -1,5 +1,6 @@
 (() => {
   const catalog = window.AMAZONIA_CATALOG || [];
+  const locale = "es";
   const i18n = (window.AMAZONIA_CATALOG_I18N && window.AMAZONIA_CATALOG_I18N["es"]) || { descriptions: {}, spatialResolution: {}, temporalCoverage: {}, licenses: {} };
   const spatialResolutionLabels = i18n.spatialResolution || {};
   const temporalCoverageLabels = i18n.temporalCoverage || {};
@@ -23,13 +24,25 @@
   };
   const kindLabels = { "Dataset": "Conjunto de datos", "Data portal": "Portal de datos", "Download": "Descarga", "Explorer": "Explorador" };
   const detailLabels = { timeframe: "Período", resolution: "Resolución", license: "Licencia", methodology: "Documentación" };
+  const tagPresentation = window.AMAZONIA_TAG_PRESENTATION || { facets: {}, vocabulary: {} };
+  const tagVocabulary = tagPresentation.vocabulary || {};
+  const topicVocabulary = tagVocabulary.topics || {};
+  const topicLabels = Object.fromEntries(Object.entries(topicVocabulary).map(([key, copy]) => [key, copy[locale] || copy.en || key]));
+  const researchPaths = window.AMAZONIA_RESEARCH_PATHS || [];
+  const localized = (copy) => typeof copy === "string" ? copy : copy?.[locale] || copy?.en || "";
+  const researchLabels = {
+    heading: "Ruta de investigación",
+    topics: "Temas",
+    filterTopic: "Filtrar por tema: ",
+    clearPath: "Volver al directorio completo"
+  };
   const detailIcons = Object.freeze({
     timeframe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>',
     resolution: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14v14H5zM12 5v14M5 12h14"/></svg>',
     license: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M10 14l2 2 4-4"/></svg>'
   });
 
-  const state = { category: "", search: "", coverage: "", access: "", source: "" };
+  const state = { category: "", search: "", coverage: "", topic: "", access: "", source: "", path: "" };
   const domainNav = document.getElementById("domain-nav");
   const grid = document.getElementById("dataset-grid");
   const emptyState = document.getElementById("empty-state");
@@ -37,10 +50,13 @@
   const count = document.getElementById("dataset-count");
   const search = document.getElementById("search");
   const coverage = document.getElementById("coverage");
+  const topic = document.getElementById("topic");
   const access = document.getElementById("access");
   const filters = document.getElementById("filters");
   const discoverButton = document.getElementById("discover-source");
   const discoveryResult = document.getElementById("discovery-result");
+  const researchPathPanel = document.getElementById("research-path-panel");
+  const researchPathButton = document.getElementById("open-research-path");
 
   count.textContent = String(catalog.length);
 
@@ -51,24 +67,43 @@
   // interfaz, no solo del catálogo actual. Así una vista vacía válida (por
   // ejemplo, Colombia antes de tener una entrada) sigue siendo compartible.
   const valuesFromSelect = (select) => new Set(Array.from(select.options, ({ value }) => value).filter(Boolean));
+  const topicValues = Object.keys(topicVocabulary);
+  if (topic) {
+    const defaultOption = topic.dataset.defaultOption || "Todos los temas";
+    topic.innerHTML = [`<option value="">${defaultOption}</option>`, ...topicValues.map((value) => `<option value="${value}">${topicLabels[value]}</option>`)].join("");
+    if (Array.isArray(topic.options)) topic.options = ["", ...topicValues].map((value) => ({ value }));
+  }
   const validCategories = new Set(categories.map((category) => category.key));
   const validCoverage = valuesFromSelect(coverage);
+  const validTopics = new Set(topicValues);
   const validAccess = valuesFromSelect(access);
+  const pathsById = new Map(researchPaths.map((path) => [path.id, path]));
   const validParam = (value, allowed) => allowed.has(value) ? value : "";
   state.category = validParam(initialParams.get("category") || "", validCategories);
   state.search = initialParams.get("q") || "";
   state.coverage = validParam(initialParams.get("coverage") || "", validCoverage);
+  state.topic = validParam(initialParams.get("topic") || "", validTopics);
   state.access = validParam(initialParams.get("access") || "", validAccess);
   state.source = initialParams.get("source") || "";
+  state.path = pathsById.has(initialParams.get("path")) ? initialParams.get("path") : "";
   if (state.source && !catalog.some((record) => record.id === state.source)) state.source = "";
   if (state.source) {
     state.category = "";
     state.search = "";
     state.coverage = "";
+    state.topic = "";
+    state.access = "";
+    state.path = "";
+  } else if (state.path) {
+    state.category = "";
+    state.search = "";
+    state.coverage = "";
+    state.topic = "";
     state.access = "";
   }
   search.value = state.search;
   coverage.value = state.coverage;
+  if (topic) topic.value = state.topic;
   access.value = state.access;
 
   const syncUrl = () => {
@@ -76,8 +111,10 @@
     if (state.category) params.set("category", state.category);
     if (state.search) params.set("q", state.search);
     if (state.coverage) params.set("coverage", state.coverage);
+    if (state.topic) params.set("topic", state.topic);
     if (state.access) params.set("access", state.access);
     if (state.source) params.set("source", state.source);
+    if (state.path) params.set("path", state.path);
     const qs = params.toString();
     window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash);
     syncLanguageLinks();
@@ -146,6 +183,9 @@
 
   const sourceCountLabel = (value) => `${value} ${value === 1 ? "fuente" : "fuentes"}`;
 
+  const getActivePath = () => pathsById.get(state.path) || null;
+  const tagLabel = (facet, value) => tagVocabulary[facet]?.[value]?.[locale] || tagVocabulary[facet]?.[value]?.en || value;
+
   const renderDomains = () => {
     if (!categories.length) {
       domainNav.innerHTML = '<p class="empty-state">Los filtros por dominio no están disponibles temporalmente. Aun así puedes explorar el catálogo completo abajo.</p>';
@@ -164,22 +204,30 @@
 
   const getVisibleRecords = () => {
     const query = state.search.trim().toLocaleLowerCase();
-    return catalog.filter((record) => {
-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], record.temporalCoverage, temporalCoverageLabels[record.id], record.spatialResolution, spatialResolutionLabels[record.spatialResolution], record.license, licenseLabels[record.id], ...record.formats]
+    const activePath = getActivePath();
+    const records = catalog.filter((record) => {
+      const tagTerms = Object.entries(record.tags || {}).flatMap(([facet, values]) => Array.isArray(values) ? values.flatMap((value) => [value, tagLabel(facet, value)]) : []);
+      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], record.temporalCoverage, temporalCoverageLabels[record.id], record.spatialResolution, spatialResolutionLabels[record.spatialResolution], record.license, licenseLabels[record.id], ...record.formats, ...tagTerms]
         .join(" ")
         .toLocaleLowerCase();
       return (!state.source || record.id === state.source)
+        && (!activePath || activePath.records.some((entry) => entry.id === record.id))
         && (!state.category || record.category === state.category)
         && (!state.coverage || record.coverage === state.coverage)
+        && (!state.topic || record.tags?.topics?.includes(state.topic))
         && (!state.access || record.access === state.access)
         && (!query || searchText.includes(query));
     });
+    if (!activePath) return records;
+    const order = new Map(activePath.records.map((entry, index) => [entry.id, index]));
+    return records.sort((a, b) => order.get(a.id) - order.get(b.id));
   };
 
   const renderCatalog = () => {
     const records = getVisibleRecords();
     resultCount.textContent = `${records.length} ${records.length === 1 ? "fuente encontrada" : "fuentes encontradas"}`;
     emptyState.hidden = records.length !== 0;
+    const activePath = getActivePath();
     grid.innerHTML = records.map((record) => {
       const detailItem = (icon, label, value) => `<li aria-label="${escapeHtml(`${label}: ${value}`)}"><span class="detail-icon" aria-hidden="true">${detailIcons[icon]}</span><span>${escapeHtml(value)}</span></li>`;
       const detailItems = [
@@ -187,6 +235,10 @@
         record.spatialResolution ? detailItem("resolution", detailLabels.resolution, spatialResolutionLabels[record.spatialResolution] || record.spatialResolution) : "",
         record.license ? detailItem("license", detailLabels.license, licenseLabels[record.id] || record.license) : ""
       ].filter(Boolean).join("");
+      const pathEntry = activePath?.records.find((entry) => entry.id === record.id);
+      const pathReason = pathEntry ? `<div class="path-role"><strong>${escapeHtml(localized(pathEntry.role))}</strong><span>${escapeHtml(localized(pathEntry.reason))}</span></div>` : "";
+      const topics = (record.tags?.topics || []).slice(0, 2);
+      const topicTags = topics.length ? `<div class="topic-tags" aria-label="${escapeHtml(researchLabels.topics)}">${topics.map((value) => `<button class="topic-tag" type="button" data-topic="${escapeHtml(value)}" aria-label="${escapeHtml(`${researchLabels.filterTopic}${topicLabels[value] || value}`)}">${escapeHtml(topicLabels[value] || value)}</button>`).join("")}</div>` : "";
       return `
       <article class="dataset-card${state.source === record.id ? " is-discovery" : ""}" data-record-id="${escapeHtml(record.id)}" aria-labelledby="source-${escapeHtml(record.id)}-title"${state.source === record.id ? " tabindex=\"-1\"" : ""}>
         <div class="card-topline">
@@ -196,6 +248,8 @@
         <h3 id="source-${escapeHtml(record.id)}-title">${escapeHtml(record.title)}</h3>
         <p class="provider">${escapeHtml(record.provider)}</p>
         <p class="description">${escapeHtml(i18n.descriptions[record.id] || record.description)}</p>
+        ${pathReason}
+        ${topicTags}
         ${detailItems ? `<ul class="dataset-details" aria-label="Detalle adicional del conjunto de datos">${detailItems}</ul>` : ""}
         <ul class="metadata" aria-label="Metadatos del conjunto de datos">
           <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
@@ -212,6 +266,26 @@
         </div>
       </article>`;
     }).join("");
+  };
+
+  const renderResearchPath = () => {
+    if (!researchPathPanel) return;
+    const activePath = getActivePath();
+    researchPathPanel.hidden = !activePath;
+    if (!activePath) {
+      researchPathPanel.innerHTML = "";
+      return;
+    }
+    const copy = activePath.locales || {};
+    researchPathPanel.setAttribute("aria-label", researchLabels.heading);
+    researchPathPanel.innerHTML = `
+      <div>
+        <p class="eyebrow">${escapeHtml(researchLabels.heading)}</p>
+        <h3>${escapeHtml(localized(copy.title))}</h3>
+        <p>${escapeHtml(localized(copy.summary))}</p>
+        <p class="research-caution">${escapeHtml(localized(copy.caution))}</p>
+      </div>
+      <button class="text-button" type="button" data-clear-path>${escapeHtml(researchLabels.clearPath)}</button>`;
   };
 
   const renderDiscovery = () => {
@@ -249,7 +323,7 @@
         "name": record.title,
         "description": i18n.descriptions[record.id] || record.description,
         "url": record.url,
-        "keywords": [categoryLabels[record.category] || record.category, coverageLabels[record.coverage] || record.coverage],
+        "keywords": [categoryLabels[record.category] || record.category, coverageLabels[record.coverage] || record.coverage, ...(record.tags?.topics || []).map((value) => topicLabels[value] || value)],
         "provider": { "@type": "Organization", "name": record.provider },
         ...(record.temporalCoverage ? { "temporalCoverage": temporalCoverageLabels[record.id] || record.temporalCoverage } : {}),
         ...(record.license ? { "license": licenseLabels[record.id] || record.license } : {}),
@@ -269,9 +343,11 @@
     if (!button) return;
     state.category = state.category === button.dataset.category ? "" : button.dataset.category;
     state.source = "";
+    state.path = "";
     trackEvent(`/filter-domain/${state.category || "all"}`);
     renderDomains();
     renderCatalog();
+    renderResearchPath();
     renderDiscovery();
     updateDiscoverControl();
     syncUrl();
@@ -281,7 +357,9 @@
   search.addEventListener("input", () => {
     state.search = search.value;
     state.source = "";
+    state.path = "";
     renderCatalog();
+    renderResearchPath();
     renderDiscovery();
     updateDiscoverControl();
     syncUrl();
@@ -290,7 +368,20 @@
   coverage.addEventListener("change", () => {
     state.coverage = coverage.value;
     state.source = "";
+    state.path = "";
     renderCatalog();
+    renderResearchPath();
+    renderDiscovery();
+    updateDiscoverControl();
+    syncUrl();
+  });
+
+  topic?.addEventListener("change", () => {
+    state.topic = topic.value;
+    state.source = "";
+    state.path = "";
+    renderCatalog();
+    renderResearchPath();
     renderDiscovery();
     updateDiscoverControl();
     syncUrl();
@@ -299,7 +390,9 @@
   access.addEventListener("change", () => {
     state.access = access.value;
     state.source = "";
+    state.path = "";
     renderCatalog();
+    renderResearchPath();
     renderDiscovery();
     updateDiscoverControl();
     syncUrl();
@@ -309,11 +402,15 @@
     window.setTimeout(() => {
       state.search = "";
       state.coverage = "";
+      state.topic = "";
       state.access = "";
       state.category = "";
       state.source = "";
+      state.path = "";
+      if (topic) topic.value = "";
       renderDomains();
       renderCatalog();
+      renderResearchPath();
       renderDiscovery();
       updateDiscoverControl();
       syncUrl();
@@ -328,19 +425,54 @@
     state.category = "";
     state.search = "";
     state.coverage = "";
+    state.topic = "";
     state.access = "";
     state.source = record.id;
+    state.path = "";
     search.value = "";
     coverage.value = "";
+    if (topic) topic.value = "";
     access.value = "";
     renderDomains();
     renderCatalog();
+    renderResearchPath();
     renderDiscovery();
     updateDiscoverControl();
     syncUrl();
     const card = grid.querySelector(`[data-record-id="${record.id}"]`);
     card?.scrollIntoView({ behavior: getScrollBehavior(), block: "center" });
     card?.focus({ preventScroll: true });
+  });
+
+  const openResearchPath = (pathId) => {
+    if (!pathsById.has(pathId)) return;
+    state.category = "";
+    state.search = "";
+    state.coverage = "";
+    state.topic = "";
+    state.access = "";
+    state.source = "";
+    state.path = pathId;
+    search.value = "";
+    coverage.value = "";
+    if (topic) topic.value = "";
+    access.value = "";
+    renderDomains();
+    renderCatalog();
+    renderResearchPath();
+    renderDiscovery();
+    updateDiscoverControl();
+    syncUrl();
+    document.getElementById("catalog").scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
+  };
+
+  researchPathButton?.addEventListener("click", () => openResearchPath(researchPathButton.dataset.path));
+  researchPathPanel?.addEventListener("click", (event) => {
+    if (!event.target.closest("button[data-clear-path]")) return;
+    state.path = "";
+    renderCatalog();
+    renderResearchPath();
+    syncUrl();
   });
 
   const copyLinkButton = document.getElementById("copy-view-link");
@@ -351,6 +483,20 @@
   });
 
   grid.addEventListener("click", async (event) => {
+    const topicButton = event.target.closest("button[data-topic]");
+    if (topicButton) {
+      state.topic = state.topic === topicButton.dataset.topic ? "" : topicButton.dataset.topic;
+      state.source = "";
+      state.path = "";
+      if (topic) topic.value = state.topic;
+      renderCatalog();
+      renderResearchPath();
+      renderDiscovery();
+      updateDiscoverControl();
+      syncUrl();
+      return;
+    }
+
     const citeButton = event.target.closest("button[data-cite-id]");
     if (citeButton) {
       const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
@@ -384,6 +530,7 @@
 
   renderDomains();
   renderCatalog();
+  renderResearchPath();
   renderDiscovery();
   updateDiscoverControl();
   syncUrl();

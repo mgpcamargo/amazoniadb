@@ -1,6 +1,6 @@
 {
   "apiVersion": 1,
-  "generated": "2026-07-30T17:17:16.481Z",
+  "generated": "2026-07-30T23:23:50.494Z",
   "count": 45,
   "source": "https://mgpcamargo.github.io/amazoniadb/",
   "recordSchema": "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json",
@@ -24,7 +24,24 @@
       "checked": "2026-07-14",
       "temporalCoverage": "Museum specimens to present (continuously updated)",
       "spatialResolution": "Point occurrence records; accuracy varies per record",
-      "methodologyUrl": "https://techdocs.gbif.org/en/"
+      "methodologyUrl": "https://techdocs.gbif.org/en/",
+      "tags": {
+        "topics": [
+          "biodiversity"
+        ],
+        "modes": [
+          "field-observation",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context",
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "specieslink-network",
@@ -43,7 +60,24 @@
       "checked": "2026-07-14",
       "temporalCoverage": "2002–present (continuously updated)",
       "spatialResolution": "Point occurrence records; accuracy varies per record",
-      "methodologyUrl": "https://splink.cria.org.br/documents"
+      "methodologyUrl": "https://splink.cria.org.br/documents",
+      "tags": {
+        "topics": [
+          "biodiversity"
+        ],
+        "modes": [
+          "field-observation",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context",
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "ana-hidroweb",
@@ -62,7 +96,25 @@
       "checked": "2026-07-14",
       "temporalCoverage": "Varies by station; many series since the early 2000s, some longer",
       "spatialResolution": "Station-level (point gauges)",
-      "methodologyUrl": "https://metadados.snirh.gov.br/geonetwork/srv/api/records/6749d278-ca5e-40e9-b648-20d6382f57df/attachments/Cartilha_EstatisticasFluPlu_VF.pdf"
+      "methodologyUrl": "https://metadados.snirh.gov.br/geonetwork/srv/api/records/6749d278-ca5e-40e9-b648-20d6382f57df/attachments/Cartilha_EstatisticasFluPlu_VF.pdf",
+      "tags": {
+        "topics": [
+          "water",
+          "climate"
+        ],
+        "modes": [
+          "station-observation",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "monitoring",
+          "context"
+        ]
+      }
     },
     {
       "id": "inmet-bdmep",
@@ -80,7 +132,23 @@
       "checked": "2026-07-14",
       "temporalCoverage": "Daily records since 2000; series length varies by station",
       "spatialResolution": "Station-level (point observations)",
-      "methodologyUrl": "https://portal.inmet.gov.br/paginas/catalogoman"
+      "methodologyUrl": "https://portal.inmet.gov.br/paginas/catalogoman",
+      "tags": {
+        "topics": [
+          "climate"
+        ],
+        "modes": [
+          "station-observation",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "mapbiomas-brasil",
@@ -99,7 +167,27 @@
       "checked": "2026-07-14",
       "temporalCoverage": "1985–2024 (annual)",
       "spatialResolution": "30 m (Landsat-based classification)",
-      "methodologyUrl": "https://brasil.mapbiomas.org/en/metodo_cobertura_e_uso/"
+      "methodologyUrl": "https://brasil.mapbiomas.org/en/metodo_cobertura_e_uso/",
+      "tags": {
+        "topics": [
+          "forests",
+          "forest-change",
+          "land-use",
+          "fire"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "baseline",
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "inpe-terrabrasilis",
@@ -119,7 +207,26 @@
       "checked": "2026-07-14",
       "temporalCoverage": "PRODES annual since 1988; DETER near-real-time alerts",
       "spatialResolution": "~30 m (PRODES, Landsat-class); down to ~250 m historically for DETER alerts",
-      "methodologyUrl": "https://terrabrasilis.dpi.inpe.br/en/about/"
+      "methodologyUrl": "https://terrabrasilis.dpi.inpe.br/en/about/",
+      "tags": {
+        "topics": [
+          "forests",
+          "forest-change",
+          "land-use"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "near-real-time"
+        ],
+        "roles": [
+          "monitoring",
+          "alert"
+        ]
+      }
     },
     {
       "id": "funai-terras-indigenas",
@@ -139,7 +246,24 @@
       "checked": "2026-07-14",
       "temporalCoverage": "Updated monthly",
       "spatialResolution": "Vector boundaries (polygon/point), not a fixed pixel resolution",
-      "methodologyUrl": "https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas/geoserver-funai"
+      "methodologyUrl": "https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas/geoserver-funai",
+      "tags": {
+        "topics": [
+          "territories",
+          "indigenous-peoples"
+        ],
+        "modes": [
+          "legal-boundary",
+          "geospatial"
+        ],
+        "time": [
+          "ongoing"
+        ],
+        "roles": [
+          "boundary",
+          "context"
+        ]
+      }
     },
     {
       "id": "isa-terras-indigenas",
@@ -157,7 +281,24 @@
       "url": "https://terrasindigenas.org.br/",
       "checked": "2026-07-14",
       "temporalCoverage": "Ongoing since the 1980s (CEDI/ISA)",
-      "methodologyUrl": "https://terrasindigenas.org.br/pt-br/node/33"
+      "methodologyUrl": "https://terrasindigenas.org.br/pt-br/node/33",
+      "tags": {
+        "topics": [
+          "territories",
+          "indigenous-peoples",
+          "tenure-and-rights"
+        ],
+        "modes": [
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "ibge-cidades",
@@ -176,7 +317,25 @@
       "checked": "2026-07-14",
       "temporalCoverage": "Varies by indicator; many annual, some tied to Census years",
       "spatialResolution": "Municipality and state level",
-      "methodologyUrl": "https://cidades.ibge.gov.br/pesquisas"
+      "methodologyUrl": "https://cidades.ibge.gov.br/pesquisas",
+      "tags": {
+        "topics": [
+          "population",
+          "health",
+          "livelihoods"
+        ],
+        "modes": [
+          "administrative-record",
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "datasus-tabnet",
@@ -194,7 +353,24 @@
       "checked": "2026-07-30",
       "temporalCoverage": "Varies by sub-system; several series ongoing since the 1990s–2000s",
       "spatialResolution": "Municipal and facility level",
-      "methodologyUrl": "https://tabnet.datasus.gov.br/tabnet/tabdescr.htm"
+      "methodologyUrl": "https://tabnet.datasus.gov.br/tabnet/tabdescr.htm",
+      "tags": {
+        "topics": [
+          "health",
+          "population"
+        ],
+        "modes": [
+          "administrative-record",
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "icmbio-dados-geoespaciais",
@@ -213,7 +389,24 @@
       "checked": "2026-07-30",
       "temporalCoverage": "Updated as boundaries are refined or redefined by decree",
       "spatialResolution": "Vector boundaries, multi-scale (1:10,000–1:250,000)",
-      "license": "Open Data Commons Public Domain Dedication and License (PDDL)"
+      "license": "Open Data Commons Public Domain Dedication and License (PDDL)",
+      "tags": {
+        "topics": [
+          "protected-areas",
+          "territories",
+          "tenure-and-rights"
+        ],
+        "modes": [
+          "legal-boundary",
+          "geospatial"
+        ],
+        "time": [
+          "ongoing"
+        ],
+        "roles": [
+          "boundary"
+        ]
+      }
     },
     {
       "id": "raisg-maps",
@@ -231,7 +424,27 @@
       "url": "https://www.raisg.org/en/maps/",
       "checked": "2026-07-14",
       "temporalCoverage": "Periodic updates since 1996; latest full atlas 2020",
-      "methodologyUrl": "https://www.amazoniasocioambiental.org/es/publicacion/amazonia-bajo-presion-2020/"
+      "methodologyUrl": "https://www.amazoniasocioambiental.org/es/publicacion/amazonia-bajo-presion-2020/",
+      "tags": {
+        "topics": [
+          "territories",
+          "protected-areas",
+          "infrastructure",
+          "extractive-pressures"
+        ],
+        "modes": [
+          "geospatial",
+          "reference-layer"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "baseline",
+          "context"
+        ]
+      }
     },
     {
       "id": "geobosques-national-forest-monitoring-platform",
@@ -252,7 +465,25 @@
       "checked": "2026-07-22",
       "temporalCoverage": "Annual forest-loss maps since 2001; near-real-time early-warning alerts",
       "spatialResolution": "30 m (Landsat); Sentinel (10 m) used for visual verification",
-      "methodologyUrl": "https://geobosques.minam.gob.pe/geobosque/descargas_geobosque/perdida/documentos/Protocolo_Metodologico_Deteccion_Perdida_de_Bosque.pdf"
+      "methodologyUrl": "https://geobosques.minam.gob.pe/geobosque/descargas_geobosque/perdida/documentos/Protocolo_Metodologico_Deteccion_Perdida_de_Bosque.pdf",
+      "tags": {
+        "topics": [
+          "forests",
+          "forest-change"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "near-real-time"
+        ],
+        "roles": [
+          "monitoring",
+          "alert"
+        ]
+      }
     },
     {
       "id": "imazon-sad-system",
@@ -272,7 +503,25 @@
       "checked": "2026-07-30",
       "temporalCoverage": "2008–present (monthly bulletins)",
       "spatialResolution": "Landsat/Sentinel-based; minimum 1 ha detection",
-      "methodologyUrl": "https://imazongeo.org.br/sad/"
+      "methodologyUrl": "https://imazongeo.org.br/sad/",
+      "tags": {
+        "topics": [
+          "forests",
+          "forest-change"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "monitoring",
+          "alert"
+        ]
+      }
     },
     {
       "id": "nasa-firms-active-fire",
@@ -293,7 +542,24 @@
       "url": "https://firms.modaps.eosdis.nasa.gov/",
       "checked": "2026-07-25",
       "temporalCoverage": "2000–present (MODIS); 2012–present (VIIRS); updated multiple times daily",
-      "spatialResolution": "MODIS 1 km; VIIRS 375 m"
+      "spatialResolution": "MODIS 1 km; VIIRS 375 m",
+      "tags": {
+        "topics": [
+          "fire"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "near-real-time"
+        ],
+        "roles": [
+          "monitoring",
+          "alert"
+        ]
+      }
     },
     {
       "id": "chirps-precipitation",
@@ -312,7 +578,25 @@
       "url": "https://www.chc.ucsb.edu/data/chirps",
       "checked": "2026-07-25",
       "temporalCoverage": "1981–present (daily, ~45-day latency for final product)",
-      "spatialResolution": "0.05° (~5.5 km)"
+      "spatialResolution": "0.05° (~5.5 km)",
+      "tags": {
+        "topics": [
+          "climate",
+          "water"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "baseline",
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "amazon-canopy-height-nicfi-lidar",
@@ -329,7 +613,23 @@
       "url": "https://registry.opendata.aws/ctrees-amazon-canopy-height/",
       "checked": "2026-07-25",
       "temporalCoverage": "2020–2024 composite",
-      "spatialResolution": "~4.78 m"
+      "spatialResolution": "~4.78 m",
+      "tags": {
+        "topics": [
+          "forests",
+          "biodiversity"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "static-reference"
+        ],
+        "roles": [
+          "baseline"
+        ]
+      }
     },
     {
       "id": "amazon-mining-watch",
@@ -349,7 +649,24 @@
       "checked": "2026-07-25",
       "temporalCoverage": "Annual 2018–2024, quarterly from Q2 2025",
       "spatialResolution": "Sentinel-2 10–20 m derived mine-scar polygons",
-      "license": "Creative Commons Attribution 4.0 (CC-BY-4.0)"
+      "license": "Creative Commons Attribution 4.0 (CC-BY-4.0)",
+      "tags": {
+        "topics": [
+          "extractive-pressures",
+          "forest-change"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "gedi-forest-structure",
@@ -368,7 +685,23 @@
       "url": "https://gedi.umd.edu/dataproducts/download/",
       "checked": "2026-07-25",
       "temporalCoverage": "April 2019–March 2023 (mission data collection)",
-      "spatialResolution": "~25 m footprints (L2); 1 km gridded (L4B)"
+      "spatialResolution": "~25 m footprints (L2); 1 km gridded (L4B)",
+      "tags": {
+        "topics": [
+          "forests",
+          "biodiversity"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series"
+        ],
+        "roles": [
+          "baseline"
+        ]
+      }
     },
     {
       "id": "hansen-global-forest-change",
@@ -385,7 +718,25 @@
       "url": "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2024-v1.12/download.html",
       "checked": "2026-07-25",
       "temporalCoverage": "2000–2024, annual updates",
-      "spatialResolution": "~30 m"
+      "spatialResolution": "~30 m",
+      "tags": {
+        "topics": [
+          "forests",
+          "forest-change"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "baseline",
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "terraclass-amazonia",
@@ -403,7 +754,26 @@
       "url": "https://data.inpe.br/big/web/biomasbr/terraclass-monitoramento-sistemico-de-uso-e-cobertura-da-terra/",
       "checked": "2026-07-25",
       "temporalCoverage": "2004, 2008, 2010, 2012, 2014, biennially through 2024",
-      "spatialResolution": "30 m (Landsat-based classification)"
+      "spatialResolution": "30 m (Landsat-based classification)",
+      "tags": {
+        "topics": [
+          "land-use",
+          "forest-change",
+          "forests"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "baseline",
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "siradx-xingu-deforestation-alert",
@@ -421,7 +791,25 @@
       "url": "https://xingumais.org.br/sirad-x",
       "checked": "2026-07-25",
       "temporalCoverage": "Ongoing, near-real-time alerts",
-      "spatialResolution": "SAR-based; sub-hectare alert polygons"
+      "spatialResolution": "SAR-based; sub-hectare alert polygons",
+      "tags": {
+        "topics": [
+          "forests",
+          "forest-change"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "ongoing",
+          "near-real-time"
+        ],
+        "roles": [
+          "monitoring",
+          "alert"
+        ]
+      }
     },
     {
       "id": "inpe-bdqueimadas",
@@ -441,7 +829,24 @@
       "url": "https://data.inpe.br/queimadas/dados-abertos/",
       "checked": "2026-07-25",
       "temporalCoverage": "1998–present (near-real-time, updated every 10 minutes to 3 hours depending on product)",
-      "spatialResolution": "1 km (AQUA/MODIS reference satellite)"
+      "spatialResolution": "1 km (AQUA/MODIS reference satellite)",
+      "tags": {
+        "topics": [
+          "fire"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "near-real-time"
+        ],
+        "roles": [
+          "monitoring",
+          "alert"
+        ]
+      }
     },
     {
       "id": "ore-hybam-observatory",
@@ -459,7 +864,24 @@
       "url": "https://hybam.obs-mip.fr/",
       "checked": "2026-07-25",
       "temporalCoverage": "2003–present (daily/decadal/monthly, depending on variable); some stations reconstructed back to 1902",
-      "spatialResolution": "17 point gauge/sampling stations"
+      "spatialResolution": "17 point gauge/sampling stations",
+      "tags": {
+        "topics": [
+          "water",
+          "climate"
+        ],
+        "modes": [
+          "station-observation",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "ibama-fiscalizacao-dados-abertos",
@@ -477,7 +899,23 @@
       "url": "https://dadosabertos.ibama.gov.br/",
       "checked": "2026-07-25",
       "temporalCoverage": "2000–present, periodic updates",
-      "spatialResolution": "Point/parcel-level enforcement records; polygon-level embargoed areas"
+      "spatialResolution": "Point/parcel-level enforcement records; polygon-level embargoed areas",
+      "tags": {
+        "topics": [
+          "environmental-accountability"
+        ],
+        "modes": [
+          "administrative-record",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "accountability"
+        ]
+      }
     },
     {
       "id": "hydrosheds",
@@ -497,7 +935,23 @@
       "checked": "2026-07-25",
       "temporalCoverage": "Static (elevation-derived; no time series)",
       "spatialResolution": "3 arc-second (~90 m) to 5 arc-minute (~10 km)",
-      "license": "HydroSHEDS License Agreement"
+      "license": "HydroSHEDS License Agreement",
+      "tags": {
+        "topics": [
+          "water",
+          "terrain"
+        ],
+        "modes": [
+          "geospatial",
+          "reference-layer"
+        ],
+        "time": [
+          "static-reference"
+        ],
+        "roles": [
+          "baseline"
+        ]
+      }
     },
     {
       "id": "worldclim-bioclimatic",
@@ -514,7 +968,24 @@
       "url": "https://www.worldclim.org/",
       "checked": "2026-07-25",
       "temporalCoverage": "1970–2000 climatology baseline (historical); future scenario layers also available",
-      "spatialResolution": "30 arc-seconds (~1 km) to 10 arc-minutes (~340 km)"
+      "spatialResolution": "30 arc-seconds (~1 km) to 10 arc-minutes (~340 km)",
+      "tags": {
+        "topics": [
+          "climate",
+          "water"
+        ],
+        "modes": [
+          "geospatial",
+          "reference-layer"
+        ],
+        "time": [
+          "static-reference",
+          "future-scenarios"
+        ],
+        "roles": [
+          "baseline"
+        ]
+      }
     },
     {
       "id": "copernicus-dem-glo30",
@@ -531,7 +1002,23 @@
       "url": "https://doi.org/10.5270/ESA-c5d3d65",
       "checked": "2026-07-25",
       "temporalCoverage": "Static (TanDEM-X acquisitions, ~2011–2015)",
-      "spatialResolution": "30 m"
+      "spatialResolution": "30 m",
+      "tags": {
+        "topics": [
+          "terrain",
+          "water"
+        ],
+        "modes": [
+          "geospatial",
+          "reference-layer"
+        ],
+        "time": [
+          "static-reference"
+        ],
+        "roles": [
+          "baseline"
+        ]
+      }
     },
     {
       "id": "esa-worldcover",
@@ -549,7 +1036,25 @@
       "url": "https://esa-worldcover.org/en/data-access",
       "checked": "2026-07-25",
       "temporalCoverage": "2020, 2021 baseline maps; annual composites from 2020 onward",
-      "spatialResolution": "10 m"
+      "spatialResolution": "10 m",
+      "tags": {
+        "topics": [
+          "land-use",
+          "forests"
+        ],
+        "modes": [
+          "remote-sensing",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "baseline",
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "rainfor-forestplots-amazon-network",
@@ -567,7 +1072,24 @@
       "url": "https://www.forestplots.net",
       "checked": "2026-07-26",
       "temporalCoverage": "2000–present, plots re-censused periodically",
-      "spatialResolution": "Permanent sample plots (typically ~1 ha each) across multiple countries"
+      "spatialResolution": "Permanent sample plots (typically ~1 ha each) across multiple countries",
+      "tags": {
+        "topics": [
+          "forests",
+          "biodiversity"
+        ],
+        "modes": [
+          "field-observation",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "ppbio-brazil-biodiversity-research",
@@ -585,7 +1107,24 @@
       "url": "https://ppbio.inpa.gov.br/en",
       "checked": "2026-07-26",
       "temporalCoverage": "2001–present",
-      "spatialResolution": "RAPELD grids (10–72 plots per site)"
+      "spatialResolution": "RAPELD grids (10–72 plots per site)",
+      "tags": {
+        "topics": [
+          "biodiversity",
+          "forests"
+        ],
+        "modes": [
+          "field-observation",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "map-of-life-species-ranges",
@@ -604,7 +1143,24 @@
       "url": "https://mol.org/",
       "checked": "2026-07-26",
       "temporalCoverage": "Continuously updated; indicators recalculated annually",
-      "spatialResolution": "Species-level range polygons; configurable by region"
+      "spatialResolution": "Species-level range polygons; configurable by region",
+      "tags": {
+        "topics": [
+          "biodiversity",
+          "protected-areas"
+        ],
+        "modes": [
+          "geospatial",
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "ongoing"
+        ],
+        "roles": [
+          "baseline",
+          "context"
+        ]
+      }
     },
     {
       "id": "otca-amazon-regional-observatory",
@@ -623,7 +1179,28 @@
       "url": "https://www.oraotca.org/en",
       "checked": "2026-07-26",
       "temporalCoverage": "Varies by module; fire module covers 2001–2025",
-      "spatialResolution": "Varies by module; national to basin-wide"
+      "spatialResolution": "Varies by module; national to basin-wide",
+      "tags": {
+        "topics": [
+          "biodiversity",
+          "water",
+          "forests",
+          "fire",
+          "indigenous-peoples"
+        ],
+        "modes": [
+          "geospatial",
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context",
+          "monitoring"
+        ]
+      }
     },
     {
       "id": "landmark-indigenous-community-lands",
@@ -642,7 +1219,26 @@
       "url": "https://www.landmarkmap.org/",
       "checked": "2026-07-26",
       "temporalCoverage": "Continuously updated; version 2.0 released 2024",
-      "spatialResolution": "Community/territory-level polygons"
+      "spatialResolution": "Community/territory-level polygons",
+      "tags": {
+        "topics": [
+          "territories",
+          "indigenous-peoples",
+          "community-lands",
+          "tenure-and-rights"
+        ],
+        "modes": [
+          "legal-boundary",
+          "geospatial"
+        ],
+        "time": [
+          "ongoing"
+        ],
+        "roles": [
+          "boundary",
+          "context"
+        ]
+      }
     },
     {
       "id": "rri-tenure-tracking-tool",
@@ -660,7 +1256,25 @@
       "url": "https://rightsandresources.org/tenure-tracking/",
       "checked": "2026-07-26",
       "temporalCoverage": "2015–present, continuously updated",
-      "spatialResolution": "Country-level indicators"
+      "spatialResolution": "Country-level indicators",
+      "tags": {
+        "topics": [
+          "territories",
+          "indigenous-peoples",
+          "community-lands",
+          "tenure-and-rights"
+        ],
+        "modes": [
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "igarape-ecocrime-data",
@@ -678,7 +1292,24 @@
       "url": "https://ecocrime.igarape.org.br/",
       "checked": "2026-07-30",
       "temporalCoverage": "2021–present, updated periodically",
-      "spatialResolution": "Site/incident-level points across 9 countries"
+      "spatialResolution": "Site/incident-level points across 9 countries",
+      "tags": {
+        "topics": [
+          "environmental-accountability",
+          "extractive-pressures",
+          "tenure-and-rights"
+        ],
+        "modes": [
+          "geospatial",
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "ongoing"
+        ],
+        "roles": [
+          "accountability"
+        ]
+      }
     },
     {
       "id": "isa-povos-indigenas-no-brasil",
@@ -696,7 +1327,24 @@
       "url": "https://pib.socioambiental.org/",
       "checked": "2026-07-26",
       "temporalCoverage": "Early 1980s–present, continuously updated",
-      "spatialResolution": "By people/ethnic group"
+      "spatialResolution": "By people/ethnic group",
+      "tags": {
+        "topics": [
+          "indigenous-peoples",
+          "languages",
+          "tenure-and-rights"
+        ],
+        "modes": [
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "ibge-censo-indigena-2022",
@@ -715,7 +1363,25 @@
       "url": "https://www.ibge.gov.br/estatisticas/sociais/saude/22827-censo-demografico-2022.html",
       "checked": "2026-07-26",
       "temporalCoverage": "Systematic collection since 1991; latest round 2022, with continued table releases",
-      "spatialResolution": "Municipality, Indigenous Land, Legal Amazon subregion"
+      "spatialResolution": "Municipality, Indigenous Land, Legal Amazon subregion",
+      "tags": {
+        "topics": [
+          "indigenous-peoples",
+          "languages",
+          "population",
+          "territories"
+        ],
+        "modes": [
+          "survey-or-census",
+          "geospatial"
+        ],
+        "time": [
+          "historical-series"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "glottolog-language-catalog",
@@ -734,7 +1400,23 @@
       "url": "https://glottolog.org/",
       "checked": "2026-07-26",
       "temporalCoverage": "Continuously updated; version 5.3 as of 2026",
-      "spatialResolution": "Language/dialect-level point locations"
+      "spatialResolution": "Language/dialect-level point locations",
+      "tags": {
+        "topics": [
+          "languages",
+          "indigenous-peoples"
+        ],
+        "modes": [
+          "indicators-and-profiles",
+          "geospatial"
+        ],
+        "time": [
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "cimi-observatorio-violencia-indigena",
@@ -752,7 +1434,25 @@
       "url": "https://cimi.org.br/observatorio-da-violencia/o-relatorio/",
       "checked": "2026-07-26",
       "temporalCoverage": "1996–present, annual",
-      "spatialResolution": "Case-level, aggregated nationally and by state"
+      "spatialResolution": "Case-level, aggregated nationally and by state",
+      "tags": {
+        "topics": [
+          "indigenous-peoples",
+          "tenure-and-rights",
+          "environmental-accountability"
+        ],
+        "modes": [
+          "administrative-record",
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "accountability"
+        ]
+      }
     },
     {
       "id": "fcp-comunidades-quilombolas-certificadas",
@@ -770,7 +1470,24 @@
       "url": "https://dados.cultura.gov.br/dataset/comunidades-quilombolas-certificadas",
       "checked": "2026-07-26",
       "temporalCoverage": "2003–present, continuously updated",
-      "spatialResolution": "Community-level records"
+      "spatialResolution": "Community-level records",
+      "tags": {
+        "topics": [
+          "community-lands",
+          "territories",
+          "tenure-and-rights"
+        ],
+        "modes": [
+          "administrative-record"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "atlas-brasil-idhm",
@@ -788,7 +1505,25 @@
       "url": "https://www.atlasbrasil.org.br/",
       "checked": "2026-07-26",
       "temporalCoverage": "1991, 2000, 2010 census rounds; ~78 indicators updated annually",
-      "spatialResolution": "Municipality level"
+      "spatialResolution": "Municipality level",
+      "tags": {
+        "topics": [
+          "population",
+          "health",
+          "livelihoods"
+        ],
+        "modes": [
+          "administrative-record",
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "ibge-pnad-continua",
@@ -806,7 +1541,24 @@
       "url": "https://www.ibge.gov.br/en/statistics/social/labor/17270-pnad-continua.html",
       "checked": "2026-07-26",
       "temporalCoverage": "Continuous since 2012 (predecessor annual survey since 1967)",
-      "spatialResolution": "State/regional level microdata"
+      "spatialResolution": "State/regional level microdata",
+      "tags": {
+        "topics": [
+          "population",
+          "livelihoods",
+          "food-security"
+        ],
+        "modes": [
+          "survey-or-census"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "cadunico-familias-inscritas",
@@ -824,7 +1576,25 @@
       "url": "https://dados.gov.br/dados/conjuntos-dados/familias-inscritas-no-cadastro-unico",
       "checked": "2026-07-26",
       "temporalCoverage": "2001–present, updated daily",
-      "spatialResolution": "Municipality level"
+      "spatialResolution": "Municipality level",
+      "tags": {
+        "topics": [
+          "population",
+          "livelihoods",
+          "food-security"
+        ],
+        "modes": [
+          "administrative-record",
+          "indicators-and-profiles"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     },
     {
       "id": "rede-penssan-vigisan",
@@ -842,7 +1612,24 @@
       "url": "https://redepenssan.org.br/",
       "checked": "2026-07-26",
       "temporalCoverage": "2020–present (I VIGISAN 2020/21, II VIGISAN 2021/22, ongoing)",
-      "spatialResolution": "State level"
+      "spatialResolution": "State level",
+      "tags": {
+        "topics": [
+          "food-security",
+          "health",
+          "population"
+        ],
+        "modes": [
+          "survey-or-census"
+        ],
+        "time": [
+          "historical-series",
+          "ongoing"
+        ],
+        "roles": [
+          "context"
+        ]
+      }
     }
   ]
 }

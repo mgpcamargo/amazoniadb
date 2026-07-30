@@ -18,9 +18,10 @@
     <meta name="twitter:title" content="AmazoniaDB — Encuentra los datos en la fuente">
     <meta name="twitter:description" content="Un directorio ligero para encontrar conjuntos de datos socioambientales de la Amazonía en sus fuentes originales.">
     <meta name="twitter:image" content="https://mgpcamargo.github.io/amazoniadb/og-image.png">
-    <link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/">
-    <link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/pt-br/">
-    <link rel="alternate" hreflang="es-419" href="https://mgpcamargo.github.io/amazoniadb/es/">
+    <link rel="canonical" href="https://mgpcamargo.github.io/amazoniadb/es/">
+    <link rel="alternate" hreflang="pt-BR" href="https://mgpcamargo.github.io/amazoniadb/">
+    <link rel="alternate" hreflang="en" href="https://mgpcamargo.github.io/amazoniadb/en/">
+    <link rel="alternate" hreflang="es" href="https://mgpcamargo.github.io/amazoniadb/es/">
     <link rel="alternate" hreflang="x-default" href="https://mgpcamargo.github.io/amazoniadb/">
     <link rel="icon" href="../favicon.svg" type="image/svg+xml">
     <title>AmazoniaDB — Encuentra los datos en la fuente</title>
@@ -44,8 +45,8 @@
             <svg class="theme-icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
           </button>
           <nav class="lang-switch" aria-label="Idioma">
-            <a class="lang-link" href="../index.html">EN</a>
-            <a class="lang-link" href="../pt-br/index.html">PT-BR</a>
+            <a class="lang-link" href="../en/index.html">EN</a>
+            <a class="lang-link" href="../index.html">PT-BR</a>
             <span class="lang-current" aria-current="true">ES</span>
           </nav>
         </div>
@@ -65,6 +66,17 @@
           <div><dt id="dataset-count">45</dt><dd>fuentes seleccionadas</dd></div>
           <div><dt>6</dt><dd>áreas de conocimiento</dd></div>
         </dl>
+      </section>
+
+      <section class="research-starter container" aria-labelledby="research-starter-title">
+        <div>
+          <p class="eyebrow">Ruta de investigación</p>
+          <h2 id="research-starter-title">¿Qué cambia en el bosque alrededor de un territorio?</h2>
+        </div>
+        <div class="research-starter-copy">
+          <p>Un punto de partida para Brasil: cuatro fuentes públicas con funciones complementarias. Sin análisis automático.</p>
+          <button id="open-research-path" class="button button-secondary" type="button" data-path="forest-change-territory-brazil">Explorar la ruta</button>
+        </div>
       </section>
 
       <section class="domain-section" aria-labelledby="domains-title">
@@ -96,6 +108,8 @@
           </div>
         </div>
 
+        <aside id="research-path-panel" class="research-path-panel" hidden></aside>
+
         <form id="filters" class="filters" role="search">
           <label class="search-field" for="search">
             <span>Buscar en el directorio</span>
@@ -115,6 +129,12 @@
               <option value="Bolivia">Bolivia</option>
               <option value="Ecuador">Ecuador</option>
               <option value="Global — subsettable">Global — recortable</option>
+            </select>
+          </label>
+          <label for="topic">
+            <span>Tema</span>
+            <select id="topic" name="topic" data-default-option="Todos los temas">
+              <option value="">Todos los temas</option>
             </select>
           </label>
           <label for="access">
@@ -173,8 +193,10 @@
     </footer>
 
     <script src="../data/category-presentation.js"></script>
+    <script src="../data/tag-presentation.js"></script>
     <script src="../data/catalog.js"></script>
     <script src="../data/catalog.i18n.js"></script>
+    <script src="../data/research-paths.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

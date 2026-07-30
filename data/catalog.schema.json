@@ -93,6 +93,50 @@
       "type": "string",
       "pattern": "^https?://",
       "description": "Optional. A direct link to the provider's methodology, technical note, or documentation — distinct from `url`, which is the dataset/portal page itself."
+    },
+    "tags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["topics", "modes", "time", "roles"],
+      "description": "Optional editorial classification for discovery. When present, every facet must use the controlled vocabulary in data/tag-presentation.js. Tags describe the source, not a claim about people or places.",
+      "properties": {
+        "topics": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["biodiversity", "forests", "forest-change", "land-use", "fire", "extractive-pressures", "infrastructure", "water", "climate", "terrain", "territories", "indigenous-peoples", "community-lands", "languages", "population", "health", "livelihoods", "food-security", "protected-areas", "tenure-and-rights", "environmental-accountability"]
+          }
+        },
+        "modes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["geospatial", "remote-sensing", "field-observation", "station-observation", "administrative-record", "survey-or-census", "legal-boundary", "indicators-and-profiles", "reference-layer"]
+          }
+        },
+        "time": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["historical-series", "ongoing", "near-real-time", "static-reference", "future-scenarios"]
+          }
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["baseline", "monitoring", "alert", "boundary", "context", "accountability"]
+          }
+        }
+      }
     }
   }
 }
