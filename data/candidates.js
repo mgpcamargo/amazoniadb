@@ -1,1 +1,0 @@
-window.AMAZONIA_CANDIDATES = [];
