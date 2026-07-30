@@ -94,7 +94,7 @@ const runExplorerSmokeTest = async (page, browserData) => {
   const ids = [
     "domain-nav", "dataset-grid", "empty-state", "result-count", "dataset-count",
     "search", "coverage", "access", "filters", "discover-source", "discovery-result",
-    "domain-gap", "catalog", "copy-view-link"
+    "catalog", "copy-view-link"
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, makeElement()]));
   elements.coverage.options = controlledFilterValues.coverage.map((value) => ({ value }));
@@ -168,6 +168,8 @@ const runExplorerSmokeTest = async (page, browserData) => {
   elements["domain-nav"].listener("click")?.({ target: { closest: () => firstTile } });
   const resetRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
   if (resetRecords !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: clicking an active category must restore the full catalog.`);
+  const documentationLinks = (elements["dataset-grid"].innerHTML.match(/class="methodology-link"/g) || []).length;
+  if (documentationLinks !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: every source card must expose a documentation link.`);
   elements["discover-source"].listener("click")?.();
   const discoveryRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
   if (discoveryRecords !== 1 || elements["discovery-result"].hidden) fail(`${page.file}: discovery must focus one verified source.`);
@@ -251,9 +253,9 @@ for (const [file, expectedScript] of [
   if (!html.includes(`src="${expectedScript}"`)) fail(`${file}: does not load ${expectedScript}.`);
 }
 const submitCategoryLabels = {
-  "submit.html": ["Life &amp; biodiversity", "Water &amp; climate", "Land &amp; pressures", "Peoples &amp; territories", "Wellbeing &amp; livelihoods", "Rights &amp; governance"],
-  "pt-br/submit.html": ["Vida e biodiversidade", "Água e clima", "Terra e pressões", "Povos e territórios", "Bem-estar e meios de vida", "Direitos e governança"],
-  "es/submit.html": ["Vida y biodiversidad", "Agua y clima", "Tierra y presiones", "Pueblos y territorios", "Bienestar y medios de vida", "Derechos y gobernanza"]
+  "submit.html": ["Forests &amp; biodiversity", "Earth, water &amp; air", "Land, fire &amp; change", "Peoples &amp; territories", "Health &amp; livelihoods", "Rights &amp; governance"],
+  "pt-br/submit.html": ["Florestas e biodiversidade", "Terra, água e ar", "Terra, fogo e transformação", "Povos e territórios", "Saúde e meios de vida", "Direitos e governança"],
+  "es/submit.html": ["Bosques y biodiversidad", "Tierra, agua y aire", "Tierra, fuego y cambio", "Pueblos y territorios", "Salud y medios de vida", "Derechos y gobernanza"]
 };
 for (const [file, labels] of Object.entries(submitCategoryLabels)) {
   const html = await read(file);
@@ -280,7 +282,7 @@ const sourceIssueTemplate = await read(".github/ISSUE_TEMPLATE/new-source.yml");
 for (const id of ["description_pt_br", "description_es", "temporal_coverage_pt_br", "temporal_coverage_es", "spatial_resolution_pt_br", "spatial_resolution_es", "license_pt_br", "license_es"]) {
   if (!sourceIssueTemplate.includes(`id: ${id}`)) fail(`new-source issue template: missing ${id}.`);
 }
-for (const label of ["Life & biodiversity", "Water & climate", "Land & pressures", "Peoples & territories", "Wellbeing & livelihoods", "Rights & governance"]) {
+for (const label of ["Forests & biodiversity", "Earth, water & air", "Land, fire & change", "Peoples & territories", "Health & livelihoods", "Rights & governance"]) {
   if (!sourceIssueTemplate.includes(`- ${JSON.stringify(label)}`)) fail(`new-source issue template: category label must use the V2 public taxonomy (${label}).`);
 }
 for (const legacyLabel of ["Forest & biodiversity", "Earth, water & climate", "Land use & infrastructure", "Peoples, territories & culture", "Society, health & livelihoods", "Governance, rights & safeguards"]) {

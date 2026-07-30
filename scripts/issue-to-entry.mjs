@@ -43,12 +43,16 @@ const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license"
 // stable schema keys used in data/catalog.js. Canonical values remain as
 // aliases so an older submitted issue can still be rebuilt safely.
 const PUBLIC_CATEGORY_TO_CANONICAL = Object.freeze({
+  "Forests & biodiversity": "Forest & biodiversity",
+  "Earth, water & air": "Earth, water & climate",
+  "Land, fire & change": "Land use & infrastructure",
+  "Peoples & territories": "Peoples, territories & culture",
+  "Health & livelihoods": "Society, health & livelihoods",
+  "Rights & governance": "Governance, rights & safeguards",
   "Life & biodiversity": "Forest & biodiversity",
   "Water & climate": "Earth, water & climate",
   "Land & pressures": "Land use & infrastructure",
-  "Peoples & territories": "Peoples, territories & culture",
-  "Wellbeing & livelihoods": "Society, health & livelihoods",
-  "Rights & governance": "Governance, rights & safeguards"
+  "Wellbeing & livelihoods": "Society, health & livelihoods"
 });
 
 const toCatalogObject = (record) => {

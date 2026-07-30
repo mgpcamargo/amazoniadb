@@ -22,7 +22,7 @@
     "Publicly available": "Disponível publicamente"
   };
   const kindLabels = { "Dataset": "Conjunto de dados", "Data portal": "Portal de dados", "Download": "Download", "Explorer": "Explorador" };
-  const detailLabels = { timeframe: "Período", resolution: "Resolução", license: "Licença", methodology: "Metodologia" };
+  const detailLabels = { timeframe: "Período", resolution: "Resolução", license: "Licença", methodology: "Documentação" };
 
   const state = { category: "", search: "", coverage: "", access: "", source: "" };
   const domainNav = document.getElementById("domain-nav");
@@ -157,28 +157,6 @@
     }).join("");
   };
 
-  // Highlights whichever domain has the fewest catalog entries, as a nudge
-  // toward community submissions. Reflects the whole catalog, not the current
-  // filter, so it does not need to re-render on filter change.
-  const renderGapPrompt = () => {
-    const gapEl = document.getElementById("domain-gap");
-    if (!gapEl) return;
-    if (!categories.length) {
-      gapEl.hidden = true;
-      return;
-    }
-    gapEl.hidden = false;
-    const counts = categories.map((category) => ({
-      label: category.label,
-      count: catalog.filter((record) => record.category === category.key).length
-    }));
-    const minCount = Math.min(...counts.map((entry) => entry.count));
-    const thinnest = counts.filter((entry) => entry.count === minCount);
-    gapEl.innerHTML = thinnest.length === counts.length
-      ? `Todos os domínios têm ${minCount} ${minCount === 1 ? "fonte" : "fontes"} até agora — <a href="submit.html">ajude um deles a crescer →</a>`
-      : `${escapeHtml(thinnest[0].label)} tem o menor número de fontes (${thinnest[0].count}) — conhece uma? <a href="submit.html">Propor uma fonte →</a>`;
-  };
-
   const getVisibleRecords = () => {
     const query = state.search.trim().toLocaleLowerCase();
     return catalog.filter((record) => {
@@ -221,7 +199,7 @@
         <div class="card-actions">
           <div class="card-links">
             <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir na fonte <span class="sr-only">(abre em nova aba)</span></a>
-            ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">${detailLabels.methodology} <span class="sr-only">(abre em nova aba)</span></a>` : ""}
+            <a class="methodology-link" href="${escapeHtml(record.methodologyUrl || record.url)}" target="_blank" rel="noopener noreferrer">${detailLabels.methodology} <span class="sr-only">${record.methodologyUrl ? "metodologia" : "página da fonte"}; abre em nova aba</span></a>
           </div>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
           <button class="cite-button" type="button" data-report-id="${escapeHtml(record.id)}">Reportar link</button>
@@ -402,7 +380,6 @@
   renderCatalog();
   renderDiscovery();
   updateDiscoverControl();
-  renderGapPrompt();
   syncUrl();
   injectStructuredData();
 })();

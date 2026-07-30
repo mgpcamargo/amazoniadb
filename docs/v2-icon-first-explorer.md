@@ -36,11 +36,11 @@ to scan.
 
 | Catalog key (unchanged) | V2 public label | Icon language | Example question |
 | --- | --- | --- | --- |
-| Forest & biodiversity | Life & biodiversity | Leaf / canopy | Where can I find species and ecosystem evidence? |
-| Earth, water & climate | Water & climate | River / cloud | What describes climate, water, or atmospheric change? |
-| Land use & infrastructure | Land & pressures | Terrain / route | Where are land conversion and infrastructure data? |
+| Forest & biodiversity | Forests & biodiversity | Leaf / canopy | Where can I find species and ecosystem evidence? |
+| Earth, water & climate | Earth, water & air | River / cloud | What describes climate, water, or atmospheric change? |
+| Land use & infrastructure | Land, fire & change | Terrain / route | Where are land conversion and infrastructure data? |
 | Peoples, territories & culture | Peoples & territories | Community / boundary | What sources represent territories and cultural context? |
-| Society, health & livelihoods | Wellbeing & livelihoods | Home / hands | Which data explain everyday conditions and livelihoods? |
+| Society, health & livelihoods | Health & livelihoods | Home / hands | Which data explain everyday conditions and livelihoods? |
 | Governance, rights & safeguards | Rights & governance | Shield / scales | Where are legal, policy, and safeguards sources? |
 
 The icons must be an original, consistent SVG family: a shared 24px grid,
@@ -60,7 +60,8 @@ pictograms. Colour supplements meaning; it never carries it alone.
   fabricate a thematic connection.
 - A future "Explore connections" feature requires explicit, reviewed fields
   such as `themes`, `geographies`, and `relatedIds`, with a visible reason for
-  every suggested relationship.
+  every suggested relationship. See `docs/evidence-connections.md` for the
+  proposed metadata, product path, and safety rules.
 - Continue linking out to publishers. Do not mirror source files, override
   licenses, or expose sensitive locations simply to make the interface feel
   richer.
