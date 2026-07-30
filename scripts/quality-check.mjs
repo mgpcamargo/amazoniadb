@@ -7,16 +7,25 @@ import { fileURLToPath } from "node:url";
 import vm from "node:vm";
 
 const root = new URL("../", import.meta.url);
-const htmlFiles = [
-  "index.html", "donate.html", "submit.html",
-  "pt-br/index.html", "pt-br/donate.html", "pt-br/submit.html",
-  "es/index.html", "es/donate.html", "es/submit.html"
+const publicBase = "https://mgpcamargo.github.io/amazoniadb";
+const canonicalPages = [
+  { file: "index.html", app: "app.js", locale: "pt-BR", url: `${publicBase}/` },
+  { file: "en/index.html", app: "en/app.js", locale: "en", url: `${publicBase}/en/` },
+  { file: "es/index.html", app: "es/app.js", locale: "es", url: `${publicBase}/es/` },
+  { file: "donate.html", locale: "pt-BR", url: `${publicBase}/donate.html` },
+  { file: "en/donate.html", locale: "en", url: `${publicBase}/en/donate.html` },
+  { file: "es/donate.html", locale: "es", url: `${publicBase}/es/donate.html` },
+  { file: "submit.html", locale: "pt-BR", url: `${publicBase}/submit.html` },
+  { file: "en/submit.html", locale: "en", url: `${publicBase}/en/submit.html` },
+  { file: "es/submit.html", locale: "es", url: `${publicBase}/es/submit.html` }
 ];
-const homePages = [
-  { file: "index.html", app: "app.js", locale: "en" },
-  { file: "pt-br/index.html", app: "pt-br/app.js", locale: "pt-BR" },
-  { file: "es/index.html", app: "es/app.js", locale: "es" }
+const homePages = canonicalPages.filter((page) => page.app);
+const legacyPages = [
+  { file: "pt-br/index.html", target: "../" },
+  { file: "pt-br/donate.html", target: "../donate.html" },
+  { file: "pt-br/submit.html", target: "../submit.html" }
 ];
+const htmlFiles = [...canonicalPages.map((page) => page.file), ...legacyPages.map((page) => page.file)];
 const requiredCategories = [
   "Forest & biodiversity",
   "Earth, water & climate",
@@ -44,7 +53,7 @@ const selectOptionValues = (html, id) => {
 
 const evaluateBrowserData = async () => {
   const context = { window: {} };
-  for (const file of ["data/catalog.js", "data/category-presentation.js", "data/catalog.i18n.js"]) {
+  for (const file of ["data/category-presentation.js", "data/tag-presentation.js", "data/catalog.js", "data/catalog.i18n.js", "data/research-paths.js"]) {
     vm.runInNewContext(await read(file), context, { filename: file });
   }
   return context.window;
@@ -63,6 +72,18 @@ const checkLocalReferences = async (file, html) => {
       fail(`${file}: local reference does not resolve: ${reference}`);
     }
   }
+};
+
+const linkTags = (html) => [...html.matchAll(/<link\b[^>]*>/gi)].map((match) => match[0]);
+const attributeValue = (tag, attribute) => tag.match(new RegExp(`\\b${attribute}=["']([^"']+)["']`, "i"))?.[1] || "";
+const linkHref = (html, rel, hreflang = "") => linkTags(html)
+  .find((tag) => attributeValue(tag, "rel") === rel && (!hreflang || attributeValue(tag, "hreflang") === hreflang))
+  ? attributeValue(linkTags(html).find((tag) => attributeValue(tag, "rel") === rel && (!hreflang || attributeValue(tag, "hreflang") === hreflang)), "href")
+  : "";
+const localizedPageUrl = (locale, file) => {
+  const page = file.replace(/^(?:en|es)\//, "");
+  const prefix = locale === "pt-BR" ? "" : `${locale}/`;
+  return `${publicBase}/${prefix}${page === "index.html" ? "" : page}`;
 };
 
 const makeElement = () => {
@@ -93,13 +114,15 @@ const makeLanguageLink = (href) => ({
 const runExplorerSmokeTest = async (page, browserData) => {
   const ids = [
     "domain-nav", "dataset-grid", "empty-state", "result-count", "dataset-count",
-    "search", "coverage", "access", "filters", "discover-source", "discovery-result",
-    "catalog", "copy-view-link"
+    "search", "coverage", "topic", "access", "filters", "discover-source", "discovery-result",
+    "catalog", "copy-view-link", "research-path-panel", "open-research-path"
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, makeElement()]));
   elements.coverage.options = controlledFilterValues.coverage.map((value) => ({ value }));
   elements.access.options = controlledFilterValues.access.map((value) => ({ value }));
-  const languageLinks = [makeLanguageLink("index.html"), makeLanguageLink("pt-br/index.html")];
+  elements.topic.options = [{ value: "" }];
+  elements.topic.dataset.defaultOption = "All topics";
+  const languageLinks = [makeLanguageLink("../index.html"), makeLanguageLink("../es/index.html")];
   const head = { appendChild() {} };
   const body = { appendChild() {}, removeChild() {} };
   const document = {
@@ -115,7 +138,7 @@ const runExplorerSmokeTest = async (page, browserData) => {
   const location = {
     origin: "https://mgpcamargo.github.io",
     pathname: `/${page.file}`,
-    search: "?source=gbif-species-occurrences&category=Earth%2C%20water%20%26%20climate",
+    search: "?source=gbif-species-occurrences&category=Earth%2C%20water%20%26%20climate&topic=forests&path=forest-change-territory-brazil",
     hash: ""
   };
   const history = {
@@ -153,7 +176,7 @@ const runExplorerSmokeTest = async (page, browserData) => {
   const renderedRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
   if (renderedTiles !== 6) fail(`${page.file}: expected six category tiles, rendered ${renderedTiles}.`);
   if (renderedRecords !== 1) fail(`${page.file}: a source URL must override conflicting filters and render exactly one source.`);
-  if (!history.replacements.at(-1)?.includes("source=gbif-species-occurrences") || history.replacements.at(-1).includes("category=")) {
+  if (!history.replacements.at(-1)?.includes("source=gbif-species-occurrences") || /(?:category|topic|path)=/.test(history.replacements.at(-1))) {
     fail(`${page.file}: source URL did not normalize conflicting filter parameters.`);
   }
   if (!languageLinks.every((link) => link.href.includes("?source=gbif-species-occurrences"))) {
@@ -179,13 +202,42 @@ const runExplorerSmokeTest = async (page, browserData) => {
 
   // Malformed or obsolete share URLs must degrade to the full directory,
   // never to an unexplained empty view with no selected control.
-  location.search = "?category=not-a-real-category&coverage=nowhere&access=unknown";
+  location.search = "?category=not-a-real-category&coverage=nowhere&topic=unknown&access=unknown&path=not-a-real-path";
   location.hash = "";
   history.replacements = [];
   vm.runInNewContext(await read(page.app), context, { filename: `${page.app}:invalid-url` });
   const invalidUrlRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
   if (invalidUrlRecords !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: invalid filter URL must fall back to the full catalog.`);
-  if (history.replacements.at(-1)?.includes("not-a-real-category")) fail(`${page.file}: invalid filter URL was not normalized.`);
+  if (/(?:not-a-real-category|unknown|not-a-real-path)/.test(history.replacements.at(-1) || "")) fail(`${page.file}: invalid filter URL was not normalized.`);
+
+  const topicId = "forest-change";
+  location.search = `?topic=${topicId}`;
+  location.hash = "";
+  history.replacements = [];
+  vm.runInNewContext(await read(page.app), context, { filename: `${page.app}:topic-url` });
+  const topicRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
+  const expectedTopicRecords = browserData.AMAZONIA_CATALOG.filter((record) => record.tags?.topics?.includes(topicId)).length;
+  if (topicRecords !== expectedTopicRecords || elements.topic.value !== topicId) {
+    fail(`${page.file}: a valid topic URL must render the reviewed tagged records and preserve its selected control.`);
+  }
+  if (!history.replacements.at(-1)?.includes(`topic=${topicId}`)) fail(`${page.file}: a valid topic URL was not preserved.`);
+
+  const guidedPath = browserData.AMAZONIA_RESEARCH_PATHS?.[0];
+  if (guidedPath) {
+    location.search = `?path=${guidedPath.id}&coverage=Brazil`;
+    location.hash = "";
+    history.replacements = [];
+    vm.runInNewContext(await read(page.app), context, { filename: `${page.app}:research-path` });
+    const guidedRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
+    const guidedOrder = [...elements["dataset-grid"].innerHTML.matchAll(/data-record-id="([^"]+)"/g)].map((match) => match[1]);
+    const expectedOrder = guidedPath.records.map((entry) => entry.id);
+    if (guidedRecords !== expectedOrder.length || JSON.stringify(guidedOrder) !== JSON.stringify(expectedOrder) || elements["research-path-panel"].hidden) {
+      fail(`${page.file}: a guided path must show its reviewed sources in the declared order with a visible caution panel.`);
+    }
+    if (!history.replacements.at(-1)?.includes(`path=${guidedPath.id}`) || history.replacements.at(-1).includes("coverage=")) {
+      fail(`${page.file}: a guided path must normalize conflicting filters while preserving the path.`);
+    }
+  }
 
   // Every optional card detail must also be discoverable through search in
   // every locale. The localized apps index translated text in addition to the
@@ -228,31 +280,58 @@ for (const file of htmlFiles) {
   if (/candidates\.html|candidates\.js/i.test(html)) fail(`${file}: must not expose the retired candidates board.`);
 }
 
+for (const page of canonicalPages) {
+  const html = await read(page.file);
+  if (linkHref(html, "canonical") !== page.url) fail(`${page.file}: canonical URL must be ${page.url}.`);
+  const pageName = page.file.replace(/^(?:en|es)\//, "");
+  for (const locale of ["pt-BR", "en", "es"]) {
+    const expected = localizedPageUrl(locale, pageName);
+    if (linkHref(html, "alternate", locale) !== expected) {
+      fail(`${page.file}: ${locale} alternate must be ${expected}.`);
+    }
+  }
+  const defaultUrl = localizedPageUrl("pt-BR", pageName);
+  if (linkHref(html, "alternate", "x-default") !== defaultUrl) fail(`${page.file}: x-default alternate must be ${defaultUrl}.`);
+}
+
+for (const alias of legacyPages) {
+  const html = await read(alias.file);
+  if (!/name=["']robots["']\s+content=["']noindex,follow["']/i.test(html)) fail(`${alias.file}: legacy redirect must be noindex,follow.`);
+  if (!html.includes(`new URL("${alias.target}"`) || !html.includes("destination.search = window.location.search") || !html.includes("destination.hash = window.location.hash")) {
+    fail(`${alias.file}: legacy redirect must preserve query and hash while targeting ${alias.target}.`);
+  }
+}
+
 if (!(await read("styles.css")).includes('.domain-button[data-domain="life"] .domain-icon')) {
   fail("styles.css: the forests icon needs its own color treatment.");
 }
 
 for (const page of homePages) {
   const html = await read(page.file);
-  for (const id of ["domain-nav", "discover-source", "dataset-grid"]) {
+  for (const id of ["domain-nav", "discover-source", "dataset-grid", "topic", "research-path-panel", "open-research-path"]) {
     if (!new RegExp(`id=["']${id}["']`).test(html)) fail(`${page.file}: missing #${id}.`);
   }
   const prefix = page.file.includes("/") ? "../" : "";
   const categoryIndex = html.indexOf(`src="${prefix}data/category-presentation.js"`);
+  const tagIndex = html.indexOf(`src="${prefix}data/tag-presentation.js"`);
   const catalogIndex = html.indexOf(`src="${prefix}data/catalog.js"`);
+  const pathIndex = html.indexOf(`src="${prefix}data/research-paths.js"`);
   const appIndex = html.indexOf(`src="${page.app.replace(/^.*\//, "")}"`);
-  if (!(categoryIndex >= 0 && categoryIndex < catalogIndex && catalogIndex < appIndex)) {
-    fail(`${page.file}: category presentation, catalog, and app scripts must load in that order.`);
+  if (!(categoryIndex >= 0 && categoryIndex < tagIndex && tagIndex < catalogIndex && catalogIndex < pathIndex && pathIndex < appIndex)) {
+    fail(`${page.file}: category, tag, catalog, research-path, and app scripts must load in that order.`);
   }
   for (const [filter, values] of Object.entries(controlledFilterValues)) {
     if (JSON.stringify(selectOptionValues(html, filter)) !== JSON.stringify(values)) {
       fail(`${page.file}: #${filter} options must exactly match the catalog schema vocabulary.`);
     }
   }
+  if (JSON.stringify(selectOptionValues(html, "topic")) !== JSON.stringify([""]) || !/data-default-option=["'][^"']+["']/.test(html)) {
+    fail(`${page.file}: #topic must start with one localized default option and be populated from the controlled tag vocabulary.`);
+  }
 }
 
 for (const [file, expectedScript] of [
-  ["submit.html", "submit.js"], ["pt-br/submit.html", "../submit.js"], ["es/submit.html", "../submit.js"]
+  ["submit.html", "submit.js"], ["en/submit.html", "../submit.js"], ["es/submit.html", "../submit.js"]
 ]) {
   const html = await read(file);
   for (const name of ["temporalCoverage", "spatialResolution", "license", "methodologyUrl"]) {
@@ -261,8 +340,8 @@ for (const [file, expectedScript] of [
   if (!html.includes(`src="${expectedScript}"`)) fail(`${file}: does not load ${expectedScript}.`);
 }
 const submitCategoryLabels = {
-  "submit.html": ["Forests &amp; biodiversity", "Earth, water &amp; air", "Land, fire &amp; change", "Peoples &amp; territories", "Health &amp; livelihoods", "Rights &amp; governance"],
-  "pt-br/submit.html": ["Florestas e biodiversidade", "Terra, água e ar", "Terra, fogo e transformação", "Povos e territórios", "Saúde e meios de vida", "Direitos e governança"],
+  "submit.html": ["Florestas e biodiversidade", "Terra, água e ar", "Terra, fogo e transformação", "Povos e territórios", "Saúde e meios de vida", "Direitos e governança"],
+  "en/submit.html": ["Forests &amp; biodiversity", "Earth, water &amp; air", "Land, fire &amp; change", "Peoples &amp; territories", "Health &amp; livelihoods", "Rights &amp; governance"],
   "es/submit.html": ["Bosques y biodiversidad", "Tierra, agua y aire", "Tierra, fuego y cambio", "Pueblos y territorios", "Salud y medios de vida", "Derechos y gobernanza"]
 };
 for (const [file, labels] of Object.entries(submitCategoryLabels)) {
@@ -307,26 +386,21 @@ for (const [file, output] of [[".github/workflows/validate-catalog.yml", "api_ch
 
 const sitemap = await read("sitemap.xml");
 const sitemapLocations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-const expectedSitemapLocations = [
-  "https://mgpcamargo.github.io/amazoniadb/",
-  "https://mgpcamargo.github.io/amazoniadb/pt-br/",
-  "https://mgpcamargo.github.io/amazoniadb/es/",
-  ...["submit.html", "donate.html"].flatMap((page) => [
-    `https://mgpcamargo.github.io/amazoniadb/${page}`,
-    `https://mgpcamargo.github.io/amazoniadb/pt-br/${page}`,
-    `https://mgpcamargo.github.io/amazoniadb/es/${page}`
-  ])
-];
+const expectedSitemapLocations = canonicalPages.map((page) => page.url);
 for (const location of expectedSitemapLocations) {
   if (!sitemapLocations.includes(location)) fail(`sitemap.xml: missing ${location}.`);
 }
+if (sitemapLocations.length !== expectedSitemapLocations.length) fail("sitemap.xml: must list exactly the nine canonical localized pages.");
 if (new Set(sitemapLocations).size !== sitemapLocations.length) fail("sitemap.xml: contains duplicate <loc> entries.");
+if (/\/pt-br\/|hreflang="es-419"/i.test(sitemap)) fail("sitemap.xml: must exclude legacy pt-br aliases and use hreflang=es.");
 if (!(await read("robots.txt")).includes("Sitemap: https://mgpcamargo.github.io/amazoniadb/sitemap.xml")) fail("robots.txt: sitemap declaration is missing or incorrect.");
 
 const browserData = await evaluateBrowserData();
 const catalog = browserData.AMAZONIA_CATALOG;
 const presentation = browserData.AMAZONIA_CATEGORY_PRESENTATION;
 const translations = browserData.AMAZONIA_CATALOG_I18N;
+const tagPresentation = browserData.AMAZONIA_TAG_PRESENTATION;
+const researchPaths = browserData.AMAZONIA_RESEARCH_PATHS;
 if (!Array.isArray(catalog) || !catalog.length) fail("data/catalog.js did not load a non-empty catalog.");
 if (!presentation || Object.keys(presentation).length !== 6) fail("data/category-presentation.js must define exactly six categories.");
 if (JSON.stringify(Object.keys(presentation || {})) !== JSON.stringify(requiredCategories)) fail("category presentation keys must match the six catalog categories in order.");
@@ -334,6 +408,53 @@ for (const [key, item] of Object.entries(presentation || {})) {
   if (!item.icon?.includes("<svg") || !item.id) fail(`${key}: presentation needs an inline SVG icon and stable visual id.`);
   for (const locale of ["en", "pt-BR", "es"]) {
     if (!item.locales?.[locale]?.label || !item.locales?.[locale]?.note) fail(`${key}: missing ${locale} presentation copy.`);
+  }
+}
+
+const tagFacets = ["topics", "modes", "time", "roles"];
+if (!tagPresentation?.vocabulary) fail("data/tag-presentation.js must define the controlled tag vocabulary.");
+for (const facet of tagFacets) {
+  const vocabulary = tagPresentation?.vocabulary?.[facet];
+  if (!vocabulary || !Object.keys(vocabulary).length) fail(`data/tag-presentation.js: ${facet} vocabulary must be non-empty.`);
+  for (const [key, copy] of Object.entries(vocabulary || {})) {
+    for (const locale of ["en", "pt-BR", "es"]) {
+      if (!copy?.[locale]) fail(`data/tag-presentation.js: ${facet}.${key} is missing ${locale} copy.`);
+    }
+  }
+}
+for (const record of catalog) {
+  // Tags stay optional for a newly submitted draft source: a reviewer adds
+  // them before it becomes a deliberate research-path input. Existing tagged
+  // records, however, must always validate against the shared vocabulary.
+  if (!record.tags) continue;
+  for (const facet of tagFacets) {
+    const values = record.tags[facet];
+    if (!Array.isArray(values) || !values.length || new Set(values).size !== values.length || values.some((value) => !tagPresentation?.vocabulary?.[facet]?.[value])) {
+      fail(`${record.id}: ${facet} must use unique, controlled reviewed tags.`);
+    }
+  }
+}
+
+if (!Array.isArray(researchPaths) || researchPaths.length !== 1) fail("data/research-paths.js must currently define exactly one reviewed research-path prototype.");
+const catalogById = new Map(catalog.map((record) => [record.id, record]));
+for (const path of researchPaths || []) {
+  if (!path.id || !Array.isArray(path.records) || path.records.length < 3 || new Set(path.records.map((entry) => entry.id)).size !== path.records.length) {
+    fail(`research path ${path.id || "(unnamed)"}: needs a unique, deliberate set of at least three records.`);
+  }
+  for (const key of ["title", "summary", "caution"]) {
+    for (const locale of ["en", "pt-BR", "es"]) {
+      if (!path.locales?.[key]?.[locale]) fail(`research path ${path.id}: ${key} is missing ${locale} copy.`);
+    }
+  }
+  for (const entry of path.records || []) {
+    const record = catalogById.get(entry.id);
+    if (!record) fail(`research path ${path.id}: ${entry.id} is not a catalog record.`);
+    if (record && record.coverage !== "Brazil") fail(`research path ${path.id}: ${entry.id} must remain Brazil-scoped until the guide is broadened by review.`);
+    for (const key of ["role", "reason"]) {
+      for (const locale of ["en", "pt-BR", "es"]) {
+        if (!entry[key]?.[locale]) fail(`research path ${path.id}: ${entry.id} ${key} is missing ${locale} copy.`);
+      }
+    }
   }
 }
 

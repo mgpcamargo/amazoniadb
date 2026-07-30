@@ -1,4 +1,5 @@
-// Translated content for each data/catalog.js entry, used by pt-br/app.js
+// Translated content for each data/catalog.js entry, used by the Portuguese
+// root app and the Spanish app.
 // and es/app.js. `descriptions` and the per-record `temporalCoverage` /
 // `licenses` maps are keyed by record id. `spatialResolution` is keyed by
 // the exact English value because several records share a phrase. Keep all

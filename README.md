@@ -7,6 +7,20 @@ AmazoniaDB is a lightweight directory of Amazon socioenvironmental datasets and 
 
 Open `index.html` directly in a browser. The directory works without a build step or server.
 
+## Languages and public URLs
+
+Portuguese (Brazil) is the default public experience at the site root. English
+and Spanish have stable, explicit routes:
+
+- Portuguese (Brazil): `/`
+- English: `/en/`
+- Spanish: `/es/`
+
+The corresponding `submit.html` and `donate.html` pages use the same locale
+paths. Older `/pt-br/` URLs remain only as compatibility redirects and are not
+canonical or included in the sitemap. Language switching preserves the current
+catalog filters and selected source.
+
 For the repository checks, use Node 22 or newer:
 
 ```sh
@@ -15,7 +29,7 @@ npm run check
 
 ## Use the data without the site
 
-Every card has a copyable citation and a link to the original publisher. Filters and a single discovered source are shareable in the URL. For programmatic use without JavaScript execution, use the versioned API described in [Data & API](#data--api); it is regenerated automatically from the same source of truth.
+Every card has a copyable citation and a link to the original publisher. Filters, a single discovered source, and a research path are shareable in the URL. The first path is a reviewed Brazil starting set for forest change around a territory; it explains each source's role and is never an automated analysis or a finding. For programmatic use without JavaScript execution, use the versioned API described in [Data & API](#data--api); it is regenerated automatically from the same source of truth.
 
 ## Add a source
 
@@ -29,6 +43,8 @@ Add an object to `data/catalog.js`. Every entry should have:
 - `coverage`, `formats`, `access`, `kind`, a plain-language `description`, and a `checked` date.
 
 Optionally, an entry can also carry `temporalCoverage`, `spatialResolution`, `license`, and `methodologyUrl` — each shown on the card when present, and each collected (as optional fields) by both `submit.html` and the GitHub issue submission form. When a visible metadata field is added, add its Portuguese and Spanish display text in `data/catalog.i18n.js`; formal license names may intentionally remain canonical. Omit rather than guess when one doesn't apply.
+
+Reviewers may also add controlled editorial `tags` with `topics`, `modes`, `time`, and `roles`, defined in `data/tag-presentation.js`. Tags are optional for a new draft submission so a maintainer can classify it carefully before publication; they are discovery aids, not claims about people, territories, consent, or data safety.
 
 Use only a page controlled by the original publisher. Do not imply a dataset is open, downloadable, or redistributable without checking its terms. Do not add sensitive locations, personal data, or community knowledge that should not be indexed.
 
@@ -47,7 +63,7 @@ Five workflows in `.github/workflows/` protect and automate the review-record pr
 - `validate-catalog.yml` runs `scripts/validate-catalog.mjs` on every pull request touching `data/catalog.js`, `data/catalog.schema.json`, or the validator itself, and on push to `main`.
 - `source-submission.yml` fires when a "New source submission" issue is opened (`.github/ISSUE_TEMPLATE/new-source.yml`). It parses the English, Portuguese, and Spanish source descriptions and visible optional metadata; builds the record and localized display content via `scripts/issue-to-entry.mjs`; regenerates the API mirror; runs the full quality gate; and opens a **draft** pull request if it passes. Nothing merges automatically — a maintainer still reviews the diff. The workflow captures the submitting issue author's GitHub handle as `submittedBy` on the new record.
 - `check-links.yml` runs `scripts/check-links.mjs` weekly (and on demand). It flags both dead links and entries whose `checked` date has gone stale (over 180 days), filing or updating one tracking issue and closing it when a recheck is healthy.
-- `quality.yml` runs `npm run check` on every pull request and every push to `main`. It checks syntax, catalog fields and duplicate URLs, the API mirror, local public-file references, the six localized entry points, submission fields, translations for every visible catalog field, and placeholder content.
+- `quality.yml` runs `npm run check` on every pull request and every push to `main`. It checks syntax, catalog fields and duplicate URLs, the API mirror, local public-file references, the nine canonical localized pages, submission fields, translations for every visible catalog field, and placeholder content.
 - `deploy-pages.yml` publishes the static site through GitHub Actions after a successful quality gate on `main`, and is called directly after a generated API update. It checks out the current `main` branch, so bot-generated updates are deployed without broad workflow fan-out, instead of relying on the legacy branch builder.
 
 Entries created through the issue workflow retain the submitter's GitHub handle in source control for review provenance. That metadata is not a public quality badge: every proposed source still needs editorial review before merging.

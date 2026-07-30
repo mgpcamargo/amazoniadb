@@ -47,6 +47,42 @@ vm.runInNewContext(source, context, { filename: "data/catalog.js" });
 const catalog = context.window.AMAZONIA_CATALOG;
 const issues = [];
 
+const tagFacets = ["topics", "modes", "time", "roles"];
+const tagPresentationSource = await readFile(new URL("../data/tag-presentation.js", import.meta.url), "utf8");
+const tagPresentationContext = { window: {} };
+vm.runInNewContext(tagPresentationSource, tagPresentationContext, { filename: "data/tag-presentation.js" });
+const tagPresentation = tagPresentationContext.window.AMAZONIA_TAG_PRESENTATION;
+const tagVocabulary = tagPresentation?.vocabulary;
+const tagValues = {};
+
+for (const facet of tagFacets) {
+  const entries = tagVocabulary?.[facet];
+  if (!entries || typeof entries !== "object" || Array.isArray(entries) || !Object.keys(entries).length) {
+    issues.push(`data/tag-presentation.js: ${facet} must expose a non-empty controlled vocabulary.`);
+    tagValues[facet] = new Set();
+    continue;
+  }
+  tagValues[facet] = new Set(Object.keys(entries));
+  for (const [tag, labels] of Object.entries(entries)) {
+    if (!/^[a-z]+(?:-[a-z]+)*$/.test(tag)) {
+      issues.push(`data/tag-presentation.js: ${facet} tag ${tag} must be lowercase kebab-case.`);
+    }
+    for (const locale of ["en", "pt-BR", "es"]) {
+      if (typeof labels?.[locale] !== "string" || !labels[locale].trim()) {
+        issues.push(`data/tag-presentation.js: ${facet}.${tag} is missing a ${locale} label.`);
+      }
+    }
+  }
+}
+
+const catalogSchema = JSON.parse(await readFile(new URL("../data/catalog.schema.json", import.meta.url), "utf8"));
+for (const facet of tagFacets) {
+  const schemaValues = catalogSchema.properties?.tags?.properties?.[facet]?.items?.enum;
+  if (!Array.isArray(schemaValues) || JSON.stringify(schemaValues) !== JSON.stringify([...tagValues[facet]])) {
+    issues.push(`data/catalog.schema.json: ${facet} enum must match data/tag-presentation.js.`);
+  }
+}
+
 if (!Array.isArray(catalog)) {
   issues.push("catalog.js must assign an array to window.AMAZONIA_CATALOG.");
 }
@@ -102,6 +138,29 @@ for (const [index, record] of (catalog || []).entries()) {
   }
   if (record.methodologyUrl != null && !isHttpUrl(record.methodologyUrl)) {
     issues.push(`${label}: methodologyUrl must be a valid http:// or https:// URL.`);
+  }
+  if (record.tags != null) {
+    if (!record.tags || typeof record.tags !== "object" || Array.isArray(record.tags)) {
+      issues.push(`${label}: tags must be an object when present.`);
+    } else {
+      const unexpectedFacets = Object.keys(record.tags).filter((facet) => !tagFacets.includes(facet));
+      if (unexpectedFacets.length) {
+        issues.push(`${label}: tags has unsupported facet(s): ${unexpectedFacets.join(", ")}.`);
+      }
+      for (const facet of tagFacets) {
+        const values = record.tags[facet];
+        if (!Array.isArray(values) || !values.length) {
+          issues.push(`${label}: tags.${facet} must be a non-empty array when tags are present.`);
+          continue;
+        }
+        if (values.some((value) => typeof value !== "string" || !tagValues[facet].has(value))) {
+          issues.push(`${label}: tags.${facet} contains a value outside the controlled vocabulary.`);
+        }
+        if (new Set(values).size !== values.length) {
+          issues.push(`${label}: tags.${facet} must not repeat a value.`);
+        }
+      }
+    }
   }
 }
 

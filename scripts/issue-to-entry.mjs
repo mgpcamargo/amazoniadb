@@ -36,7 +36,7 @@ const slugify = (value) =>
 // Optional fields are appended only when present, in this order. Listed
 // separately from the required lines below so adding another optional
 // field later is a one-line change here, not a hand-placed comma.
-const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl", "submittedBy"];
+const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl", "tags", "submittedBy"];
 
 // GitHub issue forms cannot give a dropdown option a separate machine value.
 // Keep their V2 public labels friendly, then translate them back to the

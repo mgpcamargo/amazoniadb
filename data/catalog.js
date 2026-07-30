@@ -689,3 +689,68 @@ window.AMAZONIA_CATALOG = [
     spatialResolution: "State level"
   }
 ];
+
+// Editorial classification is kept separate from the source descriptions so
+// it can power future discovery without changing what a provider says about
+// its own data. New submissions may intentionally arrive without tags until
+// a reviewer classifies them; all current public records are backfilled here.
+(() => {
+  const tags = (topics, modes, time, roles) => Object.freeze({
+    topics: Object.freeze(topics),
+    modes: Object.freeze(modes),
+    time: Object.freeze(time),
+    roles: Object.freeze(roles)
+  });
+
+  const reviewedTags = Object.freeze({
+    "gbif-species-occurrences": tags(["biodiversity"], ["field-observation", "geospatial"], ["historical-series", "ongoing"], ["context", "monitoring"]),
+    "specieslink-network": tags(["biodiversity"], ["field-observation", "geospatial"], ["historical-series", "ongoing"], ["context", "monitoring"]),
+    "ana-hidroweb": tags(["water", "climate"], ["station-observation", "geospatial"], ["historical-series", "ongoing"], ["monitoring", "context"]),
+    "inmet-bdmep": tags(["climate"], ["station-observation", "geospatial"], ["historical-series", "ongoing"], ["monitoring"]),
+    "mapbiomas-brasil": tags(["forests", "forest-change", "land-use", "fire"], ["remote-sensing", "geospatial"], ["historical-series", "ongoing"], ["baseline", "monitoring"]),
+    "inpe-terrabrasilis": tags(["forests", "forest-change", "land-use"], ["remote-sensing", "geospatial"], ["historical-series", "near-real-time"], ["monitoring", "alert"]),
+    "funai-terras-indigenas": tags(["territories", "indigenous-peoples"], ["legal-boundary", "geospatial"], ["ongoing"], ["boundary", "context"]),
+    "isa-terras-indigenas": tags(["territories", "indigenous-peoples", "tenure-and-rights"], ["indicators-and-profiles"], ["historical-series", "ongoing"], ["context"]),
+    "ibge-cidades": tags(["population", "health", "livelihoods"], ["administrative-record", "indicators-and-profiles"], ["historical-series", "ongoing"], ["context"]),
+    "datasus-tabnet": tags(["health", "population"], ["administrative-record", "indicators-and-profiles"], ["historical-series", "ongoing"], ["context"]),
+    "icmbio-dados-geoespaciais": tags(["protected-areas", "territories", "tenure-and-rights"], ["legal-boundary", "geospatial"], ["ongoing"], ["boundary"]),
+    "raisg-maps": tags(["territories", "protected-areas", "infrastructure", "extractive-pressures"], ["geospatial", "reference-layer"], ["historical-series", "ongoing"], ["baseline", "context"]),
+    "geobosques-national-forest-monitoring-platform": tags(["forests", "forest-change"], ["remote-sensing", "geospatial"], ["historical-series", "near-real-time"], ["monitoring", "alert"]),
+    "imazon-sad-system": tags(["forests", "forest-change"], ["remote-sensing", "geospatial"], ["historical-series", "ongoing"], ["monitoring", "alert"]),
+    "nasa-firms-active-fire": tags(["fire"], ["remote-sensing", "geospatial"], ["historical-series", "near-real-time"], ["monitoring", "alert"]),
+    "chirps-precipitation": tags(["climate", "water"], ["remote-sensing", "geospatial"], ["historical-series", "ongoing"], ["baseline", "monitoring"]),
+    "amazon-canopy-height-nicfi-lidar": tags(["forests", "biodiversity"], ["remote-sensing", "geospatial"], ["static-reference"], ["baseline"]),
+    "amazon-mining-watch": tags(["extractive-pressures", "forest-change"], ["remote-sensing", "geospatial"], ["historical-series", "ongoing"], ["monitoring"]),
+    "gedi-forest-structure": tags(["forests", "biodiversity"], ["remote-sensing", "geospatial"], ["historical-series"], ["baseline"]),
+    "hansen-global-forest-change": tags(["forests", "forest-change"], ["remote-sensing", "geospatial"], ["historical-series", "ongoing"], ["baseline", "monitoring"]),
+    "terraclass-amazonia": tags(["land-use", "forest-change", "forests"], ["remote-sensing", "geospatial"], ["historical-series", "ongoing"], ["baseline", "monitoring"]),
+    "siradx-xingu-deforestation-alert": tags(["forests", "forest-change"], ["remote-sensing", "geospatial"], ["ongoing", "near-real-time"], ["monitoring", "alert"]),
+    "inpe-bdqueimadas": tags(["fire"], ["remote-sensing", "geospatial"], ["historical-series", "near-real-time"], ["monitoring", "alert"]),
+    "ore-hybam-observatory": tags(["water", "climate"], ["station-observation", "geospatial"], ["historical-series", "ongoing"], ["monitoring"]),
+    "ibama-fiscalizacao-dados-abertos": tags(["environmental-accountability"], ["administrative-record", "geospatial"], ["historical-series", "ongoing"], ["accountability"]),
+    hydrosheds: tags(["water", "terrain"], ["geospatial", "reference-layer"], ["static-reference"], ["baseline"]),
+    "worldclim-bioclimatic": tags(["climate", "water"], ["geospatial", "reference-layer"], ["static-reference", "future-scenarios"], ["baseline"]),
+    "copernicus-dem-glo30": tags(["terrain", "water"], ["geospatial", "reference-layer"], ["static-reference"], ["baseline"]),
+    "esa-worldcover": tags(["land-use", "forests"], ["remote-sensing", "geospatial"], ["historical-series", "ongoing"], ["baseline", "monitoring"]),
+    "rainfor-forestplots-amazon-network": tags(["forests", "biodiversity"], ["field-observation", "geospatial"], ["historical-series", "ongoing"], ["monitoring"]),
+    "ppbio-brazil-biodiversity-research": tags(["biodiversity", "forests"], ["field-observation", "geospatial"], ["historical-series", "ongoing"], ["monitoring"]),
+    "map-of-life-species-ranges": tags(["biodiversity", "protected-areas"], ["geospatial", "indicators-and-profiles"], ["ongoing"], ["baseline", "context"]),
+    "otca-amazon-regional-observatory": tags(["biodiversity", "water", "forests", "fire", "indigenous-peoples"], ["geospatial", "indicators-and-profiles"], ["historical-series", "ongoing"], ["context", "monitoring"]),
+    "landmark-indigenous-community-lands": tags(["territories", "indigenous-peoples", "community-lands", "tenure-and-rights"], ["legal-boundary", "geospatial"], ["ongoing"], ["boundary", "context"]),
+    "rri-tenure-tracking-tool": tags(["territories", "indigenous-peoples", "community-lands", "tenure-and-rights"], ["indicators-and-profiles"], ["historical-series", "ongoing"], ["context"]),
+    "igarape-ecocrime-data": tags(["environmental-accountability", "extractive-pressures", "tenure-and-rights"], ["geospatial", "indicators-and-profiles"], ["ongoing"], ["accountability"]),
+    "isa-povos-indigenas-no-brasil": tags(["indigenous-peoples", "languages", "tenure-and-rights"], ["indicators-and-profiles"], ["historical-series", "ongoing"], ["context"]),
+    "ibge-censo-indigena-2022": tags(["indigenous-peoples", "languages", "population", "territories"], ["survey-or-census", "geospatial"], ["historical-series"], ["context"]),
+    "glottolog-language-catalog": tags(["languages", "indigenous-peoples"], ["indicators-and-profiles", "geospatial"], ["ongoing"], ["context"]),
+    "cimi-observatorio-violencia-indigena": tags(["indigenous-peoples", "tenure-and-rights", "environmental-accountability"], ["administrative-record", "indicators-and-profiles"], ["historical-series", "ongoing"], ["accountability"]),
+    "fcp-comunidades-quilombolas-certificadas": tags(["community-lands", "territories", "tenure-and-rights"], ["administrative-record"], ["historical-series", "ongoing"], ["context"]),
+    "atlas-brasil-idhm": tags(["population", "health", "livelihoods"], ["administrative-record", "indicators-and-profiles"], ["historical-series", "ongoing"], ["context"]),
+    "ibge-pnad-continua": tags(["population", "livelihoods", "food-security"], ["survey-or-census"], ["historical-series", "ongoing"], ["context"]),
+    "cadunico-familias-inscritas": tags(["population", "livelihoods", "food-security"], ["administrative-record", "indicators-and-profiles"], ["historical-series", "ongoing"], ["context"]),
+    "rede-penssan-vigisan": tags(["food-security", "health", "population"], ["survey-or-census"], ["historical-series", "ongoing"], ["context"])
+  });
+
+  window.AMAZONIA_CATALOG = window.AMAZONIA_CATALOG.map((record) =>
+    reviewedTags[record.id] ? { ...record, tags: reviewedTags[record.id] } : record
+  );
+})();
