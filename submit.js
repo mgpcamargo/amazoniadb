@@ -19,6 +19,49 @@
     .slice(0, 64);
 
   const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl"];
+  const pageLanguage = (document.documentElement.lang || "en").toLocaleLowerCase();
+  const language = pageLanguage.startsWith("pt") ? "pt-BR" : pageLanguage.startsWith("es") ? "es" : "en";
+  const copy = {
+    en: {
+      generatedTitle: "Candidate record generated.",
+      generatedCopy: "Copy it into the catalog or download it for a reviewer. Confirm the source terms again before publishing.",
+      httpsOnly: "Use an https:// URL.",
+      incomplete: "Complete the required source and review fields before generating a record.",
+      invalidTitle: "Use a source title that contains letters or numbers.",
+      generated: "Candidate generated locally. Review it before adding it to the public catalog.",
+      initialTitle: "A review-ready record will appear here.",
+      initialCopy: "Fill in the details, then generate a candidate. Nothing leaves this browser.",
+      copied: "Candidate copied to your clipboard.",
+      copyUnavailable: "Copy is unavailable in this browser. Select the record text and copy it manually.",
+      downloaded: "Candidate JSON downloaded."
+    },
+    "pt-BR": {
+      generatedTitle: "Registro candidato gerado.",
+      generatedCopy: "Copie-o para o catálogo ou baixe-o para uma pessoa revisora. Confirme novamente os termos da fonte antes de publicar.",
+      httpsOnly: "Use uma URL com https://.",
+      incomplete: "Preencha os campos obrigatórios da fonte e da revisão antes de gerar um registro.",
+      invalidTitle: "Use um título de fonte com letras ou números.",
+      generated: "Candidato gerado localmente. Revise-o antes de adicioná-lo ao catálogo público.",
+      initialTitle: "Um registro pronto para revisão aparecerá aqui.",
+      initialCopy: "Preencha os detalhes e gere um candidato. Nada sai deste navegador.",
+      copied: "Candidato copiado para a área de transferência.",
+      copyUnavailable: "A cópia não está disponível neste navegador. Selecione o texto do registro e copie-o manualmente.",
+      downloaded: "JSON do candidato baixado."
+    },
+    es: {
+      generatedTitle: "Registro candidato generado.",
+      generatedCopy: "Cópialo al catálogo o descárgalo para una persona revisora. Confirma de nuevo las condiciones de la fuente antes de publicarlo.",
+      httpsOnly: "Usa una URL con https://.",
+      incomplete: "Completa los campos obligatorios de la fuente y la revisión antes de generar un registro.",
+      invalidTitle: "Usa un título de fuente que contenga letras o números.",
+      generated: "Candidato generado localmente. Revísalo antes de añadirlo al catálogo público.",
+      initialTitle: "Aquí aparecerá un registro listo para revisión.",
+      initialCopy: "Completa los detalles y genera un candidato. Nada sale de este navegador.",
+      copied: "Candidato copiado al portapapeles.",
+      copyUnavailable: "La copia no está disponible en este navegador. Selecciona el texto del registro y cópialo manualmente.",
+      downloaded: "JSON del candidato descargado."
+    }
+  }[language];
 
   const toCatalogObject = (record) => {
     const requiredLines = [
@@ -71,26 +114,26 @@
     output.textContent = toCatalogObject(record);
     outputContainer.hidden = false;
     recordActions.hidden = false;
-    previewTitle.textContent = "Candidate record generated.";
-    previewCopy.textContent = "Copy it into the catalog or download it for a reviewer. Confirm the source terms again before publishing.";
+    previewTitle.textContent = copy.generatedTitle;
+    previewCopy.textContent = copy.generatedCopy;
   };
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const url = form.elements.url;
-    url.setCustomValidity(url.value && !url.value.startsWith("https://") ? "Use an https:// URL." : "");
+    url.setCustomValidity(url.value && !url.value.startsWith("https://") ? copy.httpsOnly : "");
     if (!form.checkValidity()) {
       form.reportValidity();
-      message.textContent = "Complete the required source and review fields before generating a record.";
+      message.textContent = copy.incomplete;
       return;
     }
     const record = generateRecord();
     if (!record.id) {
-      message.textContent = "Use a source title that contains letters or numbers.";
+      message.textContent = copy.invalidTitle;
       return;
     }
     showRecord(record);
-    message.textContent = "Candidate generated locally. Review it before adding it to the public catalog.";
+    message.textContent = copy.generated;
   });
 
   form.addEventListener("reset", () => {
@@ -99,8 +142,8 @@
       output.textContent = "";
       outputContainer.hidden = true;
       recordActions.hidden = true;
-      previewTitle.textContent = "A review-ready record will appear here.";
-      previewCopy.textContent = "Fill in the details, then generate a candidate. Nothing leaves this browser.";
+      previewTitle.textContent = copy.initialTitle;
+      previewCopy.textContent = copy.initialCopy;
       message.textContent = "";
     }, 0);
   });
@@ -109,9 +152,9 @@
     if (!currentRecord) return;
     try {
       await navigator.clipboard.writeText(toCatalogObject(currentRecord));
-      message.textContent = "Candidate copied to your clipboard.";
+      message.textContent = copy.copied;
     } catch {
-      message.textContent = "Copy is unavailable in this browser. Select the record text and copy it manually.";
+      message.textContent = copy.copyUnavailable;
     }
   });
 
@@ -125,6 +168,6 @@
     link.click();
     link.remove();
     URL.revokeObjectURL(link.href);
-    message.textContent = "Candidate JSON downloaded.";
+    message.textContent = copy.downloaded;
   });
 })();

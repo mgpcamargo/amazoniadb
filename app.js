@@ -1,15 +1,14 @@
 (() => {
   const catalog = window.AMAZONIA_CATALOG || [];
-  const categories = [
-    { name: "Forest & biodiversity", note: "Species, habitats, forest condition" },
-    { name: "Earth, water & climate", note: "Weather, rivers, bedrock, extremes" },
-    { name: "Land use & infrastructure", note: "Change, monitoring, access" },
-    { name: "Peoples, territories & culture", note: "Communities, lands, knowledge" },
-    { name: "Society, health & livelihoods", note: "Wellbeing and local economies" },
-    { name: "Governance, rights & safeguards", note: "Protection, policy, accountability" }
-  ];
+  const presentation = window.AMAZONIA_CATEGORY_PRESENTATION || {};
+  const categories = Object.entries(presentation).map(([key, item]) => ({
+    key,
+    ...item,
+    ...(item.locales.en || {})
+  }));
+  const categoryLabels = Object.fromEntries(categories.map((category) => [category.key, category.label]));
 
-  const state = { category: "", search: "", coverage: "", access: "" };
+  const state = { category: "", search: "", coverage: "", access: "", source: "" };
   const domainNav = document.getElementById("domain-nav");
   const grid = document.getElementById("dataset-grid");
   const emptyState = document.getElementById("empty-state");
@@ -19,6 +18,8 @@
   const coverage = document.getElementById("coverage");
   const access = document.getElementById("access");
   const filters = document.getElementById("filters");
+  const discoverButton = document.getElementById("discover-source");
+  const discoveryResult = document.getElementById("discovery-result");
 
   count.textContent = String(catalog.length);
 
@@ -29,6 +30,14 @@
   state.search = initialParams.get("q") || "";
   state.coverage = initialParams.get("coverage") || "";
   state.access = initialParams.get("access") || "";
+  state.source = initialParams.get("source") || "";
+  if (state.source && !catalog.some((record) => record.id === state.source)) state.source = "";
+  if (state.source) {
+    state.category = "";
+    state.search = "";
+    state.coverage = "";
+    state.access = "";
+  }
   search.value = state.search;
   coverage.value = state.coverage;
   access.value = state.access;
@@ -39,9 +48,21 @@
     if (state.search) params.set("q", state.search);
     if (state.coverage) params.set("coverage", state.coverage);
     if (state.access) params.set("access", state.access);
+    if (state.source) params.set("source", state.source);
     const qs = params.toString();
     window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash);
+    syncLanguageLinks();
   };
+
+  const syncLanguageLinks = () => {
+    document.querySelectorAll(".lang-switch a").forEach((link) => {
+      const baseHref = link.dataset.baseHref || link.getAttribute("href").split(/[?#]/)[0];
+      link.dataset.baseHref = baseHref;
+      link.href = `${baseHref}${window.location.search}${window.location.hash}`;
+    });
+  };
+
+  const getScrollBehavior = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 
   const escapeHtml = (value) => String(value)
     .replaceAll("&", "&amp;")
@@ -94,14 +115,22 @@
     }
   };
 
+  const sourceCountLabel = (value) => `${value} ${value === 1 ? "source" : "sources"}`;
+
   const renderDomains = () => {
-    const allButton = `<button class="domain-button" type="button" data-category="" aria-pressed="${state.category === ""}"><strong>All sources</strong><span>See every curated link</span></button>`;
-    const buttons = categories.map((category) => `
-      <button class="domain-button" type="button" data-category="${escapeHtml(category.name)}" aria-pressed="${state.category === category.name}">
-        <strong>${escapeHtml(category.name)}</strong>
-        <span>${escapeHtml(category.note)}</span>
-      </button>`).join("");
-    domainNav.innerHTML = allButton + buttons;
+    if (!categories.length) {
+      domainNav.innerHTML = '<p class="empty-state">Domain filters are temporarily unavailable. You can still browse the full catalog below.</p>';
+      return;
+    }
+    domainNav.innerHTML = categories.map((category) => {
+      const sourceCount = catalog.filter((record) => record.category === category.key).length;
+      return `
+        <button class="domain-button" type="button" data-category="${escapeHtml(category.key)}" data-domain="${escapeHtml(category.id)}" aria-pressed="${state.category === category.key}">
+          <span class="domain-icon">${category.icon}</span>
+          <span class="domain-copy"><strong>${escapeHtml(category.label)}</strong><span>${escapeHtml(category.note)}</span></span>
+          <span class="domain-count">${sourceCountLabel(sourceCount)}</span>
+        </button>`;
+    }).join("");
   };
 
   // Highlights whichever domain has the fewest catalog entries, as a nudge
@@ -110,9 +139,14 @@
   const renderGapPrompt = () => {
     const gapEl = document.getElementById("domain-gap");
     if (!gapEl) return;
+    if (!categories.length) {
+      gapEl.hidden = true;
+      return;
+    }
+    gapEl.hidden = false;
     const counts = categories.map((category) => ({
-      name: category.name,
-      count: catalog.filter((record) => record.category === category.name).length
+      name: category.label,
+      count: catalog.filter((record) => record.category === category.key).length
     }));
     const minCount = Math.min(...counts.map((entry) => entry.count));
     const thinnest = counts.filter((entry) => entry.count === minCount);
@@ -127,7 +161,8 @@
       const searchText = [record.title, record.provider, record.category, record.coverage, record.description, ...record.formats]
         .join(" ")
         .toLocaleLowerCase();
-      return (!state.category || record.category === state.category)
+      return (!state.source || record.id === state.source)
+        && (!state.category || record.category === state.category)
         && (!state.coverage || record.coverage === state.coverage)
         && (!state.access || record.access === state.access)
         && (!query || searchText.includes(query));
@@ -145,12 +180,12 @@
         record.license ? `<li><strong>License:</strong> ${escapeHtml(record.license)}</li>` : ""
       ].filter(Boolean).join("");
       return `
-      <article class="dataset-card">
+      <article class="dataset-card${state.source === record.id ? " is-discovery" : ""}" data-record-id="${escapeHtml(record.id)}" aria-labelledby="source-${escapeHtml(record.id)}-title"${state.source === record.id ? " tabindex=\"-1\"" : ""}>
         <div class="card-topline">
-          <span class="category-label">${escapeHtml(record.category)}</span>
+          <span class="category-label">${escapeHtml(categoryLabels[record.category] || record.category)}</span>
           <span class="source-kind">${escapeHtml(record.kind)}</span>
         </div>
-        <h3>${escapeHtml(record.title)}</h3>
+        <h3 id="source-${escapeHtml(record.id)}-title">${escapeHtml(record.title)}</h3>
         <p class="provider">${escapeHtml(record.provider)}</p>
         <p class="description">${escapeHtml(record.description)}</p>
         ${detailItems ? `<ul class="dataset-details" aria-label="Additional dataset detail">${detailItems}</ul>` : ""}
@@ -169,6 +204,25 @@
         </div>
       </article>`;
     }).join("");
+  };
+
+  const renderDiscovery = () => {
+    if (!discoveryResult) return;
+    const record = catalog.find((entry) => entry.id === state.source);
+    discoveryResult.hidden = !record;
+    if (!record) {
+      discoveryResult.textContent = "";
+      return;
+    }
+    const category = categories.find((entry) => entry.key === record.category);
+    discoveryResult.textContent = `Showing ${record.title} — a verified source in ${category?.label || record.category} · ${record.coverage}.`;
+  };
+
+  const updateDiscoverControl = () => {
+    if (!discoverButton) return;
+    const hasRecords = catalog.length > 0;
+    discoverButton.disabled = !hasRecords;
+    discoverButton.setAttribute("aria-disabled", String(!hasRecords));
   };
 
   // One-time structured-data injection so search engines (Google Dataset
@@ -204,29 +258,41 @@
   domainNav.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-category]");
     if (!button) return;
-    state.category = button.dataset.category;
-    trackEvent(`/filter-domain/${button.dataset.category || "all"}`);
+    state.category = state.category === button.dataset.category ? "" : button.dataset.category;
+    state.source = "";
+    trackEvent(`/filter-domain/${state.category || "all"}`);
     renderDomains();
     renderCatalog();
+    renderDiscovery();
+    updateDiscoverControl();
     syncUrl();
-    document.getElementById("catalog").scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("catalog").scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
   });
 
   search.addEventListener("input", () => {
     state.search = search.value;
+    state.source = "";
     renderCatalog();
+    renderDiscovery();
+    updateDiscoverControl();
     syncUrl();
   });
 
   coverage.addEventListener("change", () => {
     state.coverage = coverage.value;
+    state.source = "";
     renderCatalog();
+    renderDiscovery();
+    updateDiscoverControl();
     syncUrl();
   });
 
   access.addEventListener("change", () => {
     state.access = access.value;
+    state.source = "";
     renderCatalog();
+    renderDiscovery();
+    updateDiscoverControl();
     syncUrl();
   });
 
@@ -235,9 +301,37 @@
       state.search = "";
       state.coverage = "";
       state.access = "";
+      state.category = "";
+      state.source = "";
+      renderDomains();
       renderCatalog();
+      renderDiscovery();
+      updateDiscoverControl();
       syncUrl();
     }, 0);
+  });
+
+  discoverButton?.addEventListener("click", () => {
+    const otherRecords = catalog.filter((record) => record.id !== state.source);
+    const records = otherRecords.length ? otherRecords : catalog;
+    if (!records.length) return;
+    const record = records[Math.floor(Math.random() * records.length)];
+    state.category = "";
+    state.search = "";
+    state.coverage = "";
+    state.access = "";
+    state.source = record.id;
+    search.value = "";
+    coverage.value = "";
+    access.value = "";
+    renderDomains();
+    renderCatalog();
+    renderDiscovery();
+    updateDiscoverControl();
+    syncUrl();
+    const card = grid.querySelector(`[data-record-id="${record.id}"]`);
+    card?.scrollIntoView({ behavior: getScrollBehavior(), block: "center" });
+    card?.focus({ preventScroll: true });
   });
 
   const copyLinkButton = document.getElementById("copy-view-link");
@@ -281,6 +375,9 @@
 
   renderDomains();
   renderCatalog();
+  renderDiscovery();
+  updateDiscoverControl();
   renderGapPrompt();
+  syncUrl();
   injectStructuredData();
 })();

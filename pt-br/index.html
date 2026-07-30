@@ -26,10 +26,6 @@
     <title>AmazoniaDB — Encontre dados na fonte</title>
     <link rel="stylesheet" href="../styles.css">
     <script src="../theme.js" defer></script>
-    <!-- Analytics: privacy-respecting, no cookies, no persistent identifiers.
-         Free tier is non-commercial-only — see https://www.goatcounter.com/help/plans
-         Replace AMAZONIADB_GOATCOUNTER_CODE with the real site code after signup. -->
-    <script data-goatcounter="https://AMAZONIADB_GOATCOUNTER_CODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#catalog">Pular para os conjuntos de dados</a>
@@ -67,7 +63,7 @@
           <a class="button button-secondary" href="#how-it-works">Nossa política de links</a>
         </div>
         <dl class="site-stats" aria-label="Resumo do diretório">
-          <div><dt id="dataset-count">33</dt><dd>fontes selecionadas</dd></div>
+          <div><dt id="dataset-count">45</dt><dd>fontes selecionadas</dd></div>
           <div><dt>6</dt><dd>domínios conectados</dd></div>
         </dl>
       </section>
@@ -79,6 +75,13 @@
             <h2 id="domains-title">Comece pela pergunta que você tem.</h2>
           </div>
           <div id="domain-nav" class="domain-nav" aria-label="Filtrar conjuntos de dados por domínio"></div>
+          <div class="discovery-panel">
+            <button id="discover-source" class="discover-source" type="button">
+              <svg class="discovery-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 .9 4.1L17 8l-4.1.9L12 13l-.9-4.1L7 8l4.1-.9L12 3Z"/><path d="m18 14 .5 2.5L21 17l-2.5.5L18 20l-.5-2.5L15 17l2.5-.5L18 14Z"/></svg>
+              <span><strong>Descubra uma fonte</strong><span>Mostre uma fonte verificada do catálogo.</span></span>
+            </button>
+            <p id="discovery-result" class="discovery-result" role="status" hidden></p>
+          </div>
           <p id="domain-gap" class="domain-gap" aria-live="polite"></p>
         </div>
       </section>
@@ -128,7 +131,7 @@
           <button id="clear-filters" class="text-button" type="reset">Limpar filtros</button>
         </form>
 
-        <div id="dataset-grid" class="dataset-grid" aria-live="polite"></div>
+        <div id="dataset-grid" class="dataset-grid"></div>
         <p id="empty-state" class="empty-state" hidden>Nenhuma fonte corresponde a esses filtros. Tente uma busca mais ampla.</p>
       </section>
 
@@ -164,13 +167,14 @@
         <p>A AmazoniaDB é um índice, não um repositório — as fontes permanecem com seus provedores.</p>
         <div class="footer-links">
           <a href="../api/v1/catalog.json">API</a>
-          <a href="../CHANGELOG.md">Changelog</a>
+          <a href="https://github.com/mgpcamargo/amazoniadb/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog ↗</a>
           <a href="donate.html">Apoiar este projeto</a>
           <a href="#top">Voltar ao topo ↑</a>
         </div>
       </div>
     </footer>
 
+    <script src="../data/category-presentation.js"></script>
     <script src="../data/catalog.js"></script>
     <script src="../data/catalog.i18n.js"></script>
     <script src="app.js"></script>

@@ -2,11 +2,11 @@
 // writes them to data/candidates.js as window.AMAZONIA_CANDIDATES, for the
 // public candidates board (candidates.html).
 //
-// The /issues endpoint returns both plain issues and PRs for a given label;
-// an item counts as "in review" if it has a pull_request field (meaning
-// source-submission.yml successfully built a draft PR from it) and
-// "needs fixing" otherwise (meaning validation failed and no PR exists yet —
-// see scripts/issue-to-entry.mjs and scripts/validate-catalog.mjs).
+// The /issues endpoint returns both plain issues and PRs for a given label.
+// The public board shows each originating issue exactly once. A source issue
+// is "in review" only when an open generated PR explicitly says it came from
+// that issue; otherwise it remains "needs fixing". This avoids rendering a
+// successful submission twice (once as its issue and once as its PR).
 //
 // Runs via .github/workflows/update-candidates.yml, on issue/PR activity and
 // on a schedule as a safety net. Uses GITHUB_TOKEN when available (5000
@@ -20,16 +20,16 @@ const TOKEN = process.env.GITHUB_TOKEN || "";
 const outUrl = new URL("../data/candidates.js", import.meta.url);
 
 function stripTitlePrefix(title) {
-  return title.replace(/^\[New source\]:\s*/i, "").trim();
+  return title.replace(/^\[(?:new source|source)\]\s*:?\s*/i, "").trim();
 }
 
-function toCandidateRecord(item) {
+function toCandidateRecord(item, sourceIssuesInReview) {
   return {
     number: item.number,
     title: stripTitlePrefix(item.title || `#${item.number}`),
     submittedBy: item.user?.login || "unknown",
     avatarUrl: item.user?.avatar_url || "",
-    status: item.pull_request ? "in-review" : "needs-fixing",
+    status: sourceIssuesInReview.has(item.number) ? "in-review" : "needs-fixing",
     url: item.html_url,
     createdAt: (item.created_at || "").slice(0, 10)
   };
@@ -42,17 +42,35 @@ async function fetchLabeledItems() {
   };
   if (TOKEN) headers.Authorization = `Bearer ${TOKEN}`;
 
-  const url = `https://api.github.com/repos/${REPO}/issues?labels=new-source&state=open&per_page=100`;
-  const res = await fetch(url, { headers });
-  if (!res.ok) {
-    throw new Error(`GitHub API returned ${res.status} for ${url}: ${await res.text()}`);
+  const items = [];
+  for (let page = 1; ; page += 1) {
+    const url = new URL(`https://api.github.com/repos/${REPO}/issues`);
+    url.searchParams.set("labels", "new-source");
+    url.searchParams.set("state", "open");
+    url.searchParams.set("per_page", "100");
+    url.searchParams.set("page", String(page));
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      throw new Error(`GitHub API returned ${res.status} for ${url}: ${await res.text()}`);
+    }
+    const pageItems = await res.json();
+    items.push(...pageItems);
+    if (pageItems.length < 100) break;
   }
-  return res.json();
+  return items;
 }
 
 const items = await fetchLabeledItems();
+const sourceIssuesInReview = new Set(
+  items
+    .filter((item) => item.pull_request)
+    .map((item) => (item.body || "").match(/Auto-generated from #(\d+)/i)?.[1])
+    .filter(Boolean)
+    .map(Number)
+);
 const candidates = items
-  .map(toCandidateRecord)
+  .filter((item) => !item.pull_request)
+  .map((item) => toCandidateRecord(item, sourceIssuesInReview))
   .sort((a, b) => (a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0));
 
 const output = `window.AMAZONIA_CANDIDATES = ${JSON.stringify(candidates, null, 2)};\n`;
