@@ -1,15 +1,12 @@
 name: Deploy GitHub Pages
 
 on:
-  # A normal main push is validated by Quality gate. Generated commits use
-  # GITHUB_TOKEN and intentionally do not emit a new push workflow, so each
-  # writer is also an explicit deployment parent below.
+  # Writers call this workflow directly after a generated file reaches main.
+  # Normal main pushes arrive through the quality gate below.
+  workflow_call:
   workflow_run:
     workflows:
       - Quality gate
-      - Validate catalog
-      - Update candidates board
-      - Source submission to draft PR
     types: [completed]
   workflow_dispatch:
 
@@ -22,15 +19,13 @@ concurrency:
 
 jobs:
   verify:
-    # Never deploy a PR quality/validation run. Candidate-board updates from
-    # trusted PRs do change main, while fork PRs are read-only and do not.
+    # A pull-request quality run must never publish. Direct reusable-workflow
+    # callers have already written a generated file to main before invoking us.
     if: >-
       github.event_name != 'workflow_run' ||
       (
         github.event.workflow_run.conclusion == 'success' &&
-        (github.event.workflow_run.name != 'Quality gate' || github.event.workflow_run.event == 'push') &&
-        (github.event.workflow_run.name != 'Validate catalog' || github.event.workflow_run.event == 'push') &&
-        (github.event.workflow_run.name != 'Update candidates board' || github.event.workflow_run.event != 'pull_request' || github.event.workflow_run.head_repository.full_name == github.repository)
+        github.event.workflow_run.event == 'push'
       )
     runs-on: ubuntu-latest
     permissions:

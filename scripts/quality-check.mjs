@@ -290,6 +290,23 @@ const sourceWorkflow = await read(".github/workflows/source-submission.yml");
 for (const command of ["node scripts/build-api.mjs", "npm run check"]) {
   if (!sourceWorkflow.includes(command)) fail(`source-submission workflow: missing ${command}.`);
 }
+const deployWorkflow = await read(".github/workflows/deploy-pages.yml");
+if (!deployWorkflow.includes("workflow_call:") || !deployWorkflow.includes("- Quality gate")) {
+  fail("deploy-pages workflow: must be reusable and run after the main-branch quality gate.");
+}
+if (deployWorkflow.includes("- Update candidates board") || deployWorkflow.includes("- Source submission to draft PR")) {
+  fail("deploy-pages workflow: generated writers must call it directly, not fan out through workflow_run.");
+}
+for (const [file, output] of [
+  [".github/workflows/validate-catalog.yml", "api_changed"],
+  [".github/workflows/update-candidates.yml", "candidates_changed"],
+  [".github/workflows/source-submission.yml", "candidates_changed"]
+]) {
+  const workflow = file === ".github/workflows/source-submission.yml" ? sourceWorkflow : await read(file);
+  if (!workflow.includes("uses: ./.github/workflows/deploy-pages.yml") || !workflow.includes(output)) {
+    fail(`${file}: generated updates must report changes and call the Pages deploy workflow directly.`);
+  }
+}
 
 const sitemap = await read("sitemap.xml");
 const sitemapLocations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);

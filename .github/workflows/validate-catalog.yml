@@ -35,6 +35,8 @@ jobs:
     if: github.event_name == 'push'
     needs: validate
     runs-on: ubuntu-latest
+    outputs:
+      api_changed: ${{ steps.commit.outputs.changed }}
     permissions:
       contents: write
     concurrency:
@@ -53,8 +55,10 @@ jobs:
       - name: Regenerate public API mirror
         run: node scripts/build-api.mjs
       - name: Commit API mirror if changed
+        id: commit
         run: |
           if git diff --quiet -- api/v1/catalog.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -63,3 +67,13 @@ jobs:
           git commit -m "Regenerate api/v1/catalog.json [skip ci]"
           git pull --rebase origin main
           git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+  deploy-pages:
+    if: github.event_name == 'push' && needs.publish-api.result == 'success' && needs.publish-api.outputs.api_changed == 'true'
+    needs: publish-api
+    uses: ./.github/workflows/deploy-pages.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
