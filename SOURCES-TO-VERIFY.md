@@ -4,7 +4,7 @@ Real institutions relevant to AmazoniaDB's domains, not yet in `data/catalog.js`
 
 Pick an unchecked item, verify it, submit it through the issue form or a pull request like any other entry. Check the box once it's merged into the catalog.
 
-Current coverage is Brazil-heavy (10 of 13 entries), with one global, one pan-Amazon, and one Peru source. Everything below is a start at the remaining 7 Amazon countries.
+Current coverage is still Brazil-heavy (24 of 46 entries), alongside 13 global-subsettable sources, 8 pan-Amazon sources, and 1 Peru source. There are no current entries specifically covering Colombia, Bolivia, or Ecuador. Everything below is a start at the remaining Amazon countries.
 
 ## Peru
 - [x] **Geobosques** — geobosques.minam.gob.pe — MINAM's national forest-loss monitoring platform: annual deforestation maps + early-warning alerts, stated as free public access. → *Land use & infrastructure* — merged as `geobosques-national-forest-monitoring-platform`.
@@ -26,4 +26,4 @@ Current coverage is Brazil-heavy (10 of 13 entries), with one global, one pan-Am
 - **French Guiana** — likely tied to French national systems (ONF, INSEE) rather than an independent local institution — worth confirming
 
 ## Also open
-Every lead above is forest/deforestation monitoring, because that's the most publicly documented category across these countries — it was the easiest to find quickly. Biodiversity, hydrology, health/livelihoods, and governance sources for these same countries are completely unexplored. So is Brazil beyond the current 10.
+Every lead above is forest/deforestation monitoring, because that's the most publicly documented category across these countries — it was the easiest to find quickly. Biodiversity, hydrology, health/livelihoods, and governance sources for these same countries are completely unexplored. So is Brazil beyond the current 24.

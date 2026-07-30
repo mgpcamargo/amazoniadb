@@ -9,15 +9,7 @@ Open `index.html` directly in a browser. The directory works without a build ste
 
 ## Use the data without the site
 
-Every card has "Cite" and "BibTeX" buttons, and the results header has "Export full catalog" (JSON/CSV) for whatever's currently in `data/catalog.js`.
-
-For programmatic access with no JS execution required, `data/catalog.json` is a plain static export of the same records — fetchable directly (e.g. via the GitHub Pages URL or raw.githubusercontent.com). Regenerate it after any edit to `data/catalog.js`:
-
-```
-node scripts/build-catalog-json.mjs
-```
-
-It isn't currently wired into CI, so it's only as fresh as the last time someone ran that command — check the file's own git history if that matters for your use.
+Every card has "Cite" and "BibTeX" buttons, and the results header has "Export full catalog" (JSON/CSV) for whatever is currently in `data/catalog.js`. For programmatic use without JS execution, use the versioned API described in [Data & API](#data--api); it is regenerated automatically from the same source of truth.
 
 ## Add a source
 

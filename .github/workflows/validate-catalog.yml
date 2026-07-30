@@ -6,12 +6,14 @@ on:
       - "data/catalog.js"
       - "data/catalog.schema.json"
       - "scripts/validate-catalog.mjs"
+      - "scripts/build-api.mjs"
   push:
     branches: [main]
     paths:
       - "data/catalog.js"
       - "data/catalog.schema.json"
       - "scripts/validate-catalog.mjs"
+      - "scripts/build-api.mjs"
 
 permissions:
   contents: write
@@ -33,10 +35,10 @@ jobs:
       - name: Commit API mirror if changed
         if: github.event_name == 'push'
         run: |
-          if ! git diff --quiet -- api/catalog.json; then
+          if ! git diff --quiet -- api/v1/catalog.json; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add api/catalog.json
-            git commit -m "Regenerate api/catalog.json [skip ci]"
+            git add api/v1/catalog.json
+            git commit -m "Regenerate api/v1/catalog.json [skip ci]"
             git push
           fi
