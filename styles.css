@@ -125,8 +125,6 @@ h2 { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; color: va
 .discover-source span span { color: var(--quiet); font-size: 0.76rem; font-weight: 550; line-height: 1.32; }
 .discovery-icon { width: 28px; height: 28px; }
 .discovery-result { margin: 0; color: var(--quiet); font-size: 0.85rem; line-height: 1.45; }
-.domain-gap { margin: 18px 0 0; color: var(--quiet); font-size: 0.86rem; }
-.domain-gap a { color: var(--forest); font-weight: 700; text-decoration: underline; text-underline-offset: 0.16em; }
 
 .catalog-section { padding: 84px 0 98px; }
 .catalog-heading { margin-bottom: 26px; }
@@ -201,6 +199,7 @@ input::placeholder { color: var(--placeholder); }
 .footer-links { display: flex; gap: 16px; flex-wrap: wrap; }
 
 .submission-page { padding: clamp(58px, 9vw, 108px) 0 90px; }
+.donate-page { padding: clamp(58px, 9vw, 108px) 0 42px; }
 .submission-intro { margin-bottom: 48px; }
 .submission-intro h1 { margin-bottom: 16px; font-size: clamp(2.8rem, 6vw, 5.1rem); }
 .submission-intro > p:last-child { max-width: 690px; color: var(--quiet); font-size: 1.08rem; line-height: 1.58; }

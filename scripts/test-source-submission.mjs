@@ -21,7 +21,7 @@ const form = {
   url: "https://example.org/quality-fixture",
   title: "Quality Fixture Source",
   provider: "Quality Fixture Institute",
-  category: "Water & climate",
+  category: "Earth, water & air",
   coverage: "Brazil",
   kind: "Dataset",
   access: "Publicly available",

@@ -36,11 +36,11 @@ body:
     attributes:
       label: Domain
       options:
-        - "Life & biodiversity"
-        - "Water & climate"
-        - "Land & pressures"
+        - "Forests & biodiversity"
+        - "Earth, water & air"
+        - "Land, fire & change"
         - "Peoples & territories"
-        - "Wellbeing & livelihoods"
+        - "Health & livelihoods"
         - "Rights & governance"
     validations:
       required: true

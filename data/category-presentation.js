@@ -9,27 +9,27 @@
       id: "life",
       icon: icon('<path d="M7 25c10-1 16-7 18-18-11 1-17 7-18 18Z"/><path d="M8 24c4-5 8-9 14-14"/><path d="M14 19l-5-1M18 15l-1-5"/>'),
       locales: Object.freeze({
-        en: { label: "Life & biodiversity", note: "Species, habitats, forest condition" },
-        "pt-BR": { label: "Vida e biodiversidade", note: "Espécies, habitats e condição da floresta" },
-        es: { label: "Vida y biodiversidad", note: "Especies, hábitats y estado del bosque" }
+        en: { label: "Forests & biodiversity", note: "Forests, species, habitats" },
+        "pt-BR": { label: "Florestas e biodiversidade", note: "Florestas, espécies e habitats" },
+        es: { label: "Bosques y biodiversidad", note: "Bosques, especies y hábitats" }
       })
     }),
     "Earth, water & climate": Object.freeze({
       id: "water",
       icon: icon('<path d="M7 14c1-3 4-5 7-5 2 0 4 1 5 3 3-1 6 1 6 4 0 2-2 4-5 4H9c-3 0-5-2-5-4 0-1 1-2 3-2Z"/><path d="M8 25c2 1 4 1 6 0s4-1 6 0 4 1 6 0"/>'),
       locales: Object.freeze({
-        en: { label: "Water & climate", note: "Weather, rivers, rock, extremes" },
-        "pt-BR": { label: "Água e clima", note: "Clima, rios, rochas e extremos" },
-        es: { label: "Agua y clima", note: "Clima, ríos, rocas y extremos" }
+        en: { label: "Earth, water & air", note: "Rivers, climate, atmosphere" },
+        "pt-BR": { label: "Terra, água e ar", note: "Rios, clima e atmosfera" },
+        es: { label: "Tierra, agua y aire", note: "Ríos, clima y atmósfera" }
       })
     }),
     "Land use & infrastructure": Object.freeze({
       id: "land",
       icon: icon('<path d="M4 24 12 11l5 8 3-5 8 10H4Z"/><path d="M18 24c0-4 1-7 5-10"/><path d="M23 14h4"/>'),
       locales: Object.freeze({
-        en: { label: "Land & pressures", note: "Change, monitoring, access" },
-        "pt-BR": { label: "Terra e pressões", note: "Mudanças, monitoramento e acesso" },
-        es: { label: "Tierra y presiones", note: "Cambios, monitoreo y acceso" }
+        en: { label: "Land, fire & change", note: "Land use, fire, infrastructure" },
+        "pt-BR": { label: "Terra, fogo e transformação", note: "Uso da terra, fogo e infraestrutura" },
+        es: { label: "Tierra, fuego y cambio", note: "Uso del suelo, fuego e infraestructura" }
       })
     }),
     "Peoples, territories & culture": Object.freeze({
@@ -45,9 +45,9 @@
       id: "wellbeing",
       icon: icon('<path d="M5 16 16 7l11 9v10H5V16Z"/><path d="M13 19c1-2 4-2 5 0 1-2 4-2 5 0 0 3-4 5-5 6-1-1-5-3-5-6Z"/>'),
       locales: Object.freeze({
-        en: { label: "Wellbeing & livelihoods", note: "Health, wellbeing, local economies" },
-        "pt-BR": { label: "Bem-estar e meios de vida", note: "Saúde, bem-estar e economias locais" },
-        es: { label: "Bienestar y medios de vida", note: "Salud, bienestar y economías locales" }
+        en: { label: "Health & livelihoods", note: "Health, care, local economies" },
+        "pt-BR": { label: "Saúde e meios de vida", note: "Saúde, cuidado e economias locais" },
+        es: { label: "Salud y medios de vida", note: "Salud, cuidados y economías locales" }
       })
     }),
     "Governance, rights & safeguards": Object.freeze({

@@ -141,28 +141,6 @@
     }).join("");
   };
 
-  // Highlights whichever domain has the fewest catalog entries, as a nudge
-  // toward community submissions. Reflects the whole catalog, not the current
-  // filter, so it does not need to re-render on filter change.
-  const renderGapPrompt = () => {
-    const gapEl = document.getElementById("domain-gap");
-    if (!gapEl) return;
-    if (!categories.length) {
-      gapEl.hidden = true;
-      return;
-    }
-    gapEl.hidden = false;
-    const counts = categories.map((category) => ({
-      name: category.label,
-      count: catalog.filter((record) => record.category === category.key).length
-    }));
-    const minCount = Math.min(...counts.map((entry) => entry.count));
-    const thinnest = counts.filter((entry) => entry.count === minCount);
-    gapEl.innerHTML = thinnest.length === counts.length
-      ? `Every domain has ${minCount} ${minCount === 1 ? "source" : "sources"} so far — <a href="submit.html">help one grow →</a>`
-      : `${escapeHtml(thinnest[0].name)} has the fewest sources (${thinnest[0].count}) — know one? <a href="submit.html">Propose a source →</a>`;
-  };
-
   const getVisibleRecords = () => {
     const query = state.search.trim().toLocaleLowerCase();
     return catalog.filter((record) => {
@@ -205,7 +183,7 @@
         <div class="card-actions">
           <div class="card-links">
             <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
-            ${record.methodologyUrl ? `<a class="methodology-link" href="${escapeHtml(record.methodologyUrl)}" target="_blank" rel="noopener noreferrer">Methodology <span class="sr-only">(opens in a new tab)</span></a>` : ""}
+            <a class="methodology-link" href="${escapeHtml(record.methodologyUrl || record.url)}" target="_blank" rel="noopener noreferrer">Documentation <span class="sr-only">${record.methodologyUrl ? "methodology" : "source page"}; opens in a new tab</span></a>
           </div>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
           <button class="cite-button" type="button" data-report-id="${escapeHtml(record.id)}">Report link</button>
@@ -386,7 +364,6 @@
   renderCatalog();
   renderDiscovery();
   updateDiscoverControl();
-  renderGapPrompt();
   syncUrl();
   injectStructuredData();
 })();
