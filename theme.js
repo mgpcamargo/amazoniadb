@@ -19,9 +19,8 @@
     pt: "Modo escuro",
   };
 
-  // Matches on the primary subtag (the part before any "-") rather than the
-  // exact tag, since this codebase isn't fully consistent about "es" vs
-  // "es-419" across pages — this way it works regardless.
+  // Matches on the primary subtag (the part before any "-") so regional
+  // language tags such as "pt-BR" and "es-419" share the right UI copy.
   const getLabel = () => {
     const primary = (document.documentElement.lang || "en").split("-")[0].toLowerCase();
     return LABELS[primary] || LABELS.en;

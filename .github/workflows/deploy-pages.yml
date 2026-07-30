@@ -1,0 +1,70 @@
+name: Deploy GitHub Pages
+
+on:
+  # A normal main push is validated by Quality gate. Generated commits use
+  # GITHUB_TOKEN and intentionally do not emit a new push workflow, so each
+  # writer is also an explicit deployment parent below.
+  workflow_run:
+    workflows:
+      - Quality gate
+      - Validate catalog
+      - Update candidates board
+      - Source submission to draft PR
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    # Never deploy a PR quality/validation run. Candidate-board updates from
+    # trusted PRs do change main, while fork PRs are read-only and do not.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        (github.event.workflow_run.name != 'Quality gate' || github.event.workflow_run.event == 'push') &&
+        (github.event.workflow_run.name != 'Validate catalog' || github.event.workflow_run.event == 'push') &&
+        (github.event.workflow_run.name != 'Update candidates board' || github.event.workflow_run.event != 'pull_request' || github.event.workflow_run.head_repository.full_name == github.repository)
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Run repository quality gate
+        run: npm run check
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

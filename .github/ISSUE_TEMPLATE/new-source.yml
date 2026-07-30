@@ -36,12 +36,12 @@ body:
     attributes:
       label: Domain
       options:
-        - "Forest & biodiversity"
-        - "Earth, water & climate"
-        - "Land use & infrastructure"
-        - "Peoples, territories & culture"
-        - "Society, health & livelihoods"
-        - "Governance, rights & safeguards"
+        - "Life & biodiversity"
+        - "Water & climate"
+        - "Land & pressures"
+        - "Peoples & territories"
+        - "Wellbeing & livelihoods"
+        - "Rights & governance"
     validations:
       required: true
   - type: dropdown
@@ -118,6 +118,22 @@ body:
     validations:
       required: false
   - type: input
+    id: temporal_coverage_pt_br
+    attributes:
+      label: Período em português (opcional)
+      description: Se você preencheu o período acima, traduza-o aqui. Deixe ambos os campos de tradução vazios se o período não se aplicar.
+      placeholder: "ex.: 1985–2024 (anual)"
+    validations:
+      required: false
+  - type: input
+    id: temporal_coverage_es
+    attributes:
+      label: Periodo en español (opcional)
+      description: Si completaste el período anterior, tradúcelo aquí. Deja ambos los campos de traducción vacíos si el período no aplica.
+      placeholder: "p. ej., 1985–2024 (anual)"
+    validations:
+      required: false
+  - type: input
     id: spatial_resolution
     attributes:
       label: Spatial resolution (optional)
@@ -155,6 +171,22 @@ body:
       label: Named license (optional)
       description: Only fill this in when the provider explicitly names a specific open-data license (e.g. CC-BY-4.0, PDDL, ODbL). Leave blank if there's just a general terms note — that's what the access dropdown above is for.
       placeholder: "e.g. Open Data Commons Public Domain Dedication and License (PDDL)"
+    validations:
+      required: false
+  - type: input
+    id: license_pt_br
+    attributes:
+      label: Licença em português (opcional)
+      description: Se você preencheu uma licença acima, informe aqui a forma em português. Mantenha o nome oficial inalterado quando ele for um título jurídico próprio.
+      placeholder: "ex.: Licença CC BY 4.0"
+    validations:
+      required: false
+  - type: input
+    id: license_es
+    attributes:
+      label: Licencia en español (opcional)
+      description: Si completaste una licencia anterior, indica aquí su forma en español. Conserva el nombre oficial si es un título jurídico propio.
+      placeholder: "p. ej., Licencia CC BY 4.0"
     validations:
       required: false
   - type: checkboxes

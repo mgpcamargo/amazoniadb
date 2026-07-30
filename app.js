@@ -26,10 +26,18 @@
   // Restore filter state from the URL (?category=&q=&coverage=&access=) so a
   // filtered view can be bookmarked or shared as a link.
   const initialParams = new URLSearchParams(window.location.search);
-  state.category = initialParams.get("category") || "";
+  // Filter values come from their controlled UI vocabulary, rather than only
+  // values represented by the current catalog. That keeps a legitimate empty
+  // view (for example, Colombia before it has an entry) shareable.
+  const valuesFromSelect = (select) => new Set(Array.from(select.options, ({ value }) => value).filter(Boolean));
+  const validCategories = new Set(categories.map((category) => category.key));
+  const validCoverage = valuesFromSelect(coverage);
+  const validAccess = valuesFromSelect(access);
+  const validParam = (value, allowed) => allowed.has(value) ? value : "";
+  state.category = validParam(initialParams.get("category") || "", validCategories);
   state.search = initialParams.get("q") || "";
-  state.coverage = initialParams.get("coverage") || "";
-  state.access = initialParams.get("access") || "";
+  state.coverage = validParam(initialParams.get("coverage") || "", validCoverage);
+  state.access = validParam(initialParams.get("access") || "", validAccess);
   state.source = initialParams.get("source") || "";
   if (state.source && !catalog.some((record) => record.id === state.source)) state.source = "";
   if (state.source) {
@@ -158,7 +166,7 @@
   const getVisibleRecords = () => {
     const query = state.search.trim().toLocaleLowerCase();
     return catalog.filter((record) => {
-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, ...record.formats]
+      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, record.temporalCoverage, record.spatialResolution, record.license, ...record.formats]
         .join(" ")
         .toLocaleLowerCase();
       return (!state.source || record.id === state.source)
@@ -243,7 +251,8 @@
         "url": record.url,
         "keywords": [record.category, record.coverage],
         "provider": { "@type": "Organization", "name": record.provider },
-        "license": record.access,
+        ...(record.temporalCoverage ? { "temporalCoverage": record.temporalCoverage } : {}),
+        ...(record.license ? { "license": record.license } : {}),
         "isAccessibleForFree": record.access === "Publicly available",
         "dateModified": record.checked,
         "distribution": record.formats.map((format) => ({ "@type": "DataDownload", "encodingFormat": format }))

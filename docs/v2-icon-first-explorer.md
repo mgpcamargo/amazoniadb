@@ -107,7 +107,7 @@ descriptions are required rather than treated as a silent fallback.
    relationship.
 3. Prioritize additions from Colombia, Bolivia, Ecuador, Peru, and
    underrepresented domains; the current catalog is materially Brazil-heavy.
-4. Finish Portuguese and Spanish translations for the newer records.
+4. Keep Portuguese and Spanish translations complete for every newly added visible metadata field.
 
 ## Success measures
 

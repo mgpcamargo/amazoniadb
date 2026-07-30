@@ -401,7 +401,7 @@ window.AMAZONIA_CATALOG = [
     checked: "2026-07-25",
     temporalCoverage: "Static (elevation-derived; no time series)",
     spatialResolution: "3 arc-second (~90 m) to 5 arc-minute (~10 km)",
-    license: "Free for scientific, educational, and commercial use with attribution (HydroSHEDS terms of use)"
+    license: "HydroSHEDS License Agreement"
   },
   {
     id: "worldclim-bioclimatic",
