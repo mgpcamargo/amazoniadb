@@ -1,7 +1,7 @@
 {
   "$schema": "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json",
   "apiVersion": 1,
-  "generated": "2026-07-29T05:29:49.013Z",
+  "generated": "2026-07-30T15:32:05.667Z",
   "count": 46,
   "source": "https://mgpcamargo.github.io/amazoniadb/",
   "license": "All rights reserved on this index. Each record links to its original provider, who holds their own rights over the underlying data — this JSON is a convenience mirror of AmazoniaDB's curated list, not a redistribution of provider data.",
