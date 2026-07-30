@@ -81,3 +81,40 @@ jobs:
               issue_number: context.issue.number,
               body: "Thanks for the submission — an automated check didn't pass, so no PR was opened yet. This usually means a required field was left blank or a dropdown answer didn't match exactly. A maintainer will take a look."
             });
+
+  refresh-candidates:
+    needs: build-pr
+    if: needs.build-pr.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: read
+    concurrency:
+      group: generated-main-writes
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Refresh the main checkout
+        run: git pull --ff-only origin main
+      - name: Rebuild candidates board after draft PR creation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/build-candidates.mjs
+      - name: Commit candidates board if changed
+        run: |
+          git add data/candidates.js
+          if git diff --staged --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update candidates board [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main

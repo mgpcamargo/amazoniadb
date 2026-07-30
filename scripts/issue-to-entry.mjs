@@ -38,6 +38,19 @@ const slugify = (value) =>
 // field later is a one-line change here, not a hand-placed comma.
 const OPTIONAL_RECORD_KEYS = ["temporalCoverage", "spatialResolution", "license", "methodologyUrl", "submittedBy"];
 
+// GitHub issue forms cannot give a dropdown option a separate machine value.
+// Keep their V2 public labels friendly, then translate them back to the
+// stable schema keys used in data/catalog.js. Canonical values remain as
+// aliases so an older submitted issue can still be rebuilt safely.
+const PUBLIC_CATEGORY_TO_CANONICAL = Object.freeze({
+  "Life & biodiversity": "Forest & biodiversity",
+  "Water & climate": "Earth, water & climate",
+  "Land & pressures": "Land use & infrastructure",
+  "Peoples & territories": "Peoples, territories & culture",
+  "Wellbeing & livelihoods": "Society, health & livelihoods",
+  "Rights & governance": "Governance, rights & safeguards"
+});
+
 const toCatalogObject = (record) => {
   const requiredLines = [
     `    id: ${JSON.stringify(record.id)}`,
@@ -114,6 +127,7 @@ try {
 }
 
 const title = (fields.title || "").trim();
+const submittedCategory = (fields.category || "").trim();
 const localizedDescriptions = {
   "pt-BR": (fields.description_pt_br || "").trim(),
   es: (fields.description_es || "").trim()
@@ -122,7 +136,7 @@ const record = {
   id: slugify(title),
   title,
   provider: (fields.provider || "").trim(),
-  category: (fields.category || "").trim(),
+  category: PUBLIC_CATEGORY_TO_CANONICAL[submittedCategory] || submittedCategory,
   coverage: (fields.coverage || "").trim(),
   formats: (fields.formats || "")
     .split(",")
@@ -158,7 +172,23 @@ if (missingDescriptions.length) {
 // purpose: attaching them to `record` any earlier would make a blank
 // optional field fail as though it were a missing required one.
 const temporalCoverage = (fields.temporal_coverage || "").trim();
-if (temporalCoverage) record.temporalCoverage = temporalCoverage;
+const localizedTemporalCoverage = {
+  "pt-BR": (fields.temporal_coverage_pt_br || "").trim(),
+  es: (fields.temporal_coverage_es || "").trim()
+};
+if (temporalCoverage) {
+  const missingTemporalTranslations = Object.entries(localizedTemporalCoverage)
+    .filter(([, value]) => !value)
+    .map(([locale]) => locale);
+  if (missingTemporalTranslations.length) {
+    console.error("A temporal coverage needs translations for:", missingTemporalTranslations.join(", "));
+    process.exit(1);
+  }
+  record.temporalCoverage = temporalCoverage;
+} else if (Object.values(localizedTemporalCoverage).some(Boolean)) {
+  console.error("Timeframe translations were provided without a source temporal coverage.");
+  process.exit(1);
+}
 const spatialResolution = (fields.spatial_resolution || "").trim();
 const localizedSpatialResolution = {
   "pt-BR": (fields.spatial_resolution_pt_br || "").trim(),
@@ -180,7 +210,23 @@ if (spatialResolution) {
 const methodologyUrl = (fields.methodology_url || "").trim();
 if (methodologyUrl) record.methodologyUrl = methodologyUrl;
 const license = (fields.license || "").trim();
-if (license) record.license = license;
+const localizedLicense = {
+  "pt-BR": (fields.license_pt_br || "").trim(),
+  es: (fields.license_es || "").trim()
+};
+if (license) {
+  const missingLicenseTranslations = Object.entries(localizedLicense)
+    .filter(([, value]) => !value)
+    .map(([locale]) => locale);
+  if (missingLicenseTranslations.length) {
+    console.error("A named license needs display text for:", missingLicenseTranslations.join(", "));
+    process.exit(1);
+  }
+  record.license = license;
+} else if (Object.values(localizedLicense).some(Boolean)) {
+  console.error("License display text was provided without a named license.");
+  process.exit(1);
+}
 
 const submittedBy = (process.env.SUBMITTED_BY || "").trim();
 if (submittedBy) record.submittedBy = submittedBy;
@@ -201,8 +247,8 @@ const i18nSource = await readFile(i18nUrl, "utf8");
 const i18nContext = { window: {} };
 vm.runInNewContext(i18nSource, i18nContext);
 const i18n = i18nContext.window.AMAZONIA_CATALOG_I18N;
-if (!i18n?.["pt-BR"]?.descriptions || !i18n?.es?.descriptions) {
-  console.error("data/catalog.i18n.js does not expose the expected localized description maps.");
+if (!i18n?.["pt-BR"]?.descriptions || !i18n?.es?.descriptions || !i18n?.["pt-BR"]?.temporalCoverage || !i18n?.es?.temporalCoverage || !i18n?.["pt-BR"]?.licenses || !i18n?.es?.licenses) {
+  console.error("data/catalog.i18n.js does not expose the expected localized display maps.");
   process.exit(1);
 }
 
@@ -211,6 +257,13 @@ for (const locale of ["pt-BR", "es"]) {
   if (i18n[locale].descriptions[record.id]) {
     console.error(`A ${locale} description already exists for ${record.id}.`);
     process.exit(1);
+  }
+  if (temporalCoverage) {
+    if (i18n[locale].temporalCoverage[record.id]) {
+      console.error(`A ${locale} timeframe already exists for ${record.id}.`);
+      process.exit(1);
+    }
+    i18nOutput = insertI18nEntry(i18nOutput, locale, "temporalCoverage", record.id, localizedTemporalCoverage[locale]);
   }
   if (spatialResolution) {
     const existingResolution = i18n[locale].spatialResolution?.[spatialResolution];
@@ -221,6 +274,13 @@ for (const locale of ["pt-BR", "es"]) {
     if (!existingResolution) {
       i18nOutput = insertI18nEntry(i18nOutput, locale, "spatialResolution", spatialResolution, localizedSpatialResolution[locale]);
     }
+  }
+  if (license) {
+    if (i18n[locale].licenses[record.id]) {
+      console.error(`A ${locale} license display text already exists for ${record.id}.`);
+      process.exit(1);
+    }
+    i18nOutput = insertI18nEntry(i18nOutput, locale, "licenses", record.id, localizedLicense[locale]);
   }
   i18nOutput = insertI18nEntry(i18nOutput, locale, "descriptions", record.id, localizedDescriptions[locale]);
 }

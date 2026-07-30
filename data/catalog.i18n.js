@@ -1,9 +1,9 @@
 // Translated content for each data/catalog.js entry, used by pt-br/app.js
-// and es/app.js. Two dictionaries: `descriptions` (keyed by record id) and
-// `spatialResolution` (keyed by the exact English value, since several
-// records share the same phrase). Keep spatialResolution in sync with the
-// distinct values actually in data/catalog.js — a stale entry here just
-// silently never matches; a missing one silently falls back to English.
+// and es/app.js. `descriptions` and the per-record `temporalCoverage` /
+// `licenses` maps are keyed by record id. `spatialResolution` is keyed by
+// the exact English value because several records share a phrase. Keep all
+// maps in sync with data/catalog.js — a stale entry is a maintenance error,
+// and a missing visible translation must be caught by the quality gate.
 //
 // `title` and `provider` are treated as proper names and left unchanged
 // across locales (several are already in Portuguese, e.g. "IBGE Cidades",
@@ -11,8 +11,8 @@
 // `kind` are NOT translated here — those stay as the canonical English enum
 // values in data/catalog.js (required by data/catalog.schema.json and
 // scripts/validate-catalog.mjs) and are mapped to display labels locally
-// inside each locale's app.js. `temporalCoverage` and `license` are shown
-// as-is in every locale (not translated) — see each app.js for why.
+// inside each locale's app.js. Formal license names remain canonical when
+// they have no natural localized form, but each display decision is explicit.
 //
 // If a new entry is added to data/catalog.js and doesn't have a matching
 // id here yet, the locale app.js falls back to the English description
@@ -60,6 +60,58 @@ window.AMAZONIA_CATALOG_I18N = {
       "Municipality level": "Nível municipal",
       "State/regional level microdata": "Microdados em nível estadual/regional",
       "State level": "Nível estadual"
+    },
+    temporalCoverage: {
+      "gbif-species-occurrences": "Espécimes de museu até o presente (atualização contínua)",
+      "specieslink-network": "2002–presente (atualização contínua)",
+      "ana-hidroweb": "Varia conforme a estação; muitas séries desde o início dos anos 2000, algumas mais longas",
+      "inmet-bdmep": "Registros diários desde 2000; a duração das séries varia conforme a estação",
+      "mapbiomas-brasil": "1985–2024 (anual)",
+      "inpe-terrabrasilis": "PRODES anual desde 1988; alertas DETER quase em tempo real",
+      "funai-terras-indigenas": "Atualizado mensalmente",
+      "isa-terras-indigenas": "Em andamento desde os anos 1980 (CEDI/ISA)",
+      "ibge-cidades": "Varia conforme o indicador; muitos são anuais, alguns vinculados aos anos censitários",
+      "datasus-tabnet": "Varia conforme o subsistema; várias séries em andamento desde as décadas de 1990–2000",
+      "icmbio-dados-geoespaciais": "Atualizado à medida que os limites são refinados ou redefinidos por decreto",
+      "raisg-maps": "Atualizações periódicas desde 1996; o último atlas completo é de 2020",
+      "geobosques-national-forest-monitoring-platform": "Mapas anuais de perda florestal desde 2001; alertas quase em tempo real",
+      "imazon-sad-system": "2008–presente (boletins mensais)",
+      "nasa-firms-active-fire": "2000–presente (MODIS); 2012–presente (VIIRS); atualizado várias vezes ao dia",
+      "chirps-precipitation": "1981–presente (diário, com latência de ~45 dias para o produto final)",
+      "amazon-canopy-height-nicfi-lidar": "Composto de 2020–2024",
+      "amazon-mining-watch": "Anual de 2018 a 2024; trimestral a partir do segundo trimestre de 2025",
+      "gedi-forest-structure": "Abril de 2019–março de 2023 (coleta de dados da missão)",
+      "hansen-global-forest-change": "2000–2024, atualizações anuais",
+      "terraclass-amazonia": "2004, 2008, 2010, 2012, 2014; bienal até 2024",
+      "siradx-xingu-deforestation-alert": "Em andamento, alertas quase em tempo real",
+      "inpe-bdqueimadas": "1998–presente (quase em tempo real; atualizado a cada 10 minutos a 3 horas, conforme o produto)",
+      "ore-hybam-observatory": "2003–presente (diário/a cada dez dias/mensal, dependendo da variável); algumas estações foram reconstruídas até 1902",
+      "ibama-fiscalizacao-dados-abertos": "2000–presente, atualizações periódicas",
+      "hydrosheds": "Estático (derivado de elevação; sem série temporal)",
+      "worldclim-bioclimatic": "Referência climatológica de 1970–2000 (histórica); camadas de cenários futuros também disponíveis",
+      "copernicus-dem-glo30": "Estático (aquisições TanDEM-X, ~2011–2015)",
+      "esa-worldcover": "Mapas-base de 2020 e 2021; compostos anuais desde 2020",
+      "rainfor-forestplots-amazon-network": "2000–presente, parcelas recensadas periodicamente",
+      "ppbio-brazil-biodiversity-research": "2001–presente",
+      "map-of-life-species-ranges": "Atualizado continuamente; indicadores recalculados anualmente",
+      "otca-amazon-regional-observatory": "Varia conforme o módulo; o módulo de fogo cobre 2001–2025",
+      "landmark-indigenous-community-lands": "Atualizado continuamente; versão 2.0 lançada em 2024",
+      "rri-tenure-tracking-tool": "2015–presente, atualização contínua",
+      "igarape-ecocrime-data": "2021–presente, atualizado periodicamente",
+      "isa-povos-indigenas-no-brasil": "Início dos anos 1980–presente, atualização contínua",
+      "ibge-censo-indigena-2022": "Coleta sistemática desde 1991; rodada mais recente em 2022, com publicação contínua de tabelas",
+      "glottolog-language-catalog": "Atualizado continuamente; versão 5.3 desde 2026",
+      "cimi-observatorio-violencia-indigena": "1996–presente, anual",
+      "fcp-comunidades-quilombolas-certificadas": "2003–presente, atualização contínua",
+      "atlas-brasil-idhm": "Rodadas censitárias de 1991, 2000 e 2010; ~78 indicadores atualizados anualmente",
+      "ibge-pnad-continua": "Contínua desde 2012 (pesquisa anual predecessora desde 1967)",
+      "cadunico-familias-inscritas": "2001–presente, atualização diária",
+      "rede-penssan-vigisan": "2020–presente (I VIGISAN 2020/21, II VIGISAN 2021/22, em andamento)"
+    },
+    licenses: {
+      "icmbio-dados-geoespaciais": "Open Data Commons Public Domain Dedication and License (PDDL)",
+      "amazon-mining-watch": "Creative Commons Attribution 4.0 (CC-BY-4.0)",
+      "hydrosheds": "Acordo de Licença HydroSHEDS"
     },
     descriptions: {
       "gbif-species-occurrences": "Um agregador global de registros de ocorrência de espécies — espécimes de museu, observações de ciência cidadã e dados de levantamentos —, pesquisável e filtrável para a bacia amazônica.",
@@ -151,6 +203,58 @@ window.AMAZONIA_CATALOG_I18N = {
       "Municipality level": "Nivel municipal",
       "State/regional level microdata": "Microdatos a nivel estatal/regional",
       "State level": "Nivel estatal"
+    },
+    temporalCoverage: {
+      "gbif-species-occurrences": "Especímenes de museo hasta la actualidad (actualización continua)",
+      "specieslink-network": "2002–actualidad (actualización continua)",
+      "ana-hidroweb": "Varía según la estación; muchas series desde comienzos de la década de 2000, algunas más antiguas",
+      "inmet-bdmep": "Registros diarios desde 2000; la duración de las series varía según la estación",
+      "mapbiomas-brasil": "1985–2024 (anual)",
+      "inpe-terrabrasilis": "PRODES anual desde 1988; alertas DETER casi en tiempo real",
+      "funai-terras-indigenas": "Actualizado mensualmente",
+      "isa-terras-indigenas": "En curso desde la década de 1980 (CEDI/ISA)",
+      "ibge-cidades": "Varía según el indicador; muchos son anuales y algunos están ligados a los años censales",
+      "datasus-tabnet": "Varía según el subsistema; varias series continúan desde las décadas de 1990–2000",
+      "icmbio-dados-geoespaciais": "Actualizado a medida que los límites se refinan o redefinen por decreto",
+      "raisg-maps": "Actualizaciones periódicas desde 1996; el último atlas completo es de 2020",
+      "geobosques-national-forest-monitoring-platform": "Mapas anuales de pérdida forestal desde 2001; alertas casi en tiempo real",
+      "imazon-sad-system": "2008–actualidad (boletines mensuales)",
+      "nasa-firms-active-fire": "2000–actualidad (MODIS); 2012–actualidad (VIIRS); actualizado varias veces al día",
+      "chirps-precipitation": "1981–actualidad (diario, con una latencia de ~45 días para el producto final)",
+      "amazon-canopy-height-nicfi-lidar": "Compuesto de 2020–2024",
+      "amazon-mining-watch": "Anual de 2018 a 2024; trimestral desde el segundo trimestre de 2025",
+      "gedi-forest-structure": "Abril de 2019–marzo de 2023 (recopilación de datos de la misión)",
+      "hansen-global-forest-change": "2000–2024, actualizaciones anuales",
+      "terraclass-amazonia": "2004, 2008, 2010, 2012, 2014; bienal hasta 2024",
+      "siradx-xingu-deforestation-alert": "En curso, alertas casi en tiempo real",
+      "inpe-bdqueimadas": "1998–actualidad (casi en tiempo real; actualizado cada 10 minutos a 3 horas según el producto)",
+      "ore-hybam-observatory": "2003–actualidad (diario/cada diez días/mensual, según la variable); algunas estaciones se reconstruyeron hasta 1902",
+      "ibama-fiscalizacao-dados-abertos": "2000–actualidad, actualizaciones periódicas",
+      "hydrosheds": "Estático (derivado de elevación; sin serie temporal)",
+      "worldclim-bioclimatic": "Referencia climatológica de 1970–2000 (histórica); también hay capas de escenarios futuros",
+      "copernicus-dem-glo30": "Estático (adquisiciones TanDEM-X, ~2011–2015)",
+      "esa-worldcover": "Mapas base de 2020 y 2021; compuestos anuales desde 2020",
+      "rainfor-forestplots-amazon-network": "2000–actualidad, parcelas recensadas periódicamente",
+      "ppbio-brazil-biodiversity-research": "2001–actualidad",
+      "map-of-life-species-ranges": "Actualizado continuamente; indicadores recalculados anualmente",
+      "otca-amazon-regional-observatory": "Varía según el módulo; el módulo de incendios cubre 2001–2025",
+      "landmark-indigenous-community-lands": "Actualizado continuamente; versión 2.0 publicada en 2024",
+      "rri-tenure-tracking-tool": "2015–actualidad, actualización continua",
+      "igarape-ecocrime-data": "2021–actualidad, actualizado periódicamente",
+      "isa-povos-indigenas-no-brasil": "Inicios de la década de 1980–actualidad, actualización continua",
+      "ibge-censo-indigena-2022": "Recopilación sistemática desde 1991; última ronda en 2022, con publicación continua de tablas",
+      "glottolog-language-catalog": "Actualizado continuamente; versión 5.3 desde 2026",
+      "cimi-observatorio-violencia-indigena": "1996–actualidad, anual",
+      "fcp-comunidades-quilombolas-certificadas": "2003–actualidad, actualización continua",
+      "atlas-brasil-idhm": "Rondas censales de 1991, 2000 y 2010; ~78 indicadores actualizados anualmente",
+      "ibge-pnad-continua": "Continua desde 2012 (encuesta anual predecesora desde 1967)",
+      "cadunico-familias-inscritas": "2001–actualidad, actualización diaria",
+      "rede-penssan-vigisan": "2020–actualidad (I VIGISAN 2020/21, II VIGISAN 2021/22, en curso)"
+    },
+    licenses: {
+      "icmbio-dados-geoespaciais": "Open Data Commons Public Domain Dedication and License (PDDL)",
+      "amazon-mining-watch": "Creative Commons Attribution 4.0 (CC-BY-4.0)",
+      "hydrosheds": "Acuerdo de Licencia HydroSHEDS"
     },
     descriptions: {
       "gbif-species-occurrences": "Un agregador global de registros de ocurrencia de especies —especímenes de museo, observaciones de ciencia ciudadana y datos de relevamientos—, con búsqueda y filtros para la cuenca amazónica.",

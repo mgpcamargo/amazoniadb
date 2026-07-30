@@ -1,7 +1,9 @@
 (() => {
   const catalog = window.AMAZONIA_CATALOG || [];
-  const i18n = (window.AMAZONIA_CATALOG_I18N && window.AMAZONIA_CATALOG_I18N["pt-BR"]) || { descriptions: {}, spatialResolution: {} };
+  const i18n = (window.AMAZONIA_CATALOG_I18N && window.AMAZONIA_CATALOG_I18N["pt-BR"]) || { descriptions: {}, spatialResolution: {}, temporalCoverage: {}, licenses: {} };
   const spatialResolutionLabels = i18n.spatialResolution || {};
+  const temporalCoverageLabels = i18n.temporalCoverage || {};
+  const licenseLabels = i18n.licenses || {};
 
   // `key` matches record.category/coverage/access/kind exactly as stored in
   // ../data/catalog.js (the canonical English values required by
@@ -20,7 +22,7 @@
     "Publicly available": "Disponível publicamente"
   };
   const kindLabels = { "Dataset": "Conjunto de dados", "Data portal": "Portal de dados", "Download": "Download", "Explorer": "Explorador" };
-  const detailLabels = { timeframe: "Cobre", resolution: "Resolução", license: "Licença", methodology: "Metodologia" };
+  const detailLabels = { timeframe: "Período", resolution: "Resolução", license: "Licença", methodology: "Metodologia" };
 
   const state = { category: "", search: "", coverage: "", access: "", source: "" };
   const domainNav = document.getElementById("domain-nav");
@@ -40,10 +42,18 @@
   // Restore filter state from the URL (?category=&q=&coverage=&access=) so a
   // filtered view can be bookmarked or shared as a link.
   const initialParams = new URLSearchParams(window.location.search);
-  state.category = initialParams.get("category") || "";
+  // Os valores dos filtros vêm do vocabulário controlado da interface, não
+  // apenas do catálogo atual. Assim, uma visão vazia legítima (por exemplo,
+  // Colômbia antes de ter uma entrada) continua podendo ser compartilhada.
+  const valuesFromSelect = (select) => new Set(Array.from(select.options, ({ value }) => value).filter(Boolean));
+  const validCategories = new Set(categories.map((category) => category.key));
+  const validCoverage = valuesFromSelect(coverage);
+  const validAccess = valuesFromSelect(access);
+  const validParam = (value, allowed) => allowed.has(value) ? value : "";
+  state.category = validParam(initialParams.get("category") || "", validCategories);
   state.search = initialParams.get("q") || "";
-  state.coverage = initialParams.get("coverage") || "";
-  state.access = initialParams.get("access") || "";
+  state.coverage = validParam(initialParams.get("coverage") || "", validCoverage);
+  state.access = validParam(initialParams.get("access") || "", validAccess);
   state.source = initialParams.get("source") || "";
   if (state.source && !catalog.some((record) => record.id === state.source)) state.source = "";
   if (state.source) {
@@ -172,7 +182,7 @@
   const getVisibleRecords = () => {
     const query = state.search.trim().toLocaleLowerCase();
     return catalog.filter((record) => {
-      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], ...record.formats]
+      const searchText = [record.title, record.provider, record.category, record.coverage, record.description, i18n.descriptions[record.id], record.temporalCoverage, temporalCoverageLabels[record.id], record.spatialResolution, spatialResolutionLabels[record.spatialResolution], record.license, licenseLabels[record.id], ...record.formats]
         .join(" ")
         .toLocaleLowerCase();
       return (!state.source || record.id === state.source)
@@ -189,9 +199,9 @@
     emptyState.hidden = records.length !== 0;
     grid.innerHTML = records.map((record) => {
       const detailItems = [
-        record.temporalCoverage ? `<li><strong>${detailLabels.timeframe}:</strong> ${escapeHtml(record.temporalCoverage)}</li>` : "",
+        record.temporalCoverage ? `<li><strong>${detailLabels.timeframe}:</strong> ${escapeHtml(temporalCoverageLabels[record.id] || record.temporalCoverage)}</li>` : "",
         record.spatialResolution ? `<li><strong>${detailLabels.resolution}:</strong> ${escapeHtml(spatialResolutionLabels[record.spatialResolution] || record.spatialResolution)}</li>` : "",
-        record.license ? `<li><strong>${detailLabels.license}:</strong> ${escapeHtml(record.license)}</li>` : ""
+        record.license ? `<li><strong>${detailLabels.license}:</strong> ${escapeHtml(licenseLabels[record.id] || record.license)}</li>` : ""
       ].filter(Boolean).join("");
       return `
       <article class="dataset-card${state.source === record.id ? " is-discovery" : ""}" data-record-id="${escapeHtml(record.id)}" aria-labelledby="source-${escapeHtml(record.id)}-title"${state.source === record.id ? " tabindex=\"-1\"" : ""}>
@@ -257,7 +267,8 @@
         "url": record.url,
         "keywords": [categoryLabels[record.category] || record.category, coverageLabels[record.coverage] || record.coverage],
         "provider": { "@type": "Organization", "name": record.provider },
-        "license": accessLabels[record.access] || record.access,
+        ...(record.temporalCoverage ? { "temporalCoverage": temporalCoverageLabels[record.id] || record.temporalCoverage } : {}),
+        ...(record.license ? { "license": licenseLabels[record.id] || record.license } : {}),
         "isAccessibleForFree": record.access === "Publicly available",
         "dateModified": record.checked,
         "distribution": record.formats.map((format) => ({ "@type": "DataDownload", "encodingFormat": format }))

@@ -28,7 +28,7 @@ Add an object to `data/catalog.js`. Every entry should have:
 - a direct `url` to the publisher's dataset or repository page;
 - `coverage`, `formats`, `access`, `kind`, a plain-language `description`, and a `checked` date.
 
-Optionally, an entry can also carry `temporalCoverage`, `spatialResolution`, `license`, and `methodologyUrl` — each shown on the card when present, and each collected (as optional fields) by both `submit.html` and the GitHub issue submission form. Omit rather than guess when one doesn't apply.
+Optionally, an entry can also carry `temporalCoverage`, `spatialResolution`, `license`, and `methodologyUrl` — each shown on the card when present, and each collected (as optional fields) by both `submit.html` and the GitHub issue submission form. When a visible metadata field is added, add its Portuguese and Spanish display text in `data/catalog.i18n.js`; formal license names may intentionally remain canonical. Omit rather than guess when one doesn't apply.
 
 Use only a page controlled by the original publisher. Do not imply a dataset is open, downloadable, or redistributable without checking its terms. Do not add sensitive locations, personal data, or community knowledge that should not be indexed.
 
@@ -42,13 +42,14 @@ The expected fields and controlled vocabulary are also documented in `data/catal
 
 ## Automated source submissions
 
-Five workflows in `.github/workflows/` protect and automate the review-record process:
+Six workflows in `.github/workflows/` protect and automate the review-record process:
 
 - `validate-catalog.yml` runs `scripts/validate-catalog.mjs` on every pull request touching `data/catalog.js`, `data/catalog.schema.json`, or the validator itself, and on push to `main`.
-- `source-submission.yml` fires when a "New source submission" issue is opened (`.github/ISSUE_TEMPLATE/new-source.yml`). It parses the English, Portuguese, and Spanish source descriptions; builds the record and localized display content via `scripts/issue-to-entry.mjs`; regenerates the API mirror; runs the full quality gate; and opens a **draft** pull request if it passes. Nothing merges automatically — a maintainer still reviews the diff. It also captures the submitting issue author's GitHub handle as `submittedBy` on the new record.
-- `check-links.yml` runs `scripts/check-links.mjs` weekly (and on demand). It flags both dead links and entries whose `checked` date has gone stale (over 180 days), filing or updating a single tracking issue.
+- `source-submission.yml` fires when a "New source submission" issue is opened (`.github/ISSUE_TEMPLATE/new-source.yml`). It parses the English, Portuguese, and Spanish source descriptions and visible optional metadata; builds the record and localized display content via `scripts/issue-to-entry.mjs`; regenerates the API mirror; runs the full quality gate; and opens a **draft** pull request if it passes. Nothing merges automatically — a maintainer still reviews the diff. It also refreshes the candidate board after a draft PR opens. The workflow captures the submitting issue author's GitHub handle as `submittedBy` on the new record.
+- `check-links.yml` runs `scripts/check-links.mjs` weekly (and on demand). It flags both dead links and entries whose `checked` date has gone stale (over 180 days), filing or updating one tracking issue and closing it when a recheck is healthy.
 - `update-candidates.yml` keeps `data/candidates.js` current for the public [candidates board](candidates.html) — a live feed of pending submissions, shown as "in review" (has an open draft PR) or "needs fixing" (validation failed, no PR yet). It runs on issue/PR activity and at least every six hours regardless.
-- `quality.yml` runs `npm run check` on every pull request and every push to `main`. It checks syntax, catalog fields and duplicate URLs, the API mirror, local public-file references, the six localized entry points, submission fields, translations, and placeholder content.
+- `quality.yml` runs `npm run check` on every pull request and every push to `main`. It checks syntax, catalog fields and duplicate URLs, the API mirror, local public-file references, the six localized entry points, submission fields, translations for every visible catalog field, and placeholder content.
+- `deploy-pages.yml` publishes the static site through GitHub Actions after a successful quality or catalog/candidate/source-update workflow. It checks out the current `main` branch, so bot-generated API and candidate-board updates are deployed too, instead of relying on the legacy branch builder.
 
 Entries created through the issue workflow retain the submitter's GitHub handle in source control for review provenance. That metadata is not a public quality badge: every proposed source still needs editorial review before merging.
 
@@ -57,7 +58,7 @@ Two one-time repository settings are required before `source-submission.yml` can
 1. **Settings → Actions → General → Workflow permissions** — enable "Allow GitHub Actions to create and approve pull requests."
 2. The workflow uses the default `GITHUB_TOKEN`, which is enough to open the draft PR, but pull requests it creates won't automatically re-trigger `validate-catalog.yml` as a separate check (GitHub blocks workflow-token-created PRs from triggering other workflows, to prevent recursive runs). This doesn't let bad data through — the catalog is already validated in the same run, before the PR is opened — it just means the PR won't show its own green check unless you swap the default token for a personal access token stored as a secret.
 
-If your default branch isn't `main`, update the `branches:` filter in `validate-catalog.yml`, and the `ref:` in `update-candidates.yml`, to match.
+If your default branch isn't `main`, update the `branches:`/`ref:` values in `validate-catalog.yml`, `update-candidates.yml`, `source-submission.yml`, and `deploy-pages.yml` to match.
 
 ## Data & API
 

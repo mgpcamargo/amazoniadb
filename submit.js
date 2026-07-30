@@ -26,6 +26,7 @@
       generatedTitle: "Candidate record generated.",
       generatedCopy: "Copy it into the catalog or download it for a reviewer. Confirm the source terms again before publishing.",
       httpsOnly: "Use an https:// URL.",
+      httpOrHttpsOnly: "Use an http:// or https:// URL.",
       incomplete: "Complete the required source and review fields before generating a record.",
       invalidTitle: "Use a source title that contains letters or numbers.",
       generated: "Candidate generated locally. Review it before adding it to the public catalog.",
@@ -39,6 +40,7 @@
       generatedTitle: "Registro candidato gerado.",
       generatedCopy: "Copie-o para o catálogo ou baixe-o para uma pessoa revisora. Confirme novamente os termos da fonte antes de publicar.",
       httpsOnly: "Use uma URL com https://.",
+      httpOrHttpsOnly: "Use uma URL com http:// ou https://.",
       incomplete: "Preencha os campos obrigatórios da fonte e da revisão antes de gerar um registro.",
       invalidTitle: "Use um título de fonte com letras ou números.",
       generated: "Candidato gerado localmente. Revise-o antes de adicioná-lo ao catálogo público.",
@@ -52,6 +54,7 @@
       generatedTitle: "Registro candidato generado.",
       generatedCopy: "Cópialo al catálogo o descárgalo para una persona revisora. Confirma de nuevo las condiciones de la fuente antes de publicarlo.",
       httpsOnly: "Usa una URL con https://.",
+      httpOrHttpsOnly: "Usa una URL con http:// o https://.",
       incomplete: "Completa los campos obligatorios de la fuente y la revisión antes de generar un registro.",
       invalidTitle: "Usa un título de fuente que contenga letras o números.",
       generated: "Candidato generado localmente. Revísalo antes de añadirlo al catálogo público.",
@@ -121,7 +124,9 @@
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const url = form.elements.url;
+    const methodologyUrl = form.elements.methodologyUrl;
     url.setCustomValidity(url.value && !url.value.startsWith("https://") ? copy.httpsOnly : "");
+    methodologyUrl.setCustomValidity(methodologyUrl.value && !/^https?:\/\//i.test(methodologyUrl.value) ? copy.httpOrHttpsOnly : "");
     if (!form.checkValidity()) {
       form.reportValidity();
       message.textContent = copy.incomplete;

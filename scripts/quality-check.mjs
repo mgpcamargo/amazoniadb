@@ -30,6 +30,17 @@ const notes = [];
 
 const read = (relativePath) => readFile(new URL(relativePath, root), "utf8");
 const fail = (message) => errors.push(message);
+const catalogSchema = JSON.parse(await read("data/catalog.schema.json"));
+const controlledFilterValues = {
+  coverage: ["", ...catalogSchema.properties.coverage.enum],
+  access: ["", ...catalogSchema.properties.access.enum]
+};
+
+const selectOptionValues = (html, id) => {
+  const select = html.match(new RegExp(`<select\\b[^>]*\\bid=["']${id}["'][^>]*>[\\s\\S]*?<\\/select>`, "i"));
+  if (!select) return null;
+  return [...select[0].matchAll(/<option\b[^>]*\bvalue=["']([^"']*)["']/gi)].map((match) => match[1]);
+};
 
 const evaluateBrowserData = async () => {
   const context = { window: {} };
@@ -86,6 +97,8 @@ const runExplorerSmokeTest = async (page, browserData) => {
     "domain-gap", "catalog", "copy-view-link"
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, makeElement()]));
+  elements.coverage.options = controlledFilterValues.coverage.map((value) => ({ value }));
+  elements.access.options = controlledFilterValues.access.map((value) => ({ value }));
   const languageLinks = [makeLanguageLink("index.html"), makeLanguageLink("pt-br/index.html")];
   const head = { appendChild() {} };
   const body = { appendChild() {}, removeChild() {} };
@@ -158,6 +171,46 @@ const runExplorerSmokeTest = async (page, browserData) => {
   elements["discover-source"].listener("click")?.();
   const discoveryRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
   if (discoveryRecords !== 1 || elements["discovery-result"].hidden) fail(`${page.file}: discovery must focus one verified source.`);
+
+  // Malformed or obsolete share URLs must degrade to the full directory,
+  // never to an unexplained empty view with no selected control.
+  location.search = "?category=not-a-real-category&coverage=nowhere&access=unknown";
+  location.hash = "";
+  history.replacements = [];
+  vm.runInNewContext(await read(page.app), context, { filename: `${page.app}:invalid-url` });
+  const invalidUrlRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
+  if (invalidUrlRecords !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: invalid filter URL must fall back to the full catalog.`);
+  if (history.replacements.at(-1)?.includes("not-a-real-category")) fail(`${page.file}: invalid filter URL was not normalized.`);
+
+  // Every optional card detail must also be discoverable through search in
+  // every locale. The localized apps index translated text in addition to the
+  // canonical terms; this verifies the shared canonical behavior.
+  for (const detail of ["temporalCoverage", "spatialResolution", "license"]) {
+    const value = browserData.AMAZONIA_CATALOG.find((record) => record[detail])?.[detail];
+    if (!value) continue;
+    location.search = "";
+    location.hash = "";
+    vm.runInNewContext(await read(page.app), context, { filename: `${page.app}:${detail}-search` });
+    elements.search.value = value;
+    elements.search.listener("input")?.();
+    const visibleDetailRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
+    const expectedDetailRecords = browserData.AMAZONIA_CATALOG.filter((record) => String(record[detail] || "").toLocaleLowerCase().includes(value.toLocaleLowerCase())).length;
+    if (visibleDetailRecords !== expectedDetailRecords) fail(`${page.file}: ${detail} must be searchable.`);
+  }
+
+  // Empty results are valid when a filter value is offered by the UI/schema.
+  // They must survive a reload instead of silently expanding to the full list.
+  location.search = "?coverage=Colombia";
+  location.hash = "";
+  history.replacements = [];
+  vm.runInNewContext(await read(page.app), context, { filename: `${page.app}:empty-valid-url` });
+  const emptyValidUrlRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
+  if (emptyValidUrlRecords !== 0 || elements.coverage.value !== "Colombia") {
+    fail(`${page.file}: a valid empty coverage URL must preserve its selected filter.`);
+  }
+  if (!history.replacements.at(-1)?.includes("coverage=Colombia")) {
+    fail(`${page.file}: a valid empty coverage URL was not preserved.`);
+  }
 };
 
 for (const file of htmlFiles) {
@@ -181,6 +234,11 @@ for (const page of homePages) {
   if (!(categoryIndex >= 0 && categoryIndex < catalogIndex && catalogIndex < appIndex)) {
     fail(`${page.file}: category presentation, catalog, and app scripts must load in that order.`);
   }
+  for (const [filter, values] of Object.entries(controlledFilterValues)) {
+    if (JSON.stringify(selectOptionValues(html, filter)) !== JSON.stringify(values)) {
+      fail(`${page.file}: #${filter} options must exactly match the catalog schema vocabulary.`);
+    }
+  }
 }
 
 for (const [file, expectedScript] of [
@@ -192,6 +250,18 @@ for (const [file, expectedScript] of [
   }
   if (!html.includes(`src="${expectedScript}"`)) fail(`${file}: does not load ${expectedScript}.`);
 }
+const submitCategoryLabels = {
+  "submit.html": ["Life &amp; biodiversity", "Water &amp; climate", "Land &amp; pressures", "Peoples &amp; territories", "Wellbeing &amp; livelihoods", "Rights &amp; governance"],
+  "pt-br/submit.html": ["Vida e biodiversidade", "Água e clima", "Terra e pressões", "Povos e territórios", "Bem-estar e meios de vida", "Direitos e governança"],
+  "es/submit.html": ["Vida y biodiversidad", "Agua y clima", "Tierra y presiones", "Pueblos y territorios", "Bienestar y medios de vida", "Derechos y gobernanza"]
+};
+for (const [file, labels] of Object.entries(submitCategoryLabels)) {
+  const html = await read(file);
+  for (const label of labels) {
+    if (!html.includes(`>${label}</option>`)) fail(`${file}: category option must use the V2 public taxonomy (${label}).`);
+  }
+}
+if (!(await read("submit.js")).includes("methodologyUrl.setCustomValidity")) fail("submit.js: methodology URL must be validated before a local candidate is generated.");
 
 for (const [file, expectedScript] of [
   ["candidates.html", "candidates.js"], ["pt-br/candidates.html", "../candidates.js"], ["es/candidates.html", "../candidates.js"]
@@ -199,9 +269,22 @@ for (const [file, expectedScript] of [
   if (!(await read(file)).includes(`src="${expectedScript}"`)) fail(`${file}: does not load ${expectedScript}.`);
 }
 
+for (const file of ["pt-br/candidates.html", "es/candidates.html"]) {
+  if (!(await read(file)).includes('href="../candidates.html">EN</a>')) fail(`${file}: English language switch must stay on the candidates board.`);
+}
+for (const file of ["es/index.html", "es/candidates.html", "es/donate.html", "es/submit.html"]) {
+  if (!/<html\s+lang=["']es-419["']/.test(await read(file))) fail(`${file}: Spanish document language must be es-419.`);
+}
+
 const sourceIssueTemplate = await read(".github/ISSUE_TEMPLATE/new-source.yml");
-for (const id of ["description_pt_br", "description_es", "spatial_resolution_pt_br", "spatial_resolution_es"]) {
+for (const id of ["description_pt_br", "description_es", "temporal_coverage_pt_br", "temporal_coverage_es", "spatial_resolution_pt_br", "spatial_resolution_es", "license_pt_br", "license_es"]) {
   if (!sourceIssueTemplate.includes(`id: ${id}`)) fail(`new-source issue template: missing ${id}.`);
+}
+for (const label of ["Life & biodiversity", "Water & climate", "Land & pressures", "Peoples & territories", "Wellbeing & livelihoods", "Rights & governance"]) {
+  if (!sourceIssueTemplate.includes(`- ${JSON.stringify(label)}`)) fail(`new-source issue template: category label must use the V2 public taxonomy (${label}).`);
+}
+for (const legacyLabel of ["Forest & biodiversity", "Earth, water & climate", "Land use & infrastructure", "Peoples, territories & culture", "Society, health & livelihoods", "Governance, rights & safeguards"]) {
+  if (sourceIssueTemplate.includes(`- ${JSON.stringify(legacyLabel)}`)) fail(`new-source issue template: must not expose the legacy category label (${legacyLabel}).`);
 }
 const sourceWorkflow = await read(".github/workflows/source-submission.yml");
 for (const command of ["node scripts/build-api.mjs", "npm run check"]) {
@@ -255,6 +338,18 @@ for (const locale of ["pt-BR", "es"]) {
   const unusedResolutions = Object.keys(translatedResolutions).filter((resolution) => !resolutions.has(resolution));
   if (missingResolutions.length) fail(`data/catalog.i18n.js: ${locale} is missing spatial-resolution translations for ${missingResolutions.join(", ")}.`);
   if (unusedResolutions.length) fail(`data/catalog.i18n.js: ${locale} has unused spatial-resolution translations for ${unusedResolutions.join(", ")}.`);
+  const temporalRecordIds = new Set(catalog.filter((record) => record.temporalCoverage).map((record) => record.id));
+  const translatedTemporalCoverage = translations?.[locale]?.temporalCoverage || {};
+  const missingTemporalCoverage = [...temporalRecordIds].filter((id) => !translatedTemporalCoverage[id]);
+  const unusedTemporalCoverage = Object.keys(translatedTemporalCoverage).filter((id) => !temporalRecordIds.has(id));
+  if (missingTemporalCoverage.length) fail(`data/catalog.i18n.js: ${locale} is missing timeframe translations for ${missingTemporalCoverage.join(", ")}.`);
+  if (unusedTemporalCoverage.length) fail(`data/catalog.i18n.js: ${locale} has unused timeframe translations for ${unusedTemporalCoverage.join(", ")}.`);
+  const licensedRecordIds = new Set(catalog.filter((record) => record.license).map((record) => record.id));
+  const translatedLicenses = translations?.[locale]?.licenses || {};
+  const missingLicenses = [...licensedRecordIds].filter((id) => !translatedLicenses[id]);
+  const unusedLicenses = Object.keys(translatedLicenses).filter((id) => !licensedRecordIds.has(id));
+  if (missingLicenses.length) fail(`data/catalog.i18n.js: ${locale} is missing license display text for ${missingLicenses.join(", ")}.`);
+  if (unusedLicenses.length) fail(`data/catalog.i18n.js: ${locale} has unused license display text for ${unusedLicenses.join(", ")}.`);
 }
 
 const api = JSON.parse(await read("api/v1/catalog.json"));
@@ -262,7 +357,7 @@ if (api.apiVersion !== 1) fail("api/v1/catalog.json: apiVersion must be 1.");
 if (api.$schema) fail("api/v1/catalog.json: record schema must not be used as an API-envelope $schema.");
 if (api.recordSchema !== "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json") fail("api/v1/catalog.json: recordSchema is missing or incorrect.");
 if (api.count !== catalog.length || !Array.isArray(api.records) || api.records.length !== catalog.length) fail("api/v1/catalog.json: count and records must match data/catalog.js.");
-if (JSON.stringify(api.records?.map((record) => record.id)) !== JSON.stringify(catalog.map((record) => record.id))) fail("api/v1/catalog.json: record order or ids do not match data/catalog.js.");
+if (JSON.stringify(api.records) !== JSON.stringify(catalog)) fail("api/v1/catalog.json: record content or order does not match data/catalog.js.");
 
 await Promise.all(homePages.map((page) => runExplorerSmokeTest(page, browserData)));
 

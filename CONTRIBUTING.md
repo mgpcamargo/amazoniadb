@@ -22,7 +22,7 @@ Not sure if something belongs, or want to talk through a source before submittin
 3. Read the source’s access, attribution, licensing, and redistribution conditions.
 4. Select the single most useful one of the six categories.
 5. Write a brief description of what the source contains—not what you infer from it.
-6. Add Portuguese and Spanish translations for the description (and any new spatial-resolution phrase) in `data/catalog.i18n.js`. The quality gate requires complete localized catalog content.
+6. Add Portuguese and Spanish display text for the description and every visible optional field you add (`temporalCoverage`, `spatialResolution`, or `license`) in `data/catalog.i18n.js`. Keep formal legal license names canonical when appropriate. The quality gate requires complete localized catalog content.
 
 ## Geographic scope
 

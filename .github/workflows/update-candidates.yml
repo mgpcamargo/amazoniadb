@@ -1,6 +1,6 @@
 name: Update candidates board
 
-# Always checks out and pushes to main directly (not the pull_request merge
+# Always checks out and updates main directly (not the pull_request merge
 # ref) — this job's output reflects live GitHub API state, not any single
 # PR's file changes, so there's nothing to review before it lands.
 
@@ -18,21 +18,24 @@ permissions:
   issues: read
   pull-requests: read
 
-concurrency:
-  group: candidates-board-main
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    concurrency:
+      group: generated-main-writes
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v6
         with:
           ref: main
+          fetch-depth: 0
 
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+
+      - name: Refresh the main checkout
+        run: git pull --ff-only origin main
 
       - name: Build candidates.js
         env:
@@ -52,4 +55,5 @@ jobs:
             exit 0
           fi
           git commit -m "Update candidates board [skip ci]"
-          git push
+          git pull --rebase origin main
+          git push origin HEAD:main
