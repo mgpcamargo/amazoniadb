@@ -69,9 +69,10 @@ pictograms. Colour supplements meaning; it never carries it alone.
 
 The working design should feel light, editorial, and dependable: an off-white
 surface, restrained green accents, generous space, high-contrast type, and
-cards that are calm rather than gamified. The new network-tree mark carries
-the project's connection idea; its geometry is precise rather than painterly.
-It is a brand element, not an illustration competing with the catalog.
+cards that are calm rather than gamified. Logo work is intentionally deferred:
+the eventual identity should start from the supplied canopy image and be
+cleaned without inventing a replacement concept. It should remain a brand
+element, not an illustration competing with the catalog.
 
 The reference's playful, icon-forward readability is retained. Its arbitrary
 domain names, heavy outlined panels, and unverified random-pair mechanic are
@@ -86,7 +87,8 @@ not carried over.
 2. Build the six accessible category cards on the three home pages and connect
    them to the existing filters and URL state.
 3. Add the verified one-record discovery control and a focused result state.
-4. Roll out the official vector mark to headers, favicon, and social preview.
+4. Keep the current compact branding in place until the supplied logo image has
+   been cleaned and approved as a separate, focused task.
 5. Test keyboard navigation, reduced motion, narrow screens, dark theme, and
    untranslated-record fallback.
 

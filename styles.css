@@ -63,7 +63,7 @@ button, select { cursor: pointer; }
 .site-header { border-bottom: 1px solid var(--line); background: var(--header-bg); }
 .header-inner { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-size: 1.05rem; font-weight: 780; letter-spacing: -0.035em; text-decoration: none; }
-.brand-mark { display: block; width: 32px; height: 38px; flex: 0 0 auto; object-fit: contain; }
+.brand-mark { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 50%; background: var(--forest); color: var(--paper); font-family: Georgia, serif; font-size: 1.05rem; }
 .header-links { display: flex; align-items: center; gap: 18px; }
 .header-link { color: var(--quiet); font-size: 0.92rem; font-weight: 650; }
 .lang-switch { display: flex; align-items: center; gap: 9px; padding-left: 18px; border-left: 1px solid var(--line); font-size: 0.8rem; font-weight: 700; }
