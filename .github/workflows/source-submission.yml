@@ -34,8 +34,11 @@ jobs:
           SUBMITTED_BY: ${{ github.event.issue.user.login }}
         run: node scripts/issue-to-entry.mjs
 
-      - name: Validate catalog
-        run: node scripts/validate-catalog.mjs
+      - name: Regenerate public API mirror
+        run: node scripts/build-api.mjs
+
+      - name: Run complete quality gate
+        run: npm run check
 
       - name: Open draft pull request
         id: cpr
@@ -47,7 +50,9 @@ jobs:
           body: |
             Auto-generated from #${{ github.event.issue.number }} by the source-submission workflow.
 
-            This has passed schema validation (`scripts/validate-catalog.mjs`) but **not** editorial review — check the category, access note, and description against CONTRIBUTING.md before merging.
+            Closes #${{ github.event.issue.number }}
+
+            This has passed the automated quality gate but **not** editorial review — check the category, access note, translations, and description against CONTRIBUTING.md before merging.
           draft: true
           labels: |
             new-source

@@ -7,9 +7,15 @@ AmazoniaDB is a lightweight directory of Amazon socioenvironmental datasets and 
 
 Open `index.html` directly in a browser. The directory works without a build step or server.
 
+For the repository checks, use Node 22 or newer:
+
+```sh
+npm run check
+```
+
 ## Use the data without the site
 
-Every card has "Cite" and "BibTeX" buttons, and the results header has "Export full catalog" (JSON/CSV) for whatever is currently in `data/catalog.js`. For programmatic use without JS execution, use the versioned API described in [Data & API](#data--api); it is regenerated automatically from the same source of truth.
+Every card has a copyable citation and a link to the original publisher. Filters and a single discovered source are shareable in the URL. For programmatic use without JavaScript execution, use the versioned API described in [Data & API](#data--api); it is regenerated automatically from the same source of truth.
 
 ## Add a source
 
@@ -36,14 +42,15 @@ The expected fields and controlled vocabulary are also documented in `data/catal
 
 ## Automated source submissions
 
-Four workflows in `.github/workflows/` automate the review-record process:
+Five workflows in `.github/workflows/` protect and automate the review-record process:
 
 - `validate-catalog.yml` runs `scripts/validate-catalog.mjs` on every pull request touching `data/catalog.js`, `data/catalog.schema.json`, or the validator itself, and on push to `main`.
-- `source-submission.yml` fires when a "New source submission" issue is opened (`.github/ISSUE_TEMPLATE/new-source.yml`). It parses the form, builds a record via `scripts/issue-to-entry.mjs`, validates it, and opens a **draft** pull request if it passes. Nothing merges automatically — a maintainer still reviews the diff. It also captures the submitting issue author's GitHub handle as `submittedBy` on the new record.
+- `source-submission.yml` fires when a "New source submission" issue is opened (`.github/ISSUE_TEMPLATE/new-source.yml`). It parses the English, Portuguese, and Spanish source descriptions; builds the record and localized display content via `scripts/issue-to-entry.mjs`; regenerates the API mirror; runs the full quality gate; and opens a **draft** pull request if it passes. Nothing merges automatically — a maintainer still reviews the diff. It also captures the submitting issue author's GitHub handle as `submittedBy` on the new record.
 - `check-links.yml` runs `scripts/check-links.mjs` weekly (and on demand). It flags both dead links and entries whose `checked` date has gone stale (over 180 days), filing or updating a single tracking issue.
 - `update-candidates.yml` keeps `data/candidates.js` current for the public [candidates board](candidates.html) — a live feed of pending submissions, shown as "in review" (has an open draft PR) or "needs fixing" (validation failed, no PR yet). It runs on issue/PR activity and at least every six hours regardless.
+- `quality.yml` runs `npm run check` on every pull request and every push to `main`. It checks syntax, catalog fields and duplicate URLs, the API mirror, local public-file references, the six localized entry points, submission fields, translations, and placeholder content.
 
-Every catalog entry carries an implicit **verification tier**, visible on its card: entries with `submittedBy` set are tagged "Community-submitted, schema-valid" with a credit line linking to the contributor; entries without it — the original curated set, or anything a maintainer adds by hand — are tagged "Editorially reviewed." There's no separate tier field to maintain; it's derived from whether `submittedBy` is present.
+Entries created through the issue workflow retain the submitter's GitHub handle in source control for review provenance. That metadata is not a public quality badge: every proposed source still needs editorial review before merging.
 
 Two one-time repository settings are required before `source-submission.yml` can open pull requests:
 
@@ -68,8 +75,9 @@ It's regenerated automatically by `validate-catalog.yml` on every push to `main`
 {
   "apiVersion": 1,
   "generated": "2026-07-28T00:00:00.000Z",
-  "count": 46,
+  "count": 45,
   "source": "https://mgpcamargo.github.io/amazoniadb/",
+  "recordSchema": "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json",
   "license": "...",
   "records": [ /* same shape as data/catalog.schema.json */ ]
 }

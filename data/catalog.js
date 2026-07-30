@@ -152,11 +152,11 @@ window.AMAZONIA_CATALOG = [
     access: "Provider terms apply",
     kind: "Explorer",
     description: "An interactive tabulation tool for Brazil's public health system data — mortality, births, morbidity, and health-facility records — built by the Ministry of Health.",
-    url: "https://datasus.saude.gov.br/informacoes-de-saude-tabnet/",
-    checked: "2026-07-14",
+    url: "https://tabnet.datasus.gov.br/",
+    checked: "2026-07-30",
     temporalCoverage: "Varies by sub-system; several series ongoing since the 1990s–2000s",
     spatialResolution: "Municipal and facility level",
-    methodologyUrl: "https://datasus.saude.gov.br/home/tabnet/"
+    methodologyUrl: "https://tabnet.datasus.gov.br/tabnet/tabdescr.htm"
   },
   {
     id: "icmbio-dados-geoespaciais",
@@ -168,12 +168,11 @@ window.AMAZONIA_CATALOG = [
     access: "Dataset-specific license",
     kind: "Download",
     description: "Official boundary data for Brazil's federally managed protected areas, including national parks and biological reserves, published under an open data license by the agency that administers them.",
-    url: "https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais",
-    checked: "2026-07-14",
+    url: "https://www.gov.br/icmbio/pt-br/dados-icmbio/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais",
+    checked: "2026-07-30",
     temporalCoverage: "Updated as boundaries are refined or redefined by decree",
     spatialResolution: "Vector boundaries, multi-scale (1:10,000–1:250,000)",
     license: "Open Data Commons Public Domain Dedication and License (PDDL)",
-    methodologyUrl: "https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais/mapa-tematico-e-dados-geoestatisticos-das-unidades-de-conservacao-federais"
   },
   {
     id: "raisg-maps",
@@ -212,14 +211,15 @@ window.AMAZONIA_CATALOG = [
     provider: "Instituto do Homem e Meio Ambiente da Amazônia (Imazon)",
     category: "Land use & infrastructure",
     coverage: "Brazil",
-    formats: ["PDF","GeoJSON"],
+    formats: ["CSV","GeoJSON","Shapefile"],
     access: "Provider terms apply",
     kind: "Data portal",
     description: "Independent monthly monitoring of deforestation and forest degradation across the Brazilian Legal Amazon, produced by a non-governmental research institute using Landsat/Sentinel imagery with analyst validation. Runs in parallel to INPE's PRODES/DETER as a cross-check; alert-level data also feeds into Global Forest Watch's open data layers.",
-    url: "https://imazon.org.br/en/",
-    checked: "2026-07-25",
+    url: "https://dashboards.imazongeo.org.br/sad/",
+    checked: "2026-07-30",
     temporalCoverage: "2008–present (monthly bulletins)",
-    spatialResolution: "Landsat/Sentinel-based; minimum 1 ha detection"
+    spatialResolution: "Landsat/Sentinel-based; minimum 1 ha detection",
+    methodologyUrl: "https://imazongeo.org.br/sad/"
   },
   {
     id: "nasa-firms-active-fire",
@@ -371,22 +371,6 @@ window.AMAZONIA_CATALOG = [
     checked: "2026-07-25",
     temporalCoverage: "2003–present (daily/decadal/monthly, depending on variable); some stations reconstructed back to 1902",
     spatialResolution: "17 point gauge/sampling stations"
-  },
-  {
-    id: "thermal-amazonia-modis",
-    title: "Thermal Amazoni@ — Surface Thermal Anomalies Database",
-    provider: "Image Processing Laboratory (IPL), University of Valencia",
-    category: "Earth, water & climate",
-    coverage: "Pan-Amazon",
-    formats: ["GeoTIFF","Google Earth KML viewer"],
-    access: "Dataset-specific license",
-    kind: "Explorer",
-    description: "A web-based viewer and download service for MODIS- and ERA-Interim-derived land surface temperature anomalies over the Amazon forest and adjacent tropical oceans, built to support drought monitoring and warming-trend analysis with a Google Earth-style interface.",
-    url: "https://ipl.uv.es/thamazon/web",
-    checked: "2026-07-25",
-    temporalCoverage: "2000–present, monthly",
-    spatialResolution: "MODIS 1 km",
-    license: "CC BY-NC"
   },
   {
     id: "ibama-fiscalizacao-dados-abertos",
@@ -564,8 +548,8 @@ window.AMAZONIA_CATALOG = [
     access: "Publicly available",
     kind: "Explorer",
     description: "An interactive data visualization platform tracking environmental crime across all nine Amazonian countries — illegal logging, land grabbing, wildcat mining, and wildlife trafficking — combining open-source data with narrative stories produced in partnership with InSight Crime and other investigative partners.",
-    url: "https://ecocrime.igarape.org.br/explore",
-    checked: "2026-07-26",
+    url: "https://ecocrime.igarape.org.br/",
+    checked: "2026-07-30",
     temporalCoverage: "2021–present, updated periodically",
     spatialResolution: "Site/incident-level points across 9 countries"
   },

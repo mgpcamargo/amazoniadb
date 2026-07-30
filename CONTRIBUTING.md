@@ -6,13 +6,13 @@ Don't know where to start? `SOURCES-TO-VERIFY.md` lists real institutions we hav
 
 The `submit.html` page can create a locally stored candidate record. It is an aid for preparing a submission, not an automatic publishing channel.
 
-Submitted through the issue form? Track it on the [candidates board](candidates.html) — it shows "in review" once a draft pull request opens, or "needs fixing" if validation caught a problem first. If yours is merged, your GitHub handle is credited on the card automatically; nothing to do on your end for that.
+Submitted through the issue form? Track it on the [candidates board](https://mgpcamargo.github.io/amazoniadb/candidates.html) — it shows "in review" once a draft pull request opens, or "needs fixing" if validation caught a problem first. If merged, the submitting GitHub handle is retained in source control for review provenance; it is not presented as a public quality badge.
 
 Not sure if something belongs, or want to talk through a source before submitting it? Use [Discussions](../../discussions) rather than opening an issue — it keeps the issue tracker focused on actual submissions and link reports.
 
 ## Two ways to submit
 
-- **Open a pull request** with your entry added to `data/catalog.js` directly (see the record format below). `validate-catalog.yml` runs automatically on the PR.
+- **Open a pull request** with your entry added to `data/catalog.js` directly (see the record format below). The full `npm run check` quality gate runs automatically on the PR.
 - **Open a "New source submission" issue** using the issue form. This runs the same validation and opens a draft pull request for you automatically — a maintainer still reviews and merges it. Use `submit.html` first if you want to draft and sanity-check your fields before filling in either path.
 
 ## Before adding a record
@@ -22,6 +22,7 @@ Not sure if something belongs, or want to talk through a source before submittin
 3. Read the source’s access, attribution, licensing, and redistribution conditions.
 4. Select the single most useful one of the six categories.
 5. Write a brief description of what the source contains—not what you infer from it.
+6. Add Portuguese and Spanish translations for the description (and any new spatial-resolution phrase) in `data/catalog.i18n.js`. The quality gate requires complete localized catalog content.
 
 ## Geographic scope
 

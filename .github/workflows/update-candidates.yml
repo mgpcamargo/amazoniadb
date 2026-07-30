@@ -18,6 +18,10 @@ permissions:
   issues: read
   pull-requests: read
 
+concurrency:
+  group: candidates-board-main
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,15 +40,16 @@ jobs:
         run: node scripts/build-candidates.mjs
 
       - name: Commit if changed
-        # continue-on-error: pull_request runs triggered by a PR from a fork
-        # get a read-only GITHUB_TOKEN no matter what permissions: says above
-        # — that's GitHub's own security model, not something to work around
-        # here. Letting this step fail quietly for that one case is fine: the
-        # 6-hourly schedule and same-repo triggers still keep the board current.
-        continue-on-error: true
+        # Fork PRs receive a read-only token by GitHub design. They can still
+        # exercise the builder above, but only trusted repository events write
+        # the generated board back to main.
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/candidates.js
-          git diff --staged --quiet || git commit -m "Update candidates board [skip ci]"
+          if git diff --staged --quiet; then
+            exit 0
+          fi
+          git commit -m "Update candidates board [skip ci]"
           git push

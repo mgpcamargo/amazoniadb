@@ -95,6 +95,20 @@ body:
       description: What the source contains and how it's structured — not what you infer from it.
     validations:
       required: true
+  - type: textarea
+    id: description_pt_br
+    attributes:
+      label: Descrição em português (Brasil)
+      description: Traduza a descrição acima para português do Brasil. Mantenha os nomes próprios e termos técnicos do provedor quando necessário.
+    validations:
+      required: true
+  - type: textarea
+    id: description_es
+    attributes:
+      label: Descripción en español
+      description: Traduce la descripción anterior al español. Conserva los nombres propios y los términos técnicos del proveedor cuando sea necesario.
+    validations:
+      required: true
   - type: input
     id: temporal_coverage
     attributes:
@@ -109,6 +123,22 @@ body:
       label: Spatial resolution (optional)
       description: The spatial grain of the data, e.g. "30 m (Landsat-based classification)" or "Municipality level." Leave blank if a fixed resolution isn't a meaningful concept for this source.
       placeholder: "e.g. 30 m (Landsat-based classification)"
+    validations:
+      required: false
+  - type: input
+    id: spatial_resolution_pt_br
+    attributes:
+      label: Resolução espacial em português (opcional)
+      description: Se você preencheu a resolução espacial acima, traduza-a aqui. Deixe ambos os campos de tradução vazios se a resolução não se aplicar.
+      placeholder: "ex.: 30 m (classificação baseada em Landsat)"
+    validations:
+      required: false
+  - type: input
+    id: spatial_resolution_es
+    attributes:
+      label: Resolución espacial en español (opcional)
+      description: Si completaste la resolución espacial anterior, tradúcela aquí. Deja ambos los campos de traducción vacíos si la resolución no se aplica.
+      placeholder: "p. ej., 30 m (clasificación basada en Landsat)"
     validations:
       required: false
   - type: input

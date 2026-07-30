@@ -14,42 +14,60 @@ import vm from "node:vm";
 const catalogUrl = new URL("../data/catalog.js", import.meta.url);
 const TIMEOUT_MS = 15000;
 const STALE_DAYS = 180;
+const CONCURRENCY = 6;
 const UA = "Mozilla/5.0 (compatible; AmazoniaDB-LinkChecker/1.0)";
 
-async function checkOne(entry) {
+async function request(entry, method) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
-    let res = await fetch(entry.url, {
-      method: "HEAD",
+    const res = await fetch(entry.url, {
+      method,
       redirect: "follow",
       signal: controller.signal,
       headers: { "User-Agent": UA }
     });
-    // Some servers don't implement HEAD correctly — retry with GET before
-    // calling it broken.
-    if (!res.ok && (res.status === 405 || res.status === 501 || res.status === 403)) {
-      res = await fetch(entry.url, {
-        method: "GET",
-        redirect: "follow",
-        signal: controller.signal,
-        headers: { "User-Agent": UA }
-      });
-    }
-    clearTimeout(timer);
-    return { id: entry.id, title: entry.title, url: entry.url, ok: res.ok, status: res.status };
+    await res.body?.cancel();
+    return { ok: res.ok, status: res.status };
   } catch (err) {
+    return { ok: false, status: null, error: err.message };
+  } finally {
     clearTimeout(timer);
-    return { id: entry.id, title: entry.title, url: entry.url, ok: false, status: null, error: err.message };
   }
 }
+
+async function checkOne(entry) {
+  // Some providers block or mishandle HEAD requests. GET is the decisive
+  // fallback even after a timeout, so give it a fresh abort signal instead
+  // of reusing a signal that a failed HEAD may already have cancelled.
+  const head = await request(entry, "HEAD");
+  let result = head.ok ? head : await request(entry, "GET");
+  if (!result.ok && (result.status === null || result.status >= 500)) {
+    result = await request(entry, "GET");
+  }
+  return { id: entry.id, title: entry.title, url: entry.url, ...result };
+}
+
+const checkAll = async (entries) => {
+  const results = new Array(entries.length);
+  let nextIndex = 0;
+  const worker = async () => {
+    while (nextIndex < entries.length) {
+      const index = nextIndex;
+      nextIndex += 1;
+      results[index] = await checkOne(entries[index]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, entries.length) }, worker));
+  return results;
+};
 
 const source = await readFile(catalogUrl, "utf8");
 const context = { window: {} };
 vm.runInNewContext(source, context);
 const catalog = context.window.AMAZONIA_CATALOG || [];
 
-const results = await Promise.all(catalog.map(checkOne));
+const results = await checkAll(catalog);
 const broken = results.filter((r) => !r.ok);
 
 const msPerDay = 24 * 60 * 60 * 1000;

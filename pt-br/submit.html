@@ -26,10 +26,6 @@
     <title>Preparar uma fonte — AmazoniaDB</title>
     <link rel="stylesheet" href="../styles.css">
     <script src="../theme.js" defer></script>
-    <!-- Analytics: privacy-respecting, no cookies, no persistent identifiers.
-         Free tier is non-commercial-only — see https://www.goatcounter.com/help/plans
-         Replace AMAZONIADB_GOATCOUNTER_CODE with the real site code after signup. -->
-    <script data-goatcounter="https://AMAZONIADB_GOATCOUNTER_CODE.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#source-form">Pular para o formulário de fonte</a>
@@ -42,7 +38,7 @@
         </a>
         <div class="header-links">
           <a class="header-link" href="index.html#catalog">Ver diretório</a>
-          <a class="header-link" href="../CONTRIBUTING.md">Diretrizes de revisão</a>
+          <a class="header-link" href="https://github.com/mgpcamargo/amazoniadb/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Diretrizes de revisão ↗</a>
           <a class="header-link" href="candidates.html">Candidatas</a>
           <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Modo escuro">
             <svg class="theme-icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -138,6 +134,22 @@
               <span>Descrição em linguagem simples *</span>
               <textarea id="description" name="description" rows="4" minlength="20" placeholder="Descreva o que a fonte contém e como ela pode ser usada no contexto amazônico." required></textarea>
             </label>
+            <label for="temporalCoverage">
+              <span>Cobertura temporal <em>(opcional)</em></span>
+              <input id="temporalCoverage" name="temporalCoverage" type="text" placeholder="ex.: 2001–2025, anual">
+            </label>
+            <label for="spatialResolution">
+              <span>Resolução espacial <em>(opcional)</em></span>
+              <input id="spatialResolution" name="spatialResolution" type="text" placeholder="ex.: 30 m, nível municipal">
+            </label>
+            <label for="license">
+              <span>Licença <em>(opcional)</em></span>
+              <input id="license" name="license" type="text" placeholder="ex.: CC BY 4.0">
+            </label>
+            <label class="wide-field" for="methodologyUrl">
+              <span>URL da metodologia ou documentação <em>(opcional)</em></span>
+              <input id="methodologyUrl" name="methodologyUrl" type="url" inputmode="url" placeholder="https://publicador.org/metodologia">
+            </label>
           </div>
 
           <fieldset class="review-checks">
@@ -173,13 +185,13 @@
         <p>A AmazoniaDB é um índice, não um repositório — as fontes permanecem com seus provedores.</p>
         <div class="footer-links">
           <a href="../api/v1/catalog.json">API</a>
-          <a href="../CHANGELOG.md">Changelog</a>
+          <a href="https://github.com/mgpcamargo/amazoniadb/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog ↗</a>
           <a href="donate.html">Apoiar este projeto</a>
           <a href="index.html">Voltar ao diretório ←</a>
         </div>
       </div>
     </footer>
 
-    <script src="submit.js"></script>
+    <script src="../submit.js"></script>
   </body>
 </html>

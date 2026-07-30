@@ -28,7 +28,7 @@ to scan.
    would imply meaning that has not been reviewed.
 4. **The filtered catalog.** Selecting a tile scrolls to the existing catalog,
    applies the filter, updates the shareable URL, and preserves the existing
-   export, citation, access, and report-link functions.
+   citation, access, and report-link functions.
 5. **Trust and contribution strip.** A short explanation of verification,
    original-provider links, how to suggest a source, and optional support.
 
@@ -55,8 +55,8 @@ pictograms. Colour supplements meaning; it never carries it alone.
   object that each locale reads from.
 - Filter state continues to live in the URL. A tile is therefore linkable,
   keyboard-operable, and compatible with the current copy-view-link behavior.
-- "Discover a source" selects from the rendered, verified catalog and explains
-  why it was selected (for example, category and coverage). It must not
+- "Discover a source" selects from the entire verified catalog, clears ordinary
+  filters, and explains the source's category and coverage. It must not
   fabricate a thematic connection.
 - A future "Explore connections" feature requires explicit, reviewed fields
   such as `themes`, `geographies`, and `relatedIds`, with a visible reason for
@@ -78,9 +78,9 @@ The reference's playful, icon-forward readability is retained. Its arbitrary
 domain names, heavy outlined panels, and unverified random-pair mechanic are
 not carried over.
 
-## Delivery sequence
+## Delivery sequence and status
 
-### V2.0 — information architecture and trust
+### V2.0 — information architecture and trust — implemented
 
 1. Add a shared category-presentation map with icon, public label,
    description, and colour token for English, Portuguese, and Spanish.
@@ -92,7 +92,14 @@ not carried over.
 5. Test keyboard navigation, reduced motion, narrow screens, dark theme, and
    untranslated-record fallback.
 
-### V2.1 — evidence connections and catalog health
+Implementation notes: `data/category-presentation.js` is the single source
+for the six category icons and localized copy. Each home page preserves its
+locale, exposes exactly six tiles, lets an active tile toggle off, and carries
+filter or discovery URLs between languages. The quality gate runs a browserless
+behavior smoke test for all three locales. Complete Portuguese and Spanish
+descriptions are required rather than treated as a silent fallback.
+
+### V2.1 — evidence connections and catalog health — next
 
 1. Define reviewed relationship metadata before exposing dataset-to-dataset
    connections.

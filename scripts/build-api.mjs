@@ -19,11 +19,11 @@ vm.runInNewContext(source, context);
 const records = context.window.AMAZONIA_CATALOG || [];
 
 const payload = {
-  $schema: "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json",
   apiVersion: 1,
   generated: new Date().toISOString(),
   count: records.length,
   source: "https://mgpcamargo.github.io/amazoniadb/",
+  recordSchema: "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json",
   license: "All rights reserved on this index. Each record links to its original provider, who holds their own rights over the underlying data — this JSON is a convenience mirror of AmazoniaDB's curated list, not a redistribution of provider data.",
   records
 };
