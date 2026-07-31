@@ -29,7 +29,7 @@ npm run check
 
 ## Use the data without the site
 
-Every card has a copyable citation and a link to the original publisher. Filters, a single discovered source, and a research path are shareable in the URL. The first path is a reviewed Brazil starting set for forest change around a territory; it explains each source's role and is never an automated analysis or a finding. For programmatic use without JavaScript execution, use the versioned API described in [Data & API](#data--api); it is regenerated automatically from the same source of truth.
+Every card has a copyable citation and a link to the original publisher. Filters, a single discovered source, and the four reviewed research paths are shareable in the URL. A path explains each source's role and limits; it is never an automated analysis or a finding. For programmatic use without JavaScript execution, use the versioned API described in [Data & API](#data--api); it is regenerated automatically from the same source of truth.
 
 ## Add a source
 

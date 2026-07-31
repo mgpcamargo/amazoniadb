@@ -115,13 +115,15 @@ const runExplorerSmokeTest = async (page, browserData) => {
   const ids = [
     "domain-nav", "dataset-grid", "empty-state", "result-count", "dataset-count",
     "search", "coverage", "topic", "access", "filters", "discover-source", "discovery-result",
-    "catalog", "copy-view-link", "research-path-panel", "open-research-path"
+    "catalog", "copy-view-link", "research-path-panel", "open-research-path", "research-path-choice",
+    "next-research-path", "research-path-summary", "research-path-position"
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, makeElement()]));
   elements.coverage.options = controlledFilterValues.coverage.map((value) => ({ value }));
   elements.access.options = controlledFilterValues.access.map((value) => ({ value }));
   elements.topic.options = [{ value: "" }];
   elements.topic.dataset.defaultOption = "All topics";
+  elements["research-path-choice"].options = [];
   const languageLinks = [makeLanguageLink("../index.html"), makeLanguageLink("../es/index.html")];
   const head = { appendChild() {} };
   const body = { appendChild() {}, removeChild() {} };
@@ -183,6 +185,21 @@ const runExplorerSmokeTest = async (page, browserData) => {
     fail(`${page.file}: language links do not preserve the current source view.`);
   }
 
+  const reviewedPaths = browserData.AMAZONIA_RESEARCH_PATHS || [];
+  const starterOptions = Array.from(elements["research-path-choice"].options || [], ({ value }) => value);
+  if (JSON.stringify(starterOptions) !== JSON.stringify(reviewedPaths.map((path) => path.id)) || elements["open-research-path"].dataset.path !== reviewedPaths[0]?.id) {
+    fail(`${page.file}: the research-question selector must expose every reviewed path in declared order.`);
+  }
+  elements["next-research-path"].listener("click")?.();
+  if (reviewedPaths.length > 1 && (elements["research-path-choice"].value !== reviewedPaths[1].id || elements["open-research-path"].dataset.path !== reviewedPaths[1].id)) {
+    fail(`${page.file}: the next-question control must move deterministically to the next reviewed path.`);
+  }
+  elements["research-path-choice"].value = reviewedPaths.at(-1)?.id || "";
+  elements["research-path-choice"].listener("change")?.();
+  if (reviewedPaths.length && elements["open-research-path"].dataset.path !== reviewedPaths.at(-1).id) {
+    fail(`${page.file}: choosing a research question must update the path opened by the primary action.`);
+  }
+
   const firstTile = { dataset: { category: requiredCategories[0] } };
   elements["domain-nav"].listener("click")?.({ target: { closest: () => firstTile } });
   const filteredRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
@@ -222,8 +239,7 @@ const runExplorerSmokeTest = async (page, browserData) => {
   }
   if (!history.replacements.at(-1)?.includes(`topic=${topicId}`)) fail(`${page.file}: a valid topic URL was not preserved.`);
 
-  const guidedPath = browserData.AMAZONIA_RESEARCH_PATHS?.[0];
-  if (guidedPath) {
+  for (const guidedPath of browserData.AMAZONIA_RESEARCH_PATHS || []) {
     location.search = `?path=${guidedPath.id}&coverage=Brazil`;
     location.hash = "";
     history.replacements = [];
@@ -308,7 +324,7 @@ if (!(await read("styles.css")).includes('.domain-button[data-domain="life"] .do
 
 for (const page of homePages) {
   const html = await read(page.file);
-  for (const id of ["domain-nav", "discover-source", "dataset-grid", "topic", "research-path-panel", "open-research-path"]) {
+  for (const id of ["domain-nav", "discover-source", "dataset-grid", "topic", "research-path-panel", "open-research-path", "research-path-choice", "next-research-path", "research-path-summary", "research-path-position"]) {
     if (!new RegExp(`id=["']${id}["']`).test(html)) fail(`${page.file}: missing #${id}.`);
   }
   const prefix = page.file.includes("/") ? "../" : "";
@@ -435,7 +451,7 @@ for (const record of catalog) {
   }
 }
 
-if (!Array.isArray(researchPaths) || researchPaths.length !== 1) fail("data/research-paths.js must currently define exactly one reviewed research-path prototype.");
+if (!Array.isArray(researchPaths) || researchPaths.length !== 4) fail("data/research-paths.js must define exactly four reviewed research paths.");
 const catalogById = new Map(catalog.map((record) => [record.id, record]));
 for (const path of researchPaths || []) {
   if (!path.id || !Array.isArray(path.records) || path.records.length < 3 || new Set(path.records.map((entry) => entry.id)).size !== path.records.length) {

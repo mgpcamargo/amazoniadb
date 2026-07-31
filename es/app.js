@@ -34,7 +34,8 @@
     heading: "Ruta de investigación",
     topics: "Temas",
     filterTopic: "Filtrar por tema: ",
-    clearPath: "Volver al directorio completo"
+    clearPath: "Volver al directorio completo",
+    questionPosition: (current, total) => `Pregunta ${current} de ${total}. Todas fueron revisadas por personas.`
   };
   const detailIcons = Object.freeze({
     timeframe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>',
@@ -57,6 +58,10 @@
   const discoveryResult = document.getElementById("discovery-result");
   const researchPathPanel = document.getElementById("research-path-panel");
   const researchPathButton = document.getElementById("open-research-path");
+  const researchPathChoice = document.getElementById("research-path-choice");
+  const nextResearchPathButton = document.getElementById("next-research-path");
+  const researchPathSummary = document.getElementById("research-path-summary");
+  const researchPathPosition = document.getElementById("research-path-position");
 
   count.textContent = String(catalog.length);
 
@@ -101,6 +106,7 @@
     state.topic = "";
     state.access = "";
   }
+  let starterPathIndex = Math.max(0, researchPaths.findIndex((path) => path.id === state.path));
   search.value = state.search;
   coverage.value = state.coverage;
   if (topic) topic.value = state.topic;
@@ -185,6 +191,28 @@
 
   const getActivePath = () => pathsById.get(state.path) || null;
   const tagLabel = (facet, value) => tagVocabulary[facet]?.[value]?.[locale] || tagVocabulary[facet]?.[value]?.en || value;
+
+  const renderResearchStarter = () => {
+    if (!researchPathChoice || !researchPathButton) return;
+    const activePath = researchPaths[starterPathIndex] || researchPaths[0];
+    if (!activePath) {
+      researchPathChoice.disabled = true;
+      researchPathButton.disabled = true;
+      nextResearchPathButton?.setAttribute("hidden", "");
+      return;
+    }
+    researchPathChoice.innerHTML = researchPaths.map((path) => `<option value="${escapeHtml(path.id)}">${escapeHtml(localized(path.locales?.title))}</option>`).join("");
+    if (Array.isArray(researchPathChoice.options)) researchPathChoice.options = researchPaths.map((path) => ({ value: path.id }));
+    researchPathChoice.value = activePath.id;
+    researchPathButton.dataset.path = activePath.id;
+    researchPathButton.disabled = false;
+    if (researchPathSummary) researchPathSummary.textContent = localized(activePath.locales?.summary);
+    if (researchPathPosition) researchPathPosition.textContent = researchLabels.questionPosition(starterPathIndex + 1, researchPaths.length);
+    if (nextResearchPathButton) {
+      nextResearchPathButton.disabled = researchPaths.length < 2;
+      nextResearchPathButton.hidden = researchPaths.length < 2;
+    }
+  };
 
   const renderDomains = () => {
     if (!categories.length) {
@@ -446,6 +474,7 @@
 
   const openResearchPath = (pathId) => {
     if (!pathsById.has(pathId)) return;
+    starterPathIndex = researchPaths.findIndex((path) => path.id === pathId);
     state.category = "";
     state.search = "";
     state.coverage = "";
@@ -458,6 +487,7 @@
     if (topic) topic.value = "";
     access.value = "";
     renderDomains();
+    renderResearchStarter();
     renderCatalog();
     renderResearchPath();
     renderDiscovery();
@@ -466,6 +496,17 @@
     document.getElementById("catalog").scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
   };
 
+  researchPathChoice?.addEventListener("change", () => {
+    const nextIndex = researchPaths.findIndex((path) => path.id === researchPathChoice.value);
+    if (nextIndex < 0) return;
+    starterPathIndex = nextIndex;
+    renderResearchStarter();
+  });
+  nextResearchPathButton?.addEventListener("click", () => {
+    if (researchPaths.length < 2) return;
+    starterPathIndex = (starterPathIndex + 1) % researchPaths.length;
+    renderResearchStarter();
+  });
   researchPathButton?.addEventListener("click", () => openResearchPath(researchPathButton.dataset.path));
   researchPathPanel?.addEventListener("click", (event) => {
     if (!event.target.closest("button[data-clear-path]")) return;
@@ -529,6 +570,7 @@
   });
 
   renderDomains();
+  renderResearchStarter();
   renderCatalog();
   renderResearchPath();
   renderDiscovery();

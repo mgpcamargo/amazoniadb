@@ -70,12 +70,18 @@
 
       <section class="research-starter container" aria-labelledby="research-starter-title">
         <div>
-          <p class="eyebrow">Caminho de pesquisa</p>
-          <h2 id="research-starter-title">O que muda na floresta no entorno de um território?</h2>
+          <p class="eyebrow">Caminhos de pesquisa</p>
+          <h2 id="research-starter-title">Comece por uma pergunta de pesquisa.</h2>
         </div>
         <div class="research-starter-copy">
-          <p>Trilha inicial para o Brasil: quatro fontes públicas em papéis complementares. Sem análise automática.</p>
-          <button id="open-research-path" class="button button-secondary" type="button" data-path="forest-change-territory-brazil">Explorar a trilha</button>
+          <label class="research-question-label" for="research-path-choice">Escolha uma pergunta</label>
+          <select id="research-path-choice" aria-describedby="research-path-summary research-path-position"></select>
+          <p id="research-path-summary">Quatro conjuntos iniciais revisados, com fontes públicas em papéis complementares. Sem análise automática.</p>
+          <div class="research-starter-actions">
+            <button id="open-research-path" class="button button-secondary" type="button">Explorar a trilha</button>
+            <button id="next-research-path" class="text-button" type="button">Próxima pergunta</button>
+          </div>
+          <p id="research-path-position" class="research-path-position" role="status"></p>
         </div>
       </section>
 

@@ -100,6 +100,11 @@ h2 { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; color: va
 .research-starter h2 { max-width: 690px; font-size: clamp(2rem, 4vw, 3.1rem); }
 .research-starter-copy { display: grid; gap: 17px; justify-items: start; }
 .research-starter-copy p { max-width: 430px; margin: 0; color: var(--quiet); font-size: 0.98rem; line-height: 1.55; }
+.research-question-label { color: var(--quiet); font-size: 0.77rem; font-weight: 720; }
+.research-starter-copy select { max-width: 430px; }
+.research-starter-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.research-starter-actions .text-button { min-height: 42px; }
+.research-path-position { color: var(--moss) !important; font-size: 0.76rem !important; font-weight: 680; }
 
 .domain-section { padding: 71px 0; background: var(--sand); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
