@@ -23,7 +23,7 @@ jobs:
           issue-body: ${{ github.event.issue.body }}
           template-path: .github/ISSUE_TEMPLATE/new-source.yml
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
 
