@@ -151,12 +151,12 @@
           )
         }),
         Object.freeze({
-          id: "icmbio-dados-geoespaciais",
+          id: "cnuc-unidades-conservacao",
           role: copy("Protected-area context", "Contexto de área protegida", "Contexto de área protegida"),
           reason: copy(
-            "Use published federal protected-area boundaries as context, not as a claim about ecological conditions.",
-            "Use limites publicados de áreas protegidas federais como contexto, não como uma afirmação sobre condições ecológicas.",
-            "Usa límites publicados de áreas protegidas federales como contexto, no como una afirmación sobre condiciones ecológicas."
+            "Use published conservation-unit boundaries as context, not as a claim about ecological conditions.",
+            "Use limites publicados de unidades de conservação como contexto, não como uma afirmação sobre condições ecológicas.",
+            "Usa límites publicados de unidades de conservación como contexto, no como una afirmación sobre condiciones ecológicas."
           )
         })
       ])

@@ -1,6 +1,5 @@
 // Translated content for each data/catalog.js entry, used by the Portuguese
-// root app and the Spanish app.
-// and es/app.js. `descriptions` and the per-record `temporalCoverage` /
+// root app and the Spanish app. `descriptions` and the per-record `temporalCoverage` /
 // `licenses` maps are keyed by record id. `spatialResolution` is keyed by
 // the exact English value because several records share a phrase. Keep all
 // maps in sync with data/catalog.js — a stale entry is a maintenance error,
@@ -29,7 +28,6 @@ window.AMAZONIA_CATALOG_I18N = {
       "Vector boundaries (polygon/point), not a fixed pixel resolution": "Limites vetoriais (polígono/ponto), sem resolução de pixel fixa",
       "Municipality and state level": "Nível municipal e estadual",
       "Municipal and facility level": "Nível municipal e por unidade de saúde",
-      "Vector boundaries, multi-scale (1:10,000–1:250,000)": "Limites vetoriais, multiescala (1:10.000–1:250.000)",
       "30 m (Landsat); Sentinel (10 m) used for visual verification": "30 m (Landsat); Sentinel (10 m) usado para verificação visual",
       "Landsat/Sentinel-based; minimum 1 ha detection": "Baseado em Landsat/Sentinel; detecção mínima de 1 ha",
       "MODIS 1 km; VIIRS 375 m": "MODIS 1 km; VIIRS 375 m",
@@ -60,7 +58,12 @@ window.AMAZONIA_CATALOG_I18N = {
       "Community-level records": "Registros em nível de comunidade",
       "Municipality level": "Nível municipal",
       "State/regional level microdata": "Microdados em nível estadual/regional",
-      "State level": "Nível estadual"
+      "State level": "Nível estadual",
+      "30 m (Landsat-derived)": "30 m (derivado de Landsat)",
+      "Facility-level point coordinates": "Coordenadas pontuais por empreendimento",
+      "Municipality and state-level estimates": "Estimativas em nível municipal e estadual",
+      "Mining-process polygons (SIRGAS 2000)": "Polígonos de processos minerários (SIRGAS 2000)",
+      "Vector boundaries (protected-area polygons)": "Limites vetoriais (polígonos de áreas protegidas)"
     },
     temporalCoverage: {
       "gbif-species-occurrences": "Espécimes de museu até o presente (atualização contínua)",
@@ -73,7 +76,7 @@ window.AMAZONIA_CATALOG_I18N = {
       "isa-terras-indigenas": "Em andamento desde os anos 1980 (CEDI/ISA)",
       "ibge-cidades": "Varia conforme o indicador; muitos são anuais, alguns vinculados aos anos censitários",
       "datasus-tabnet": "Varia conforme o subsistema; várias séries em andamento desde as décadas de 1990–2000",
-      "icmbio-dados-geoespaciais": "Atualizado à medida que os limites são refinados ou redefinidos por decreto",
+      "cnuc-unidades-conservacao": "Recorte atual do cadastro; atualizado periodicamente",
       "raisg-maps": "Atualizações periódicas desde 1996; o último atlas completo é de 2020",
       "geobosques-national-forest-monitoring-platform": "Mapas anuais de perda florestal desde 2001; alertas quase em tempo real",
       "imazon-sad-system": "2008–presente (boletins mensais)",
@@ -107,12 +110,18 @@ window.AMAZONIA_CATALOG_I18N = {
       "atlas-brasil-idhm": "Rodadas censitárias de 1991, 2000 e 2010; ~78 indicadores atualizados anualmente",
       "ibge-pnad-continua": "Contínua desde 2012 (pesquisa anual predecessora desde 1967)",
       "cadunico-familias-inscritas": "2001–presente, atualização diária",
-      "rede-penssan-vigisan": "2020–presente (I VIGISAN 2020/21, II VIGISAN 2021/22, em andamento)"
+      "rede-penssan-vigisan": "2020–presente (I VIGISAN 2020/21, II VIGISAN 2021/22, em andamento)",
+      "mapbiomas-amazonia": "1985–2023 (cobertura da terra anual); produtos de água mensais/anuais separados",
+      "jrc-global-surface-water": "1984–2024 (camadas anuais e de longo prazo sobre água)",
+      "aneel-siga": "Atualizado diariamente/mensalmente (cronograma do provedor)",
+      "seeg-emissions-estimates": "1970–presente por setor; estimativas municipais desde 2000",
+      "anm-sigmine": "Atualizado diariamente"
     },
     licenses: {
-      "icmbio-dados-geoespaciais": "Open Data Commons Public Domain Dedication and License (PDDL)",
+      "cnuc-unidades-conservacao": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
       "amazon-mining-watch": "Creative Commons Attribution 4.0 (CC-BY-4.0)",
-      "hydrosheds": "Acordo de Licença HydroSHEDS"
+      "hydrosheds": "Acordo de Licença HydroSHEDS",
+      "aneel-siga": "Open Data Commons Open Database License (ODbL)"
     },
     descriptions: {
       "gbif-species-occurrences": "Um agregador global de registros de ocorrência de espécies — espécimes de museu, observações de ciência cidadã e dados de levantamentos —, pesquisável e filtrável para a bacia amazônica.",
@@ -125,7 +134,7 @@ window.AMAZONIA_CATALOG_I18N = {
       "isa-terras-indigenas": "Uma base de dados independente e de longa data que perfila as terras indígenas em todo o Brasil — situação jurídica, localização, população e notícias —, mantida por uma organização da sociedade civil desde os anos 1980.",
       "ibge-cidades": "Estatísticas oficiais em nível municipal e estadual do Brasil — população, economia, indicadores de educação e saúde —, pesquisáveis por localidade, produzidas pelo instituto nacional de estatística.",
       "datasus-tabnet": "Uma ferramenta interativa de tabulação para os dados do sistema público de saúde do Brasil — mortalidade, nascimentos, morbidade e registros de estabelecimentos de saúde —, desenvolvida pelo Ministério da Saúde.",
-      "icmbio-dados-geoespaciais": "Dados oficiais de limites das áreas protegidas federais do Brasil, incluindo parques nacionais e reservas biológicas, publicados sob licença de dados abertos pelo órgão que as administra.",
+      "cnuc-unidades-conservacao": "O cadastro nacional brasileiro de unidades de conservação, que reúne registros e limites publicados de áreas protegidas federais, estaduais, municipais e privadas. A situação e os limites podem ficar defasados em relação a atos legais; não são dados de terras indígenas nem de consentimento.",
       "raisg-maps": "Dados geoespaciais pan-amazônicos sobre terras indígenas, áreas naturais protegidas, projetos de infraestrutura e concessões de exploração de recursos, compilados por uma rede da sociedade civil de nove países.",
       "geobosques-national-forest-monitoring-platform": "A plataforma nacional peruana de monitoramento de perda florestal e alertas antecipados, cobrindo a floresta amazônica úmida do país com mapas anuais de perda, alertas mensais e camadas de degradação.",
       "imazon-sad-system": "Monitoramento mensal independente do desmatamento e da degradação florestal na Amazônia Legal brasileira, produzido por um instituto de pesquisa não governamental com imagens Landsat/Sentinel validadas por analistas. Opera em paralelo ao PRODES/DETER do INPE como controle cruzado; seus dados de alertas também alimentam as camadas abertas do Global Forest Watch.",
@@ -159,7 +168,12 @@ window.AMAZONIA_CATALOG_I18N = {
       "atlas-brasil-idhm": "Plataforma conjunta do PNUD, IPEA e FJP que oferece o Índice de Desenvolvimento Humano Municipal (IDHM) e mais de 200 indicadores socioeconômicos — população, educação, habitação, renda e vulnerabilidade — para todos os 5.565 municípios brasileiros. Funciona desde 1997, com parte dos indicadores atualizada anualmente a partir de registros administrativos.",
       "ibge-pnad-continua": "A pesquisa amostral trimestral contínua de domicílios do Brasil, que disponibiliza microdados públicos detalhados sobre emprego, renda, educação, moradia e segurança alimentar. Os dados podem ser desagregados por estado e região, incluindo os estados da Amazônia Legal.",
       "cadunico-familias-inscritas": "Estatísticas agregadas sobre famílias de baixa renda inscritas no Cadastro Único para programas sociais, atualizadas diariamente e usadas para orientar a assistência social federal, estadual e municipal. Oferecem um indicador detalhado de vulnerabilidade social por município.",
-      "rede-penssan-vigisan": "Uma série nacional de pesquisas domiciliares que mede a insegurança alimentar pela Escala Brasileira de Insegurança Alimentar, conduzida desde 2020 por uma rede acadêmica de pesquisa com recortes por estado. Preenche lacunas deixadas pela interrupção da coleta oficial de dados sobre segurança alimentar."
+      "rede-penssan-vigisan": "Uma série nacional de pesquisas domiciliares que mede a insegurança alimentar pela Escala Brasileira de Insegurança Alimentar, conduzida desde 2020 por uma rede acadêmica de pesquisa com recortes por estado. Preenche lacunas deixadas pela interrupção da coleta oficial de dados sobre segurança alimentar.",
+      "mapbiomas-amazonia": "Mapas anuais pan-amazônicos de cobertura e uso da terra, produzidos com imagens Landsat e uma legenda regional comum. O projeto também publica produtos separados de água superficial mensais e anuais.",
+      "jrc-global-surface-water": "Mapas globais, derivados de Landsat, de ocorrência, mudança, sazonalidade, recorrência e transições de água superficial, que podem ser recortados para a Amazônia.",
+      "aneel-siga": "Cadastro oficial de empreendimentos brasileiros de geração de energia com coordenadas, fonte, situação operacional, potência, município e sub-bacia. Um registro de empreendimento não comprova impacto social ou ecológico.",
+      "seeg-emissions-estimates": "Estimativas anuais de emissões e remoções de gases de efeito estufa do Brasil, disponíveis por setor e, em vários setores, por estado e município. São estimativas modeladas, não medições locais diretas.",
+      "anm-sigmine": "Cadastro oficial de polígonos, situação e dados administrativos de processos minerários brasileiros. O limite de um processo é informativo, não prova de extração ativa, autorização legal ou ilegalidade."
     }
   },
   "es": {
@@ -172,7 +186,6 @@ window.AMAZONIA_CATALOG_I18N = {
       "Vector boundaries (polygon/point), not a fixed pixel resolution": "Límites vectoriales (polígono/punto), sin resolución de píxel fija",
       "Municipality and state level": "Nivel municipal y estatal",
       "Municipal and facility level": "Nivel municipal y por unidad de salud",
-      "Vector boundaries, multi-scale (1:10,000–1:250,000)": "Límites vectoriales, multiescala (1:10.000–1:250.000)",
       "30 m (Landsat); Sentinel (10 m) used for visual verification": "30 m (Landsat); Sentinel (10 m) utilizado para verificación visual",
       "Landsat/Sentinel-based; minimum 1 ha detection": "Basado en Landsat/Sentinel; detección mínima de 1 ha",
       "MODIS 1 km; VIIRS 375 m": "MODIS 1 km; VIIRS 375 m",
@@ -203,7 +216,12 @@ window.AMAZONIA_CATALOG_I18N = {
       "Community-level records": "Registros a nivel de comunidad",
       "Municipality level": "Nivel municipal",
       "State/regional level microdata": "Microdatos a nivel estatal/regional",
-      "State level": "Nivel estatal"
+      "State level": "Nivel estatal",
+      "30 m (Landsat-derived)": "30 m (derivado de Landsat)",
+      "Facility-level point coordinates": "Coordenadas puntuales por instalación",
+      "Municipality and state-level estimates": "Estimaciones a nivel municipal y estatal",
+      "Mining-process polygons (SIRGAS 2000)": "Polígonos de procesos mineros (SIRGAS 2000)",
+      "Vector boundaries (protected-area polygons)": "Límites vectoriales (polígonos de áreas protegidas)"
     },
     temporalCoverage: {
       "gbif-species-occurrences": "Especímenes de museo hasta la actualidad (actualización continua)",
@@ -216,7 +234,7 @@ window.AMAZONIA_CATALOG_I18N = {
       "isa-terras-indigenas": "En curso desde la década de 1980 (CEDI/ISA)",
       "ibge-cidades": "Varía según el indicador; muchos son anuales y algunos están ligados a los años censales",
       "datasus-tabnet": "Varía según el subsistema; varias series continúan desde las décadas de 1990–2000",
-      "icmbio-dados-geoespaciais": "Actualizado a medida que los límites se refinan o redefinen por decreto",
+      "cnuc-unidades-conservacao": "Instantánea actual del registro; actualización periódica",
       "raisg-maps": "Actualizaciones periódicas desde 1996; el último atlas completo es de 2020",
       "geobosques-national-forest-monitoring-platform": "Mapas anuales de pérdida forestal desde 2001; alertas casi en tiempo real",
       "imazon-sad-system": "2008–actualidad (boletines mensuales)",
@@ -250,12 +268,18 @@ window.AMAZONIA_CATALOG_I18N = {
       "atlas-brasil-idhm": "Rondas censales de 1991, 2000 y 2010; ~78 indicadores actualizados anualmente",
       "ibge-pnad-continua": "Continua desde 2012 (encuesta anual predecesora desde 1967)",
       "cadunico-familias-inscritas": "2001–actualidad, actualización diaria",
-      "rede-penssan-vigisan": "2020–actualidad (I VIGISAN 2020/21, II VIGISAN 2021/22, en curso)"
+      "rede-penssan-vigisan": "2020–actualidad (I VIGISAN 2020/21, II VIGISAN 2021/22, en curso)",
+      "mapbiomas-amazonia": "1985–2023 (cobertura del suelo anual); productos de agua mensuales/anuales por separado",
+      "jrc-global-surface-water": "1984–2024 (capas anuales y de largo plazo sobre agua)",
+      "aneel-siga": "Actualizado diaria/mensualmente (calendario del proveedor)",
+      "seeg-emissions-estimates": "1970–actualidad por sector; estimaciones municipales desde 2000",
+      "anm-sigmine": "Actualizado diariamente"
     },
     licenses: {
-      "icmbio-dados-geoespaciais": "Open Data Commons Public Domain Dedication and License (PDDL)",
+      "cnuc-unidades-conservacao": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
       "amazon-mining-watch": "Creative Commons Attribution 4.0 (CC-BY-4.0)",
-      "hydrosheds": "Acuerdo de Licencia HydroSHEDS"
+      "hydrosheds": "Acuerdo de Licencia HydroSHEDS",
+      "aneel-siga": "Open Data Commons Open Database License (ODbL)"
     },
     descriptions: {
       "gbif-species-occurrences": "Un agregador global de registros de ocurrencia de especies —especímenes de museo, observaciones de ciencia ciudadana y datos de relevamientos—, con búsqueda y filtros para la cuenca amazónica.",
@@ -268,7 +292,7 @@ window.AMAZONIA_CATALOG_I18N = {
       "isa-terras-indigenas": "Una base de datos independiente y de larga trayectoria que perfila los territorios indígenas en todo Brasil —situación jurídica, ubicación, población y noticias—, mantenida por una organización de la sociedad civil desde la década de 1980.",
       "ibge-cidades": "Estadísticas oficiales a nivel municipal y estatal de Brasil —población, economía, indicadores de educación y salud—, con búsqueda por localidad, del instituto nacional de estadística.",
       "datasus-tabnet": "Una herramienta interactiva de tabulación para los datos del sistema público de salud de Brasil —mortalidad, nacimientos, morbilidad y registros de establecimientos de salud—, desarrollada por el Ministerio de Salud.",
-      "icmbio-dados-geoespaciais": "Datos oficiales de límites de las áreas protegidas federales de Brasil, incluidos parques nacionales y reservas biológicas, publicados bajo una licencia de datos abiertos por el organismo que las administra.",
+      "cnuc-unidades-conservacao": "El registro nacional brasileño de unidades de conservación, que reúne registros y límites publicados de áreas protegidas federales, estatales, municipales y privadas. El estado y los límites pueden quedar desfasados respecto de los actos legales; no son datos de territorios indígenas ni de consentimiento.",
       "raisg-maps": "Datos geoespaciales panamazónicos sobre territorios indígenas, áreas naturales protegidas, proyectos de infraestructura y concesiones de extracción de recursos, compilados por una red de la sociedad civil de nueve países.",
       "geobosques-national-forest-monitoring-platform": "La plataforma nacional peruana de monitoreo de pérdida de bosque y alertas tempranas, que cubre el bosque húmedo amazónico del país con mapas anuales de pérdida, alertas mensuales y capas de degradación.",
       "imazon-sad-system": "Monitoreo mensual independiente de la deforestación y la degradación forestal en la Amazonía Legal brasileña, producido por un instituto de investigación no gubernamental con imágenes Landsat/Sentinel validadas por analistas. Opera en paralelo a PRODES/DETER del INPE como contraste independiente; sus datos de alertas también alimentan las capas abiertas de Global Forest Watch.",
@@ -302,7 +326,12 @@ window.AMAZONIA_CATALOG_I18N = {
       "atlas-brasil-idhm": "Una plataforma conjunta de PNUD, IPEA y FJP que ofrece el Índice de Desarrollo Humano Municipal (IDHM) y más de 200 indicadores socioeconómicos —población, educación, vivienda, ingresos y vulnerabilidad— para los 5.565 municipios brasileños. Funciona desde 1997, con un subconjunto de indicadores actualizado anualmente a partir de registros administrativos.",
       "ibge-pnad-continua": "La encuesta continua trimestral por muestreo de hogares de Brasil, que proporciona microdatos públicos detallados sobre empleo, ingresos, educación, vivienda y seguridad alimentaria. Los datos pueden desagregarse a nivel estatal y regional, incluidos los estados de la Amazonía Legal.",
       "cadunico-familias-inscritas": "Estadísticas agregadas sobre familias de bajos ingresos inscritas en el Cadastro Único para programas sociales, actualizadas diariamente y utilizadas para orientar la asistencia social federal, estatal y municipal. Ofrecen un indicador detallado de vulnerabilidad social por municipio.",
-      "rede-penssan-vigisan": "Una serie nacional de encuestas de hogares que mide la inseguridad alimentaria mediante la Escala Brasileña de Inseguridad Alimentaria, realizada desde 2020 por una red académica de investigación con desgloses por estado. Cubre vacíos dejados por la interrupción de la recopilación oficial de datos sobre seguridad alimentaria."
+      "rede-penssan-vigisan": "Una serie nacional de encuestas de hogares que mide la inseguridad alimentaria mediante la Escala Brasileña de Inseguridad Alimentaria, realizada desde 2020 por una red académica de investigación con desgloses por estado. Cubre vacíos dejados por la interrupción de la recopilación oficial de datos sobre seguridad alimentaria.",
+      "mapbiomas-amazonia": "Mapas anuales panamazónicos de cobertura y uso del suelo, elaborados con imágenes Landsat y una leyenda regional común. El proyecto también publica productos separados de agua superficial mensuales y anuales.",
+      "jrc-global-surface-water": "Mapas globales derivados de Landsat sobre ocurrencia, cambio, estacionalidad, recurrencia y transiciones de agua superficial, que se pueden recortar para la Amazonía.",
+      "aneel-siga": "Registro oficial de instalaciones brasileñas de generación eléctrica con coordenadas, fuente, estado operativo, capacidad, municipio y subcuenca. Un registro de instalación no demuestra un impacto social o ecológico.",
+      "seeg-emissions-estimates": "Estimaciones anuales de emisiones y remociones de gases de efecto invernadero de Brasil, disponibles por sector y, para varios sectores, por estado y municipio. Son estimaciones modeladas, no mediciones locales directas.",
+      "anm-sigmine": "Registro oficial de polígonos, estado y datos administrativos de procesos mineros brasileños. El límite de un proceso es informativo, no prueba de extracción activa, autorización legal o ilegalidad."
     }
   }
 };

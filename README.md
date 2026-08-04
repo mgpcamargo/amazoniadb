@@ -91,7 +91,7 @@ It's regenerated automatically by `validate-catalog.yml` on every push to `main`
 {
   "apiVersion": 1,
   "generated": "2026-07-28T00:00:00.000Z",
-  "count": 45,
+  "count": 50,
   "source": "https://mgpcamargo.github.io/amazoniadb/",
   "recordSchema": "https://mgpcamargo.github.io/amazoniadb/data/catalog.schema.json",
   "license": "...",

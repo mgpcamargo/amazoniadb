@@ -4,7 +4,7 @@ Real institutions relevant to AmazoniaDB's domains, not yet in `data/catalog.js`
 
 Pick an unchecked item, verify it, submit it through the issue form or a pull request like any other entry. Check the box once it's merged into the catalog.
 
-Current coverage is still Brazil-heavy (24 of 46 entries), alongside 13 global-subsettable sources, 8 pan-Amazon sources, and 1 Peru source. There are no current entries specifically covering Colombia, Bolivia, or Ecuador. Everything below is a start at the remaining Amazon countries.
+Current coverage is still Brazil-heavy (27 of 50 entries), alongside 14 global-subsettable sources, 8 pan-Amazon sources, and 1 Peru source. There are no current entries specifically covering Colombia, Bolivia, or Ecuador. Everything below is a start at the remaining Amazon countries.
 
 ## Peru
 - [x] **Geobosques** — geobosques.minam.gob.pe — MINAM's national forest-loss monitoring platform: annual deforestation maps + early-warning alerts, stated as free public access. → *Land use & infrastructure* — merged as `geobosques-national-forest-monitoring-platform`.

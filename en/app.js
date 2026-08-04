@@ -27,11 +27,14 @@
     license: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M10 14l2 2 4-4"/></svg>'
   });
 
-  const state = { category: "", search: "", coverage: "", topic: "", access: "", source: "", path: "" };
+  const CATALOG_PAGE_SIZE = 12;
+  const state = { category: "", search: "", coverage: "", topic: "", access: "", source: "", path: "", visibleLimit: CATALOG_PAGE_SIZE };
   const domainNav = document.getElementById("domain-nav");
   const grid = document.getElementById("dataset-grid");
   const emptyState = document.getElementById("empty-state");
   const resultCount = document.getElementById("result-count");
+  const showMorePanel = document.getElementById("catalog-more");
+  const showMoreButton = document.getElementById("show-more-sources");
   const count = document.getElementById("dataset-count");
   const search = document.getElementById("search");
   const coverage = document.getElementById("coverage");
@@ -172,6 +175,10 @@
   };
 
   const sourceCountLabel = (value) => `${value} ${value === 1 ? "source" : "sources"}`;
+  const formatDate = (value) => {
+    const date = new Date(`${value}T00:00:00Z`);
+    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" }).format(date);
+  };
 
   const getActivePath = () => pathsById.get(state.path) || null;
   const tagLabel = (facet, value) => tagVocabulary[facet]?.[value]?.[locale] || tagVocabulary[facet]?.[value]?.en || value;
@@ -236,10 +243,19 @@
   };
 
   const renderCatalog = () => {
-    const records = getVisibleRecords();
-    resultCount.textContent = `${records.length} ${records.length === 1 ? "source" : "sources"} found`;
-    emptyState.hidden = records.length !== 0;
     const activePath = getActivePath();
+    const allRecords = getVisibleRecords();
+    const isUnfiltered = !activePath && !state.category && !state.search.trim() && !state.coverage && !state.topic && !state.access && !state.source;
+    const records = isUnfiltered ? allRecords.slice(0, state.visibleLimit) : allRecords;
+    resultCount.textContent = isUnfiltered && records.length < allRecords.length
+      ? `Showing ${records.length} of ${allRecords.length} sources`
+      : `${allRecords.length} ${allRecords.length === 1 ? "source" : "sources"} found`;
+    emptyState.hidden = allRecords.length !== 0;
+    if (showMorePanel && showMoreButton) {
+      const remaining = allRecords.length - records.length;
+      showMorePanel.hidden = remaining <= 0;
+      showMoreButton.textContent = `Show ${Math.min(CATALOG_PAGE_SIZE, remaining)} more sources`;
+    }
     grid.innerHTML = records.map((record) => {
       const detailItem = (icon, label, value) => `<li aria-label="${escapeHtml(`${label}: ${value}`)}"><span class="detail-icon" aria-hidden="true">${detailIcons[icon]}</span><span>${escapeHtml(value)}</span></li>`;
       const detailItems = [
@@ -266,12 +282,12 @@
         <ul class="metadata" aria-label="Dataset metadata">
           <li>${escapeHtml(record.coverage)}</li>
           <li>${escapeHtml(record.access)}</li>
-          <li>Checked ${escapeHtml(record.checked)}</li>
+          <li><time datetime="${escapeHtml(record.checked)}">Reviewed ${escapeHtml(formatDate(record.checked))}</time></li>
         </ul>
         <div class="card-actions">
           <div class="card-links">
             <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Open at source <span class="sr-only">(opens in a new tab)</span></a>
-            <a class="methodology-link" href="${escapeHtml(record.methodologyUrl || record.url)}" target="_blank" rel="noopener noreferrer">Documentation <span class="sr-only">${record.methodologyUrl ? "methodology" : "source page"}; opens in a new tab</span></a>
+            <a class="methodology-link" href="${escapeHtml(record.methodologyUrl || record.url)}" target="_blank" rel="noopener noreferrer">${record.methodologyUrl ? "Documentation" : "Source page"} <span class="sr-only">${record.methodologyUrl ? "methodology" : "source page"}; opens in a new tab</span></a>
           </div>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Cite</button>
           <button class="cite-button" type="button" data-report-id="${escapeHtml(record.id)}">Report link</button>
@@ -492,6 +508,10 @@
     renderResearchStarter();
   });
   researchPathButton?.addEventListener("click", () => openResearchPath(researchPathButton.dataset.path));
+  showMoreButton?.addEventListener("click", () => {
+    state.visibleLimit += CATALOG_PAGE_SIZE;
+    renderCatalog();
+  });
   researchPathPanel?.addEventListener("click", (event) => {
     if (!event.target.closest("button[data-clear-path]")) return;
     state.path = "";
@@ -526,7 +546,7 @@
     if (citeButton) {
       const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
       if (!record) return;
-      const citation = `"${record.title}." ${record.provider}. Accessed ${record.checked}. ${record.url}`;
+      const citation = `"${record.title}." ${record.provider}. Reviewed by AmazoniaDB on ${record.checked}. Accessed ${formatDate(new Date().toISOString().slice(0, 10))}. ${record.url}`;
       const ok = await copyToClipboard(citation);
       trackEvent(`/cite/${record.id}`);
       flashConfirmation(citeButton, ok ? "Copied" : "Couldn't copy", "Cite");
