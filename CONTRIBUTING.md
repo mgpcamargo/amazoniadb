@@ -8,7 +8,7 @@ The `submit.html` page can create a local source record. It is an aid for prepar
 
 Submitted through the issue form? A draft pull request is created when validation passes; a maintainer reviews it before it is merged. If merged, the submitting GitHub handle is retained in source control for review provenance; it is not presented as a public quality badge.
 
-Not sure if something belongs, or want to talk through a source before submitting it? Use [Discussions](../../discussions) rather than opening an issue — it keeps the issue tracker focused on actual submissions and link reports.
+Not sure if something belongs, or want to talk through a source before submitting it? [Open a regular issue](https://github.com/mgpcamargo/amazoniadb/issues/new) so a maintainer can help assess it before a formal submission.
 
 ## Two ways to submit
 

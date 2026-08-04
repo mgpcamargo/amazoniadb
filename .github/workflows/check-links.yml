@@ -22,6 +22,16 @@ jobs:
         id: links
         run: node scripts/check-links.mjs
 
+      - name: Publish manual-review notes
+        if: steps.links.outputs.manual_count != '0'
+        env:
+          MANUAL_BODY: ${{ steps.links.outputs.manual_body }}
+        run: |
+          echo "## Link checks needing a manual browser review" >> "$GITHUB_STEP_SUMMARY"
+          echo "Some publishers block or rate-limit automated requests. These are not treated as broken links or turned into recurring issues." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "$MANUAL_BODY" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Find existing catalog-health issue
         id: existing
         if: steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0'
@@ -67,7 +77,7 @@ jobs:
               body: bodyParts.join("\n\n---\n\n")
             });
 
-      - name: Update existing issue
+      - name: Refresh existing issue when results change
         if: (steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0') && steps.existing.outputs.result != ''
         uses: actions/github-script@v7
         env:
@@ -80,14 +90,29 @@ jobs:
           script: |
             const brokenCount = Number(process.env.BROKEN_COUNT);
             const staleCount = Number(process.env.STALE_COUNT);
-            const bodyParts = ["Re-checked:"];
-            if (brokenCount) bodyParts.push(`**Broken links**\n\n${process.env.BROKEN_BODY}`);
-            if (staleCount) bodyParts.push(`**Stale entries**\n\n${process.env.STALE_BODY}`);
-            await github.rest.issues.createComment({
+            const titleParts = [];
+            if (brokenCount) titleParts.push(`${brokenCount} broken link${brokenCount === 1 ? "" : "s"}`);
+            if (staleCount) titleParts.push(`${staleCount} stale entr${staleCount === 1 ? "y" : "ies"}`);
+            const bodyParts = [];
+            if (brokenCount) bodyParts.push(`**Broken links** — some sites block automated checks even when they work fine for real visitors; verify by hand before removing anything.\n\n${process.env.BROKEN_BODY}`);
+            if (staleCount) bodyParts.push(`**Stale entries** — not yet checked again in a while. Worth a quick revisit to confirm the link, access terms, and description still hold.\n\n${process.env.STALE_BODY}`);
+            const title = `Catalog health check: ${titleParts.join(", ")}`;
+            const body = bodyParts.join("\n\n---\n\n");
+            const existing = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.ISSUE_NUMBER)
+            });
+            if (existing.data.title === title && existing.data.body === body) {
+              core.notice("Catalog-health issue already reflects the current actionable results.");
+              return;
+            }
+            await github.rest.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: Number(process.env.ISSUE_NUMBER),
-              body: bodyParts.join("\n\n---\n\n")
+              title,
+              body
             });
 
       - name: Find resolved catalog-health issue
@@ -113,7 +138,7 @@ jobs:
         with:
           script: |
             const issueNumber = Number(process.env.ISSUE_NUMBER);
-            const body = "Automated recheck passed with no broken links or stale records. Closing this resolved catalog-health alert.";
+            const body = "No actionable broken links or stale records remain. Closing this catalog-health alert; publishers that block automation are tracked only in the workflow summary for manual review.";
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

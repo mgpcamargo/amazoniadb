@@ -54,12 +54,17 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
+      - name: Build curated public artifact
+        run: npm run build:site
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: .
+          path: dist
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5

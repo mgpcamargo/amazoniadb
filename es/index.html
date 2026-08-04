@@ -57,13 +57,13 @@
       <section class="hero container" aria-labelledby="hero-title">
         <p class="eyebrow">Directorio independiente de interés público</p>
         <h1 id="hero-title">Encuentra datos de la Amazonía en la fuente.</h1>
-        <p class="hero-copy">Un índice ligero de datos ambientales de la Amazonía — para investigación, políticas públicas y uso comunitario.</p>
+        <p class="hero-copy">Un índice ligero de datos socioambientales de la Amazonía — para investigación, políticas públicas y uso comunitario.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#catalog">Explorar el directorio</a>
-          <a class="button button-secondary" href="#how-it-works">Nuestra política de enlaces</a>
+          <a class="button button-secondary" href="#how-it-works">Cómo elegimos las fuentes</a>
         </div>
         <dl class="site-stats" aria-label="Resumen del directorio">
-          <div><dt id="dataset-count">45</dt><dd>fuentes seleccionadas</dd></div>
+          <div><dt id="dataset-count">50</dt><dd>fuentes seleccionadas</dd></div>
           <div><dt>6</dt><dd>áreas de conocimiento</dd></div>
         </dl>
       </section>
@@ -88,8 +88,8 @@
       <section class="domain-section" aria-labelledby="domains-title">
         <div class="container">
           <div class="section-heading">
-            <p class="eyebrow">Un directorio, seis formas de empezar</p>
-            <h2 id="domains-title">Empieza por la pregunta que tienes.</h2>
+            <p class="eyebrow">Seis áreas de conocimiento</p>
+            <h2 id="domains-title">O navega por un área de conocimiento.</h2>
           </div>
           <div id="domain-nav" class="domain-nav" aria-label="Filtrar conjuntos de datos por dominio"></div>
           <div class="discovery-panel">
@@ -156,6 +156,9 @@
         </form>
 
         <div id="dataset-grid" class="dataset-grid"></div>
+        <div id="catalog-more" class="catalog-more" hidden>
+          <button id="show-more-sources" class="button button-secondary" type="button" aria-controls="dataset-grid"></button>
+        </div>
         <p id="empty-state" class="empty-state" hidden>Ninguna fuente coincide con esos filtros. Prueba una búsqueda más amplia.</p>
       </section>
 

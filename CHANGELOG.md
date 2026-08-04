@@ -5,7 +5,6 @@ All notable changes to AmazoniaDB are documented here. Loosely follows [Keep a C
 ## [Unreleased] — v1.4
 
 ### Added
-- Public candidates board (`candidates.html`, all locales) showing pending community submissions — "in review" once a draft PR opens, "needs fixing" if schema validation caught a problem first
 - Contributor provenance — entries submitted through the issue pipeline retain the submitter's GitHub handle for review history
 - Weekly freshness check flagging entries not re-verified in 180+ days, alongside the existing dead-link check
 - Public API mirror at `api/v1/catalog.json`, auto-regenerated on every push to `main` that touches the catalog
@@ -14,7 +13,8 @@ All notable changes to AmazoniaDB are documented here. Loosely follows [Keep a C
 - "Report link" button on every catalog card — a pre-filled email, no GitHub account required
 - Shareable filtered-view links, per-card citation button, `DataCatalog`/`Dataset` structured data for search engines, and a prompt naming whichever domain has the fewest sources
 - `.gitignore` and a PR template with an actual review checklist, after a full repo zip, patch files, and a joke entry all ended up committed to `main` at different points
-- Catalog grew from 13 to 46 entries; one outdated source was subsequently removed when its publisher endpoint no longer met the directory's secure-link policy
+- Catalog grew from 13 to 45 entries; one outdated source was subsequently removed when its publisher endpoint no longer met the directory's secure-link policy
+- Curated gap-fill expansion to 50 sources: pan-Amazon land cover and water, global surface water, Brazilian generation facilities, greenhouse-gas estimates, mining-process context, and the broader national conservation-unit register
 - V2 icon-first entry points in English, Portuguese, and Spanish: six accessible category cards, contextual counts, an honest one-source discovery control, reduced-motion behavior, and shareable URLs
 - A repository quality gate (`npm run check` and `quality.yml`) covering syntax, catalog integrity, API synchronization, static references, localized explorer behavior, translations, forms, and placeholder content
 
@@ -23,6 +23,7 @@ All notable changes to AmazoniaDB are documented here. Loosely follows [Keep a C
 - Category renamed: "Climate, water & air" → "Earth, water & climate"
 - API path versioned: `api/catalog.json` → `api/v1/catalog.json`, before it had real external consumers to break
 - API envelope now exposes `recordSchema` rather than incorrectly declaring the per-record schema as its own `$schema`
+- GitHub Pages now deploys an allowlisted site artifact rather than the entire repository checkout
 
 ### Removed
 - The tier-badge system ("Community-submitted, schema-valid" vs. "Editorially reviewed" labels on every card) — dropped as not a meaningful contributor incentive
@@ -33,6 +34,8 @@ All notable changes to AmazoniaDB are documented here. Loosely follows [Keep a C
 - `scripts/validate-catalog.mjs` had a stale category name after the rename above, silently failing CI on real entries
 - Dark mode: the header background was hardcoded rather than tokenized, so it never switched themes — made the wordmark nearly unreadable against itself
 - Duplicate API-mirror implementation (a second, uncoordinated `data/catalog.json` + `scripts/build-catalog-json.mjs`) consolidated onto the one CI actually enforces
+- Hidden research-path panels no longer reserve empty space above catalog filters; source-page links are no longer labeled as methodology
+- Link health checks now keep robot-blocked and transient responses in the workflow summary instead of filing recurring broken-link issues
 
 ## [1.2.3] and earlier
 

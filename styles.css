@@ -65,9 +65,9 @@ button, select { cursor: pointer; }
 .brand { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); font-size: 1.05rem; font-weight: 780; letter-spacing: -0.035em; text-decoration: none; }
 .brand-mark { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 50%; background: var(--forest); color: var(--paper); font-family: Georgia, serif; font-size: 1.05rem; }
 .header-links { display: flex; align-items: center; gap: 18px; }
-.header-link { color: var(--quiet); font-size: 0.92rem; font-weight: 650; }
+.header-link { display: inline-flex; min-height: 34px; align-items: center; color: var(--quiet); font-size: 0.92rem; font-weight: 650; }
 .lang-switch { display: flex; align-items: center; gap: 9px; padding-left: 18px; border-left: 1px solid var(--line); font-size: 0.8rem; font-weight: 700; }
-.lang-switch .lang-link { color: var(--quiet); text-decoration: none; }
+.lang-switch .lang-link { display: inline-flex; min-height: 34px; align-items: center; color: var(--quiet); text-decoration: none; }
 .lang-switch .lang-link:hover { color: var(--forest); text-decoration: underline; text-underline-offset: 0.16em; }
 .lang-switch .lang-current { color: var(--forest); }
 
@@ -144,6 +144,7 @@ h2 { margin-bottom: 0; font-family: Georgia, "Times New Roman", serif; color: va
 .copy-link-button { min-height: auto; padding: 0; }
 .copy-link-button.copied { color: var(--moss); }
 .research-path-panel { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px 28px; align-items: end; margin: 0 0 26px; padding: 22px 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--sand); }
+.research-path-panel[hidden] { display: none; }
 .research-path-panel .eyebrow { margin-bottom: 7px; }
 .research-path-panel h3 { margin: 0 0 8px; color: var(--forest); font-family: Georgia, serif; font-size: 1.45rem; font-weight: 500; line-height: 1.1; letter-spacing: -0.025em; }
 .research-path-panel p { max-width: 780px; margin: 0; color: var(--quiet); font-size: 0.9rem; line-height: 1.5; }
@@ -164,6 +165,7 @@ input::placeholder { color: var(--placeholder); }
 .search-field input:not(:placeholder-shown) + kbd { display: none; }
 .text-button { min-height: 43px; border: 0; padding: 0 3px; background: none; color: var(--forest); font-size: 0.85rem; font-weight: 720; text-decoration: underline; text-underline-offset: 0.18em; }
 .dataset-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.catalog-more { display: flex; justify-content: center; margin-top: 26px; }
 .dataset-card { display: flex; min-width: 0; min-height: 290px; flex-direction: column; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: 0 2px 0 rgb(19 35 28 / 1%); }
 .dataset-card:hover { border-color: var(--card-hover-border); box-shadow: var(--shadow); }
 .dataset-card.is-discovery { border: 2px solid var(--forest); background: var(--sand); box-shadow: var(--shadow); }
@@ -182,11 +184,11 @@ input::placeholder { color: var(--placeholder); }
 .metadata li { border: 1px solid var(--line); border-radius: 999px; padding: 4px 8px; color: var(--quiet); font-size: 0.72rem; line-height: 1.1; }
 .metadata li a { color: var(--forest); text-decoration: underline; text-underline-offset: 0.16em; }
 .citation-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.cite-button, .bibtex-button { flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: none; color: var(--quiet); font-size: 0.76rem; font-weight: 650; white-space: nowrap; }
+.cite-button, .bibtex-button { min-height: 34px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: none; color: var(--quiet); font-size: 0.76rem; font-weight: 650; white-space: nowrap; }
 .cite-button:hover, .bibtex-button:hover { border-color: var(--forest); color: var(--forest); }
 .cite-button.copied, .bibtex-button.copied { border-color: var(--moss); color: var(--moss); background: var(--sand); }
-.card-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.dataset-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--forest); font-size: 0.88rem; font-weight: 780; text-decoration: none; }
+.card-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.dataset-link { display: inline-flex; min-height: 34px; align-items: center; gap: 6px; width: fit-content; color: var(--forest); font-size: 0.88rem; font-weight: 780; text-decoration: none; }
 .dataset-link::after { content: "↗"; font-size: 1rem; }
 .dataset-link:hover { color: var(--focus); }
 .dataset-details { display: flex; flex-direction: column; gap: 5px; margin: 10px 0 0; padding: 0; list-style: none; }
@@ -194,7 +196,7 @@ input::placeholder { color: var(--placeholder); }
 .detail-icon { display: grid; width: 17px; height: 17px; flex: 0 0 17px; place-items: center; color: var(--moss); }
 .detail-icon svg { width: 15px; height: 15px; }
 .card-links { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
-.methodology-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: var(--quiet); font-size: 0.8rem; font-weight: 650; text-decoration: none; }
+.methodology-link { display: inline-flex; min-height: 34px; align-items: center; gap: 6px; width: fit-content; color: var(--quiet); font-size: 0.8rem; font-weight: 650; text-decoration: none; }
 .methodology-link::after { content: "↗"; font-size: 0.95rem; }
 .methodology-link:hover { color: var(--forest); }
 .empty-state { margin: 0; padding: 34px; border: 1px dashed var(--line); color: var(--quiet); text-align: center; }
@@ -284,6 +286,8 @@ textarea { width: 100%; resize: vertical; border: 1px solid var(--line); border-
   .search-field { grid-column: auto; }
   .section-heading { align-items: start; flex-direction: column; }
   .dataset-card { min-height: 250px; }
+  .card-actions { align-items: flex-start; }
+  .card-links { width: 100%; }
   .footer-inner { align-items: start; flex-direction: column; gap: 11px; }
 }
 

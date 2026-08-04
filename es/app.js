@@ -23,7 +23,7 @@
     "Publicly available": "Disponible públicamente"
   };
   const kindLabels = { "Dataset": "Conjunto de datos", "Data portal": "Portal de datos", "Download": "Descarga", "Explorer": "Explorador" };
-  const detailLabels = { timeframe: "Período", resolution: "Resolución", license: "Licencia", methodology: "Documentación" };
+  const detailLabels = { timeframe: "Período", resolution: "Resolución", license: "Licencia", methodology: "Documentación", sourcePage: "Página de la fuente" };
   const tagPresentation = window.AMAZONIA_TAG_PRESENTATION || { facets: {}, vocabulary: {} };
   const tagVocabulary = tagPresentation.vocabulary || {};
   const topicVocabulary = tagVocabulary.topics || {};
@@ -43,11 +43,14 @@
     license: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5M10 14l2 2 4-4"/></svg>'
   });
 
-  const state = { category: "", search: "", coverage: "", topic: "", access: "", source: "", path: "" };
+  const CATALOG_PAGE_SIZE = 12;
+  const state = { category: "", search: "", coverage: "", topic: "", access: "", source: "", path: "", visibleLimit: CATALOG_PAGE_SIZE };
   const domainNav = document.getElementById("domain-nav");
   const grid = document.getElementById("dataset-grid");
   const emptyState = document.getElementById("empty-state");
   const resultCount = document.getElementById("result-count");
+  const showMorePanel = document.getElementById("catalog-more");
+  const showMoreButton = document.getElementById("show-more-sources");
   const count = document.getElementById("dataset-count");
   const search = document.getElementById("search");
   const coverage = document.getElementById("coverage");
@@ -188,6 +191,10 @@
   };
 
   const sourceCountLabel = (value) => `${value} ${value === 1 ? "fuente" : "fuentes"}`;
+  const formatDate = (value) => {
+    const date = new Date(`${value}T00:00:00Z`);
+    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" }).format(date);
+  };
 
   const getActivePath = () => pathsById.get(state.path) || null;
   const tagLabel = (facet, value) => tagVocabulary[facet]?.[value]?.[locale] || tagVocabulary[facet]?.[value]?.en || value;
@@ -252,10 +259,19 @@
   };
 
   const renderCatalog = () => {
-    const records = getVisibleRecords();
-    resultCount.textContent = `${records.length} ${records.length === 1 ? "fuente encontrada" : "fuentes encontradas"}`;
-    emptyState.hidden = records.length !== 0;
     const activePath = getActivePath();
+    const allRecords = getVisibleRecords();
+    const isUnfiltered = !activePath && !state.category && !state.search.trim() && !state.coverage && !state.topic && !state.access && !state.source;
+    const records = isUnfiltered ? allRecords.slice(0, state.visibleLimit) : allRecords;
+    resultCount.textContent = isUnfiltered && records.length < allRecords.length
+      ? `Mostrando ${records.length} de ${allRecords.length} fuentes`
+      : `${allRecords.length} ${allRecords.length === 1 ? "fuente encontrada" : "fuentes encontradas"}`;
+    emptyState.hidden = allRecords.length !== 0;
+    if (showMorePanel && showMoreButton) {
+      const remaining = allRecords.length - records.length;
+      showMorePanel.hidden = remaining <= 0;
+      showMoreButton.textContent = `Mostrar ${Math.min(CATALOG_PAGE_SIZE, remaining)} fuentes más`;
+    }
     grid.innerHTML = records.map((record) => {
       const detailItem = (icon, label, value) => `<li aria-label="${escapeHtml(`${label}: ${value}`)}"><span class="detail-icon" aria-hidden="true">${detailIcons[icon]}</span><span>${escapeHtml(value)}</span></li>`;
       const detailItems = [
@@ -282,12 +298,12 @@
         <ul class="metadata" aria-label="Metadatos del conjunto de datos">
           <li>${escapeHtml(coverageLabels[record.coverage] || record.coverage)}</li>
           <li>${escapeHtml(accessLabels[record.access] || record.access)}</li>
-          <li>Verificado el ${escapeHtml(record.checked)}</li>
+          <li><time datetime="${escapeHtml(record.checked)}">Revisado el ${escapeHtml(formatDate(record.checked))}</time></li>
         </ul>
         <div class="card-actions">
           <div class="card-links">
             <a class="dataset-link" href="${escapeHtml(record.url)}" target="_blank" rel="noopener noreferrer">Abrir en la fuente <span class="sr-only">(se abre en una pestaña nueva)</span></a>
-            <a class="methodology-link" href="${escapeHtml(record.methodologyUrl || record.url)}" target="_blank" rel="noopener noreferrer">${detailLabels.methodology} <span class="sr-only">${record.methodologyUrl ? "metodología" : "página de la fuente"}; se abre en una pestaña nueva</span></a>
+            <a class="methodology-link" href="${escapeHtml(record.methodologyUrl || record.url)}" target="_blank" rel="noopener noreferrer">${record.methodologyUrl ? detailLabels.methodology : detailLabels.sourcePage} <span class="sr-only">${record.methodologyUrl ? "metodología" : "página de la fuente"}; se abre en una pestaña nueva</span></a>
           </div>
           <button class="cite-button" type="button" data-cite-id="${escapeHtml(record.id)}">Citar</button>
           <button class="cite-button" type="button" data-report-id="${escapeHtml(record.id)}">Reportar enlace</button>
@@ -508,6 +524,10 @@
     renderResearchStarter();
   });
   researchPathButton?.addEventListener("click", () => openResearchPath(researchPathButton.dataset.path));
+  showMoreButton?.addEventListener("click", () => {
+    state.visibleLimit += CATALOG_PAGE_SIZE;
+    renderCatalog();
+  });
   researchPathPanel?.addEventListener("click", (event) => {
     if (!event.target.closest("button[data-clear-path]")) return;
     state.path = "";
@@ -542,7 +562,7 @@
     if (citeButton) {
       const record = catalog.find((entry) => entry.id === citeButton.dataset.citeId);
       if (!record) return;
-      const citation = `"${record.title}." ${record.provider}. Consultado el ${record.checked}. ${record.url}`;
+      const citation = `"${record.title}." ${record.provider}. Revisado por AmazoniaDB el ${record.checked}. Consultado el ${formatDate(new Date().toISOString().slice(0, 10))}. ${record.url}`;
       const ok = await copyToClipboard(citation);
       trackEvent(`/cite/${record.id}`);
       flashConfirmation(citeButton, ok ? "Copiado" : "No se pudo copiar", "Citar");

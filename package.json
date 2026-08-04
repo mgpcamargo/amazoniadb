@@ -4,11 +4,13 @@
   "type": "module",
   "scripts": {
     "build:api": "node scripts/build-api.mjs",
-    "check:syntax": "node --check app.js && node --check en/app.js && node --check es/app.js && node --check submit.js && node --check theme.js && node --check data/category-presentation.js && node --check data/tag-presentation.js && node --check data/catalog.js && node --check data/catalog.i18n.js && node --check data/research-paths.js && node --check scripts/build-api.mjs && node --check scripts/check-links.mjs && node --check scripts/issue-to-entry.mjs && node --check scripts/quality-check.mjs && node --check scripts/test-source-submission.mjs && node --check scripts/validate-catalog.mjs",
+    "build:site": "node scripts/build-site.mjs",
+    "check:public-site": "npm run build:site && node scripts/check-public-site.mjs",
+    "check:syntax": "node --check app.js && node --check en/app.js && node --check es/app.js && node --check submit.js && node --check theme.js && node --check data/category-presentation.js && node --check data/tag-presentation.js && node --check data/catalog.js && node --check data/catalog.i18n.js && node --check data/research-paths.js && node --check scripts/build-api.mjs && node --check scripts/build-site.mjs && node --check scripts/check-public-site.mjs && node --check scripts/check-links.mjs && node --check scripts/issue-to-entry.mjs && node --check scripts/quality-check.mjs && node --check scripts/test-source-submission.mjs && node --check scripts/validate-catalog.mjs",
     "check:quality": "node scripts/quality-check.mjs",
     "validate:catalog": "node scripts/validate-catalog.mjs",
     "test:source-submission": "node scripts/test-source-submission.mjs",
-    "check": "npm run check:syntax && npm run validate:catalog && npm run check:quality && npm run test:source-submission",
+    "check": "npm run check:syntax && npm run validate:catalog && npm run check:quality && npm run check:public-site && npm run test:source-submission",
     "verify:links": "node scripts/check-links.mjs"
   }
 }

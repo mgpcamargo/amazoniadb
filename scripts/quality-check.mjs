@@ -115,7 +115,7 @@ const runExplorerSmokeTest = async (page, browserData) => {
   const ids = [
     "domain-nav", "dataset-grid", "empty-state", "result-count", "dataset-count",
     "search", "coverage", "topic", "access", "filters", "discover-source", "discovery-result",
-    "catalog", "copy-view-link", "research-path-panel", "open-research-path", "research-path-choice",
+    "catalog", "copy-view-link", "catalog-more", "show-more-sources", "research-path-panel", "open-research-path", "research-path-choice",
     "next-research-path", "research-path-summary", "research-path-position"
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, makeElement()]));
@@ -207,9 +207,20 @@ const runExplorerSmokeTest = async (page, browserData) => {
   if (filteredRecords !== expectedRecords) fail(`${page.file}: category filtering rendered ${filteredRecords}, expected ${expectedRecords}.`);
   elements["domain-nav"].listener("click")?.({ target: { closest: () => firstTile } });
   const resetRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
-  if (resetRecords !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: clicking an active category must restore the full catalog.`);
+  const initialCatalogPageSize = Math.min(12, browserData.AMAZONIA_CATALOG.length);
+  if (resetRecords !== initialCatalogPageSize || elements["catalog-more"].hidden) {
+    fail(`${page.file}: an unfiltered catalog must initially show a compact first page with a visible expansion control.`);
+  }
+  elements["show-more-sources"].listener("click")?.();
+  const expandedFirstPage = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
+  if (browserData.AMAZONIA_CATALOG.length > 12 && expandedFirstPage !== Math.min(24, browserData.AMAZONIA_CATALOG.length)) {
+    fail(`${page.file}: show-more must reveal the next catalog page without dropping records.`);
+  }
+  while (!elements["catalog-more"].hidden) elements["show-more-sources"].listener("click")?.();
+  const fullyExpandedRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
+  if (fullyExpandedRecords !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: show-more must eventually reveal the full catalog.`);
   const documentationLinks = (elements["dataset-grid"].innerHTML.match(/class="methodology-link"/g) || []).length;
-  if (documentationLinks !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: every source card must expose a documentation link.`);
+  if (documentationLinks !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: every source card must expose a source or documentation link.`);
   const expectedDetailIcons = browserData.AMAZONIA_CATALOG.reduce((total, record) => total + [record.temporalCoverage, record.spatialResolution, record.license].filter(Boolean).length, 0);
   const renderedDetailIcons = (elements["dataset-grid"].innerHTML.match(/class="detail-icon"/g) || []).length;
   if (renderedDetailIcons !== expectedDetailIcons) fail(`${page.file}: visible timeframe, resolution, and license details must use compact icons.`);
@@ -224,7 +235,7 @@ const runExplorerSmokeTest = async (page, browserData) => {
   history.replacements = [];
   vm.runInNewContext(await read(page.app), context, { filename: `${page.app}:invalid-url` });
   const invalidUrlRecords = (elements["dataset-grid"].innerHTML.match(/<article\b/g) || []).length;
-  if (invalidUrlRecords !== browserData.AMAZONIA_CATALOG.length) fail(`${page.file}: invalid filter URL must fall back to the full catalog.`);
+  if (invalidUrlRecords !== Math.min(12, browserData.AMAZONIA_CATALOG.length)) fail(`${page.file}: invalid filter URL must fall back to the initial catalog page.`);
   if (/(?:not-a-real-category|unknown|not-a-real-path)/.test(history.replacements.at(-1) || "")) fail(`${page.file}: invalid filter URL was not normalized.`);
 
   const topicId = "forest-change";
@@ -321,10 +332,13 @@ for (const alias of legacyPages) {
 if (!(await read("styles.css")).includes('.domain-button[data-domain="life"] .domain-icon')) {
   fail("styles.css: the forests icon needs its own color treatment.");
 }
+if (!(await read("styles.css")).includes(".research-path-panel[hidden] { display: none; }")) {
+  fail("styles.css: a hidden research path panel must not reserve layout space.");
+}
 
 for (const page of homePages) {
   const html = await read(page.file);
-  for (const id of ["domain-nav", "discover-source", "dataset-grid", "topic", "research-path-panel", "open-research-path", "research-path-choice", "next-research-path", "research-path-summary", "research-path-position"]) {
+  for (const id of ["domain-nav", "discover-source", "dataset-grid", "catalog-more", "show-more-sources", "topic", "research-path-panel", "open-research-path", "research-path-choice", "next-research-path", "research-path-summary", "research-path-position"]) {
     if (!new RegExp(`id=["']${id}["']`).test(html)) fail(`${page.file}: missing #${id}.`);
   }
   const prefix = page.file.includes("/") ? "../" : "";
@@ -389,6 +403,9 @@ for (const command of ["node scripts/build-api.mjs", "npm run check"]) {
 const deployWorkflow = await read(".github/workflows/deploy-pages.yml");
 if (!deployWorkflow.includes("workflow_call:") || !deployWorkflow.includes("- Quality gate")) {
   fail("deploy-pages workflow: must be reusable and run after the main-branch quality gate.");
+}
+if (!deployWorkflow.includes("npm run build:site") || !/path:\s*dist\b/.test(deployWorkflow) || /path:\s*\.\s*(?:\n|$)/.test(deployWorkflow)) {
+  fail("deploy-pages workflow: must publish the curated dist artifact, not the repository checkout.");
 }
 if (deployWorkflow.includes("- Update candidates board") || deployWorkflow.includes("- Source submission to draft PR")) {
   fail("deploy-pages workflow: generated writers must call it directly, not fan out through workflow_run.");
