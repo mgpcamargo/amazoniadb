@@ -35,7 +35,7 @@ jobs:
       - name: Find existing catalog-health issue
         id: existing
         if: steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: |
@@ -49,7 +49,7 @@ jobs:
 
       - name: Open new issue
         if: (steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0') && steps.existing.outputs.result == ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           BROKEN_BODY: ${{ steps.links.outputs.broken_body }}
           BROKEN_COUNT: ${{ steps.links.outputs.broken_count }}
@@ -79,7 +79,7 @@ jobs:
 
       - name: Refresh existing issue when results change
         if: (steps.links.outputs.broken_count != '0' || steps.links.outputs.stale_count != '0') && steps.existing.outputs.result != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           BROKEN_BODY: ${{ steps.links.outputs.broken_body }}
           BROKEN_COUNT: ${{ steps.links.outputs.broken_count }}
@@ -118,7 +118,7 @@ jobs:
       - name: Find resolved catalog-health issue
         id: resolved
         if: steps.links.outputs.broken_count == '0' && steps.links.outputs.stale_count == '0'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           result-encoding: string
           script: |
@@ -132,7 +132,7 @@ jobs:
 
       - name: Close resolved catalog-health issue
         if: steps.resolved.outputs.result != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           ISSUE_NUMBER: ${{ steps.resolved.outputs.result }}
         with:
